@@ -1559,6 +1559,8 @@ GameObject:
   - component: {fileID: 441584}
   - component: {fileID: 9546162}
   - component: {fileID: 4308315456030011906}
+  - component: {fileID: -8003226511641330084}
+  - component: {fileID: -4550923764194911063}
   m_Layer: 0
   m_Name: SP3_HulaGirl_White
   m_TagString: Untagged
@@ -1627,6 +1629,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d42d83c93c126a489a864e8eaa40b94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-8003226511641330084
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 178550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff6cd3b316cd2ff4dad8dccb635875fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!195 &-4550923764194911063
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 178550}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &179462
 GameObject:
   m_ObjectHideFlags: 0

@@ -29,6 +29,8 @@ public class EnemySpawner : MonoBehaviour
             TestSql.Init();
 
             TestSql.GetScore("test00");
+
+            clone.ChangeState(EntityStates.IdleState);
         }
     }
 }

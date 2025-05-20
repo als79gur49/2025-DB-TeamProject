@@ -1637,6 +1637,8 @@ GameObject:
   - component: {fileID: 443146}
   - component: {fileID: 9585908}
   - component: {fileID: 5457930207378453253}
+  - component: {fileID: 850024499446833873}
+  - component: {fileID: 2011158329572320463}
   m_Layer: 0
   m_Name: SP3_Graduate_Brown
   m_TagString: Untagged
@@ -1705,6 +1707,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d42d83c93c126a489a864e8eaa40b94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &850024499446833873
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 177486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff6cd3b316cd2ff4dad8dccb635875fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!195 &2011158329572320463
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 177486}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &183602
 GameObject:
   m_ObjectHideFlags: 0
