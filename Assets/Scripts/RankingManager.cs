@@ -4,69 +4,72 @@ using UnityEngine;
 
 public class RankingManager : MonoBehaviour
 {
-    //entity 저장하는 및 추가, 삭제 하는 곳
-    //
-
-    private List<Entity> entityList;
+    private Dictionary<string, int> rankingList; // 사용자 이름과 점수만 따로 저장하는 리스트, Unique보장
+    // 정렬 필요하면 
+     // rankingList.OrderByDescending(t => t.Value).ToList();
 
     private RankingSQL sql;
 
-    public List<Entity> EntityList => entityList; //랭킹 UI만들 때 참조
+    public Dictionary<string, int> RankingList => rankingList;
+
 
     private void Awake()
     {
         sql = GetComponent<RankingSQL>();
-        entityList = new List<Entity>();
+
+        rankingList = new Dictionary<string, int>();
     }
 
     public void Setup(RankingSQL sql)
     {
         this.sql = sql;
+        
     }
 
-    public void UpdateRanking()
+    public void UpdateSQL()
     {
         //sql 업데이트
+    }
+    public void UpdateEntity(Entity entity) // Score 변경되는 경우
+    {
+        if(rankingList.TryGetValue(entity.Info.EntityName, out int score))
+        {
+            score = entity.Data.Score;
+
+            UpdateSQL();
+        }
+        else
+        {
+
+        }
     }
 
     public void AddEntity(Entity entity)
     {
-        if( !entityList.Contains(entity)) // 중복 제거
+        if(rankingList.TryAdd(entity.Info.EntityName, entity.Data.Score))
         {
-            // 추가 성공
-            entityList.Add(entity);
-
-            //내림차순 정렬
-            entityList = entityList
-                .OrderByDescending(t => t.Data.Score)
-                .ToList();
-
-            UpdateRanking();
             Debug.Log($"{entity.Info?.EntityName} 랭킹에 추가");
+
+            UpdateSQL();
         }
         else
         {
 
         }
+        
     }
 
     public void RemoveEntity(Entity entity)
     {
-        if (entityList.Contains(entity))
+        if (rankingList.Remove(entity.Info.EntityName))
         {
-            // 삭제 성공
-            entityList.Remove(entity);
-
-            entityList = entityList
-                .OrderByDescending(t => t.Data.Score)
-                .ToList();
-
-            UpdateRanking();
             Debug.Log($"{entity.Info?.EntityName} 랭킹에 삭제");
+
+            UpdateSQL();
         }
         else
         {
 
-        }
+        }  
     }
 };

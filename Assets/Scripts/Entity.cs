@@ -15,9 +15,12 @@ public abstract class Entity : MonoBehaviour
     public EntityInfo Info => info;
 
 
-    public void Setup(RankingManager rankingManager)
+    public void Setup(RankingManager rankingManager, EntityInfo info, EntityData data)
     {
         this.rankingManager = rankingManager;
+
+        this.info = info;
+        this.data = data;
 
         rankingManager?.AddEntity(this);
     }

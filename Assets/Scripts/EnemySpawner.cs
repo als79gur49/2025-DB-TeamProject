@@ -22,7 +22,9 @@ public class EnemySpawner : MonoBehaviour
         {
             Entity clone = GameObject.Instantiate(enemy);
 
-            clone.Setup(rankingManager);
+            string name = "Test_Enemy_" + Random.Range(0, 10000);
+
+            clone.Setup(rankingManager, new EntityInfo(name, "Test_Image"), new EntityData(100, 10, 1));
         }
     }
 }
