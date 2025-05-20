@@ -9,7 +9,18 @@ public abstract class Entity : MonoBehaviour
     private EntityInfo info;
     protected EntityData data;
 
+    private RankingManager rankingManager;
+
     public EntityData Data => data;
+    public EntityInfo Info => info;
+
+
+    public void Setup(RankingManager rankingManager)
+    {
+        this.rankingManager = rankingManager;
+
+        rankingManager?.AddEntity(this);
+    }
 
     public interface EntityInput
     {
@@ -25,4 +36,10 @@ public abstract class Entity : MonoBehaviour
     {
         public void DoOutput();
     };
+
+    private void OnDisable()
+    {
+        //Enable이 Setup보다 빨리 작동하여 AddEntity위치는 Setup으로 변경   
+        rankingManager?.RemoveEntity(this);
+    }
 };

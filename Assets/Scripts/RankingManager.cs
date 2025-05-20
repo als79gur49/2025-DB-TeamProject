@@ -1,43 +1,72 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public class RangkingManager : MonoBehaviour
+public class RankingManager : MonoBehaviour
 {
-    private HashSet<Entity> entities; // 유니크 보장
+    //entity 저장하는 및 추가, 삭제 하는 곳
+    //
 
-    private RankingService service;
+    private List<Entity> entityList;
 
-    public void Setup(RankingService service)
+    private RankingSQL sql;
+
+    public List<Entity> EntityList => entityList; //랭킹 UI만들 때 참조
+
+    private void Awake()
     {
-        this.service = service;
+        sql = GetComponent<RankingSQL>();
+        entityList = new List<Entity>();
+    }
+
+    public void Setup(RankingSQL sql)
+    {
+        this.sql = sql;
     }
 
     public void UpdateRanking()
     {
-
+        //sql 업데이트
     }
 
     public void AddEntity(Entity entity)
     {
-        if (entities.Add(entity))
+        if( !entityList.Contains(entity)) // 중복 제거
         {
             // 추가 성공
+            entityList.Add(entity);
+
+            //내림차순 정렬
+            entityList = entityList
+                .OrderByDescending(t => t.Data.Score)
+                .ToList();
+
+            UpdateRanking();
+            Debug.Log($"{entity.Info?.EntityName} 랭킹에 추가");
         }
         else
         {
-            // 추가 실패
+
         }
     }
 
     public void RemoveEntity(Entity entity)
     {
-        if (entities.Remove(entity))
+        if (entityList.Contains(entity))
         {
             // 삭제 성공
+            entityList.Remove(entity);
+
+            entityList = entityList
+                .OrderByDescending(t => t.Data.Score)
+                .ToList();
+
+            UpdateRanking();
+            Debug.Log($"{entity.Info?.EntityName} 랭킹에 삭제");
         }
         else
         {
-            // 삭제 실패
+
         }
     }
 };
