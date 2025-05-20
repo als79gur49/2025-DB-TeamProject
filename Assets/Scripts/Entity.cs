@@ -1,18 +1,28 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Entity : MonoBehaviour
+public abstract class Entity : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    protected EntityInput input;
+    protected EntityBrain brain;
+    protected EntityOutput output;
 
-    // Update is called once per frame
-    void Update()
+    private EntityInfo info;
+    protected EntityData data;
+
+    public EntityData Data => data;
+
+    public interface EntityInput
     {
-        
-    }
-}
+        public void DoInput();
+    };
+
+    public interface EntityBrain
+    {
+        public void DoCalculate();
+    };
+
+    public interface EntityOutput
+    {
+        public void DoOutput();
+    };
+};

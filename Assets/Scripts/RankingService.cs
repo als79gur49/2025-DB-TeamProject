@@ -1,18 +1,29 @@
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class RankingService : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    List<Entity> prevRanking;
+    List<Entity> currentRanking;
+
+    public void Setup()
     {
-        
+        prevRanking = new List<Entity>();
+        currentRanking = new List<Entity>();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void CalculateRanking(HashSet<Entity> entities)
     {
-        
+        prevRanking = currentRanking;
+
+        currentRanking = entities
+            .OrderByDescending(p => p.Data.Score)
+            .ToList();
     }
-}
+
+    public void UpdateRankingBoard()
+    {
+
+    }
+};

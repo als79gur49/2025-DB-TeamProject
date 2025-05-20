@@ -1,18 +1,33 @@
-using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class DamagePopupManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    //싱글턴으로 변경
+
+    [SerializeField]
+    private DamagePopup popupPrefab;
+
+    private MemoryPool<DamagePopup> popupPool;
+
+    private void Awake()
     {
-        
+        popupPool = new MemoryPool<DamagePopup>(popupPrefab, 10);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void PrintDamage(Color c, int amount)
     {
-        
+        DamagePopup popup = popupPool?.ActivatePoolItem();
+        TextMeshProUGUI text = popup?.GetComponent<TextMeshProUGUI>();
+        if (text != null)
+        {
+            text.text = amount.ToString();
+
+            text.color = c;
+
+            //이동 모션
+
+            //사라지는 모션
+        }
     }
-}
+};

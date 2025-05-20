@@ -1,18 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class EntityInfo : MonoBehaviour
+public class EntityInfo
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    private string entityName;
+    private string imageName;
 
-    // Update is called once per frame
-    void Update()
+    public string EntityName => entityName;
+    public string ImageName => imageName;
+
+    public void Setup(EntityInfo info)
     {
-        
+        Setup(info.entityName, info.imageName);
     }
-}
+    public void Setup(string entityName = "Player_00", string imageName = "player_image_00")
+    {
+        this.entityName = entityName;
+        this.imageName = imageName;
+    }
+};
