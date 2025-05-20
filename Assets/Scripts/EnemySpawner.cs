@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnemySpawner : MonoBehaviour
 {
     [SerializeField]
-    private Entity enemy;
+    private Entity[] enemy;
 
     [SerializeField]
     public RankingManager rankingManager;
@@ -20,11 +20,15 @@ public class EnemySpawner : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Q))
         {
-            Entity clone = GameObject.Instantiate(enemy);
+            Entity clone = GameObject.Instantiate(enemy[Random.Range(0, enemy.Length)]);
 
             string name = "Test_Enemy_" + Random.Range(0, 10000);
 
             clone.Setup(rankingManager, new EntityInfo(name, "Test_Image"), new EntityData(100, 10, 1));
+
+            TestSql.Init();
+
+            TestSql.GetScore("test00");
         }
     }
 }
