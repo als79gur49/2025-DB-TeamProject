@@ -12,25 +12,24 @@ public class IdleState : IState
         this.idleTime = idleTime;
     }
 
-    public void Enter(Entity entity)
+    public void Enter(AIInput input)
     {
         timer = 0;
         Debug.Log("Idle Enter");
     }
 
-    public void Execute(Entity entity)
+    public void Execute(AIInput input)
     {
         timer += Time.deltaTime;
 
         if(timer >= idleTime)
         {
-            entity.ChangeState(EntityStates.PatrolState);
         }
         
         Debug.Log("Idle Execute");
     }
 
-    public void Exit(Entity entity)
+    public void Exit(AIInput input)
     {
         Debug.Log("Idle Exit");
     }

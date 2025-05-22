@@ -23,7 +23,7 @@ public class PatrolState : IState
         this.wanderRadius = wanderRadius;
         this.wanderTime = wanderTime;
     }
-    public void Enter(Entity entity)
+    public void Enter(AIInput input)
     {
         agent.isStopped = false;
 
@@ -34,20 +34,21 @@ public class PatrolState : IState
         Debug.Log("Patrol Enter");
     }
 
-    public void Execute(Entity entity)
+    public void Execute(AIInput input)
     {
         timer += Time.deltaTime;
+
+        OnDrawGizmos();
 
         if(Utils.IsNearTarget(wanderPosition, entity.transform.position, length) ||
             timer >= wanderTime)
         {
-            entity.ChangeState(EntityStates.IdleState);
         }
 
         Debug.Log("Patrol Execute");
     }
 
-    public void Exit(Entity entity)
+    public void Exit(AIInput input)
     {
         agent.isStopped = true;
 

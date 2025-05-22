@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class Entity : MonoBehaviour
 {
-    //private EntityInput input;
+    private AIInput input;
     private FSM brain;
     //private EntityOutput output;
 
@@ -16,31 +16,31 @@ public abstract class Entity : MonoBehaviour
     public EntityData Data => data;
     public EntityInfo Info => info;
 
-
     public void Setup(RankingManager rankingManager, EntityInfo info, EntityData data)
     {
+        input = GetComponent<AIInput>();
+        input.self = this.gameObject;
         if(TryGetComponent<FSM>(out FSM brain))
         {
             this.brain = brain;
             this.brain.Setup(this);           
-        }
-
-        this.rankingManager = rankingManager;
+        }    
 
         this.info = info;
         this.data = data;
 
+        this.rankingManager = rankingManager;
         rankingManager?.AddEntity(this);
     }
 
     private void Update()
     {
-        brain.Execute();
+        brain.Execute(input);
     }
 
     public void ChangeState(EntityStates nextState)
     {
-        brain.ChangeState(nextState);
+        brain.ChangeState(nextState, input);
     }
     private void OnDisable()
     {
