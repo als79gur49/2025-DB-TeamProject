@@ -21,9 +21,9 @@ public class FSM : MonoBehaviour
     private IState currentState;   
 
     [SerializeField]
-    private int attackRange = 5;
+    private int attackRange = 7;
     [SerializeField]
-    private int chaseRange = 35;
+    private int chaseRange = 30;
 
     public int AttackRange => attackRange;
     public int ChaseRange => chaseRange;
@@ -38,9 +38,12 @@ public class FSM : MonoBehaviour
         states.TryAdd(EntityStates.AttackState, new AttackState());
         states.TryAdd(EntityStates.ChaseState, new ChaseState());
 
+        //전이 조건의 경우 넣은 순서대로 검사. Idle, Patorl은 무조건 true이기에 Patrol 미작동
         transitions = new Dictionary<EntityStates, ITransition>();
-        transitions.TryAdd(EntityStates.ChaseState, new ChaseTransition(EntityStates.ChaseState));
+        transitions.TryAdd(EntityStates.AttackState, new AttackTransition(EntityStates.AttackState, attackRange));
+        transitions.TryAdd(EntityStates.ChaseState, new ChaseTransition(EntityStates.ChaseState, chaseRange));
         transitions.TryAdd(EntityStates.IdleState, new IdleTransition(EntityStates.IdleState));
+        transitions.TryAdd(EntityStates.PatrolState, new PatrolTransition(EntityStates.PatrolState));
 
 
         currentState = states[EntityStates.IdleState];
@@ -71,7 +74,7 @@ public class FSM : MonoBehaviour
         //전환조건 체크
         foreach(var t in transitions)
         {
-            if (t.Value.CheckTransition(this, input) &&
+            if (t.Value.CheckTransition(input) &&
                 states.ContainsKey(t.Key))
             {
                 nextState = t.Key;
@@ -90,5 +93,14 @@ public class FSM : MonoBehaviour
         {
             currentState.Execute(input);
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, attackRange);
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, chaseRange);
     }
 }

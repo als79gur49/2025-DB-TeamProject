@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class IdleTransition : ITransition
+public class PatrolTransition : ITransition
 {
-    public IdleTransition(EntityStates state) : base(state)
+    public PatrolTransition(EntityStates state) : base(state)
     {
 
     }
@@ -11,4 +11,5 @@ public class IdleTransition : ITransition
     {
         return true;
     }
+
 }

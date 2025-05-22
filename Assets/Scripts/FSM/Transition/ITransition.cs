@@ -9,10 +9,10 @@ public abstract class ITransition
         this.state = state;
     }
 
-    protected abstract bool Check(FSM fsm, AIInput input);
-    public bool CheckTransition(FSM fsm, AIInput input)
+    protected abstract bool Check(AIInput input);
+    public bool CheckTransition(AIInput input)
     {
-        bool result = Check(fsm, input);
+        bool result = Check(input);
 
         return result;
     }

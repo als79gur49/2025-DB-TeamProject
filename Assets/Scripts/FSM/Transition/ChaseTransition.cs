@@ -1,17 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ChaseTransition : ITransition
 {
-    public ChaseTransition(EntityStates state) : base(state)
-    {
+    private int chaseRange = 50;
 
+    public ChaseTransition(EntityStates state, int chaseRange) : base(state)
+    {
+        this.chaseRange = chaseRange;
     }
 
-    protected override bool Check(FSM fsm, AIInput input)
+    protected override bool Check(AIInput input)
     {
-        if(input.DistanceToTarget() <= fsm.ChaseRange)
+        if(input.DistanceToTarget() <= chaseRange)
         {
             return true;
         }

@@ -1643,6 +1643,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff6cd3b316cd2ff4dad8dccb635875fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attackRange: 7
+  chaseRange: 30
 --- !u!195 &-4550923764194911063
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1679,6 +1681,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   self: {fileID: 0}
   target: {fileID: 0}
+  detectionRange: 200
 --- !u!65 &-4328923141910972654
 BoxCollider:
   m_ObjectHideFlags: 0
