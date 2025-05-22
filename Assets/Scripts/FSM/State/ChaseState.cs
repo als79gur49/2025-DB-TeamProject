@@ -1,7 +1,5 @@
 using UnityEngine;
 using UnityEngine.AI;
-using static UnityEngine.EventSystems.EventTrigger;
-using UnityEngine.UIElements;
 
 public class ChaseState : IState
 {

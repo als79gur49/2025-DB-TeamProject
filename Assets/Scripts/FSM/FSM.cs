@@ -34,7 +34,7 @@ public class FSM : MonoBehaviour
 
         states = new Dictionary<EntityStates, IState>();
         states.TryAdd(EntityStates.IdleState, new IdleState(3));
-        states.TryAdd(EntityStates.PatrolState, new PatrolState(owner.gameObject, 20, 3));
+        states.TryAdd(EntityStates.PatrolState, new PatrolState(20, 3));
         states.TryAdd(EntityStates.AttackState, new AttackState());
         states.TryAdd(EntityStates.ChaseState, new ChaseState());
 
@@ -42,8 +42,8 @@ public class FSM : MonoBehaviour
         transitions = new Dictionary<EntityStates, ITransition>();
         transitions.TryAdd(EntityStates.AttackState, new AttackTransition(EntityStates.AttackState, attackRange));
         transitions.TryAdd(EntityStates.ChaseState, new ChaseTransition(EntityStates.ChaseState, chaseRange));
-        transitions.TryAdd(EntityStates.IdleState, new IdleTransition(EntityStates.IdleState));
         transitions.TryAdd(EntityStates.PatrolState, new PatrolTransition(EntityStates.PatrolState));
+        transitions.TryAdd(EntityStates.IdleState, new IdleTransition(EntityStates.IdleState));
 
 
         currentState = states[EntityStates.IdleState];

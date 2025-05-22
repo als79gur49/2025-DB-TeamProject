@@ -645,6 +645,7 @@ GameObject:
   - component: {fileID: -8115611320860383852}
   - component: {fileID: -4602417134650964061}
   - component: {fileID: -2474168951639716795}
+  - component: {fileID: -8721160551052563061}
   m_Layer: 0
   m_Name: SP3_SchoolGirl_Brown
   m_TagString: Untagged
@@ -785,6 +786,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-8721160551052563061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 126200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eaed3ecba77dbba4f9496f6c643791e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &130664
 GameObject:
   m_ObjectHideFlags: 0

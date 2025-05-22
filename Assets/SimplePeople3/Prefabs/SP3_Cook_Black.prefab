@@ -1617,6 +1617,7 @@ GameObject:
   - component: {fileID: -1128189496931938270}
   - component: {fileID: 6581880062340695184}
   - component: {fileID: 7250332868698486587}
+  - component: {fileID: 4423482156493631325}
   m_Layer: 0
   m_Name: SP3_Cook_Black
   m_TagString: Untagged
@@ -1757,6 +1758,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4423482156493631325
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 188800}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eaed3ecba77dbba4f9496f6c643791e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &189038
 GameObject:
   m_ObjectHideFlags: 0

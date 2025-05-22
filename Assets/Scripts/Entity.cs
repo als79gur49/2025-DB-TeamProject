@@ -8,6 +8,8 @@ public abstract class Entity : MonoBehaviour
     private FSM brain;
     //private EntityOutput output;
 
+    private EntityAnimation animation;
+
     private EntityInfo info;
     protected EntityData data;
 
@@ -18,19 +20,26 @@ public abstract class Entity : MonoBehaviour
 
     public void Setup(RankingManager rankingManager, EntityInfo info, EntityData data)
     {
-        input = GetComponent<AIInput>();
-        input.self = this.gameObject;
-        if(TryGetComponent<FSM>(out FSM brain))
-        {
-            this.brain = brain;
-            this.brain.Setup(this);           
-        }    
-
         this.info = info;
         this.data = data;
 
         this.rankingManager = rankingManager;
         rankingManager?.AddEntity(this);
+
+        Setup();
+    }
+
+    private void Setup()
+    {
+        input = GetComponent<AIInput>();
+        input.self = this.gameObject;
+        if (TryGetComponent<FSM>(out FSM brain))
+        {
+            this.brain = brain;
+            this.brain.Setup(this);
+        }
+
+        animation = GetComponent<EntityAnimation>();
     }
 
     private void Update()

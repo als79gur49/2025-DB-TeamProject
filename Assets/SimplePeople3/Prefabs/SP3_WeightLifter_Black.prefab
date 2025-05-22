@@ -605,6 +605,7 @@ GameObject:
   - component: {fileID: -1605240610652797953}
   - component: {fileID: 441473632310723211}
   - component: {fileID: -7263240830315625382}
+  - component: {fileID: 7006400936479567577}
   m_Layer: 0
   m_Name: SP3_WeightLifter_Black
   m_TagString: Untagged
@@ -745,6 +746,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &7006400936479567577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 131882}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eaed3ecba77dbba4f9496f6c643791e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &134286
 GameObject:
   m_ObjectHideFlags: 0
