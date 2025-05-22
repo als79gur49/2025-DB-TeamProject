@@ -4,6 +4,7 @@ using UnityEngine;
 
 public enum EntityStates
 {
+    Default = -1,
     IdleState = 0,
     PatrolState,
     AttackState,
@@ -13,17 +14,19 @@ public enum EntityStates
 
 public class FSM : MonoBehaviour
 {
-    private Dictionary<EntityStates, IState> states;
-
-    private IState currentState;
-
     private Entity owner;
+
+    private Dictionary<EntityStates, IState> states;
+    private Dictionary<EntityStates, ITransition> transitions;
+    private IState currentState;   
 
     [SerializeField]
     private int attackRange = 5;
     [SerializeField]
     private int chaseRange = 35;
 
+    public int AttackRange => attackRange;
+    public int ChaseRange => chaseRange;
 
     public void Setup(Entity owner)
     {
@@ -34,6 +37,11 @@ public class FSM : MonoBehaviour
         states.TryAdd(EntityStates.PatrolState, new PatrolState(owner.gameObject, 20, 3));
         states.TryAdd(EntityStates.AttackState, new AttackState());
         states.TryAdd(EntityStates.ChaseState, new ChaseState());
+
+        transitions = new Dictionary<EntityStates, ITransition>();
+        transitions.TryAdd(EntityStates.ChaseState, new ChaseTransition(EntityStates.ChaseState));
+        transitions.TryAdd(EntityStates.IdleState, new IdleTransition(EntityStates.IdleState));
+
 
         currentState = states[EntityStates.IdleState];
     }
@@ -58,35 +66,29 @@ public class FSM : MonoBehaviour
 
     public void Execute(AIInput input)
     {
-        EntityStates nextState = DecideNetxtState(input);   
+        EntityStates nextState = EntityStates.Default;
+        
+        //전환조건 체크
+        foreach(var t in transitions)
+        {
+            if (t.Value.CheckTransition(this, input) &&
+                states.ContainsKey(t.Key))
+            {
+                nextState = t.Key;
 
+                break;
+            }
+        }
+
+        //다른 상태일 경우 변경
         if(currentState != states[nextState])
         {
             ChangeState(nextState, input);
         }
 
-        if (currentState != null)
+        if(currentState != null)
         {
             currentState.Execute(input);
         }
     }
-    
-    public EntityStates DecideNetxtState(AIInput input)
-    {
-        //공격 가능 거리이면 공격
-        if(input.DistanceToTarget() < attackRange)
-        {
-            return EntityStates.AttackState;
-        }
-        else if(input.DistanceToTarget() < chaseRange)
-        {
-            return EntityStates.ChaseState;
-        }
-        //추적 가능 거리이면 추적
-
-        //모두 그렇지 않으면 제자리
-
-        return EntityStates.IdleState;
-    }
-
 }
