@@ -35,10 +35,10 @@ public class PatrolState : IState
     public void Execute(AIInput input)
     {
         timer += Time.deltaTime;
-
-        if(Utils.IsNearTarget(wanderPosition, input.self.transform.position, threshold) ||
+        if(Utils.IsNearTarget(agent.destination, input.self.transform.position, threshold) ||
             timer >= wanderTime)
         {
+            Random.InitState(Random.Range(int.MinValue, int.MaxValue));
             agent.SetDestination(Utils.RandomPositionFromRadius(wanderRadius, input.self.transform.position));
 
             timer = 0;
@@ -52,4 +52,5 @@ public class PatrolState : IState
 
         Debug.Log("Patrol Exit");
     }
+
 }
