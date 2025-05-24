@@ -1,9 +1,14 @@
+using UnityEditor.Rendering;
+using UnityEditor.UI;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class AttackState : IState
 {
     private float cooldown = 1f;
     private float timer;
+
+    private float rotateMultiple = 3.0f;
 
     public void Enter(AIInput input)
     {
@@ -15,14 +20,16 @@ public class AttackState : IState
     {
         timer += Time.deltaTime;
 
+        Vector3 direction = (input.target.transform.position - input.self.transform.position).normalized;
+        Quaternion targetRotation = Quaternion.LookRotation(direction);
+        input.self.transform.rotation = Quaternion.Lerp(input.self.transform.rotation, targetRotation, Time.deltaTime * rotateMultiple);
+
         if(timer > cooldown)
         {
-            //attack
+            Attack(input);
 
             timer = 0;
         }
-
-        
 
         Debug.Log("Attack Execute");
     }
@@ -30,6 +37,14 @@ public class AttackState : IState
     public void Exit(AIInput input)
     {
         Debug.Log("Attack Exit");
+    }
+
+    private void Attack(AIInput input)
+    {
+        if(input.self.TryGetComponent<IAttack>(out IAttack attack))
+        {
+            attack.Attack();
+        }
     }
 
 }

@@ -8,6 +8,9 @@ public class AIInput : MonoBehaviour
     [SerializeField]
     private float detectionRange = 200f;
 
+    [SerializeField]
+    private LayerMask targetLayer = (1 << 8); // AttackCollider
+
     private void Update()
     {
         UpdateTarget();
@@ -15,7 +18,7 @@ public class AIInput : MonoBehaviour
 
     private void UpdateTarget()
     {
-        Collider[] hits = Physics.OverlapSphere(transform.position, detectionRange);
+        Collider[] hits = Physics.OverlapSphere(transform.position, detectionRange, targetLayer);
 
         float closestDistance = float.MaxValue;
         GameObject closest = null;
