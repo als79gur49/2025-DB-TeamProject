@@ -13,6 +13,9 @@ public class AttackState : IState
     public void Enter(AIInput input)
     {
         timer = 0;
+
+        input.Animation.SetIdle();
+
         Debug.Log("Attack Enter");
     }
 

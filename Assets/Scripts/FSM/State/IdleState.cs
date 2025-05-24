@@ -4,28 +4,19 @@ using UnityEngine;
 
 public class IdleState : IState
 {
-    private float idleTime = 3f;
-    private float timer;
-
-    public IdleState(float idleTime)
+    public IdleState()
     {
-        this.idleTime = idleTime;
     }
 
     public void Enter(AIInput input)
     {
-        timer = 0;
+        input.Animation.SetIdle();
+
         Debug.Log("Idle Enter");
     }
 
     public void Execute(AIInput input)
     {
-        timer += Time.deltaTime;
-
-        if(timer >= idleTime)
-        {
-        }
-        
         Debug.Log("Idle Execute");
     }
 

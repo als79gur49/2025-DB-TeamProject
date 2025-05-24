@@ -546,8 +546,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d42d83c93c126a489a864e8eaa40b94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnPoint: {fileID: 0}
-  muzzlePoint: {fileID: 0}
+  onTakeDamage:
+    m_PersistentCalls:
+      m_Calls: []
+  onDeath:
+    m_PersistentCalls:
+      m_Calls: []
+  firePoint: {fileID: 0}
+  projectile: {fileID: 0}
 --- !u!114 &-5982156448467807846
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -562,6 +568,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackRange: 7
   chaseRange: 30
+  chaseSpeed: 3.5
+  patrolSpeed: 2.5
 --- !u!195 &6729812157079324677
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -575,7 +583,7 @@ NavMeshAgent:
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
-  m_AngularSpeed: 120
+  m_AngularSpeed: 180
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
@@ -599,6 +607,9 @@ MonoBehaviour:
   self: {fileID: 0}
   target: {fileID: 0}
   detectionRange: 200
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!65 &-1108449484309184697
 BoxCollider:
   m_ObjectHideFlags: 0

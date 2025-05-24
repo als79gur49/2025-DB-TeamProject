@@ -5,13 +5,24 @@ public class ChaseState : IState
 {
     private NavMeshAgent agent;
     private GameObject target;
+
+    private float chaseSpeed = 3.5f;
+
+    public ChaseState(float chaseSpeed)
+    {
+        this.chaseSpeed = chaseSpeed;
+    }
+
     public void Enter(AIInput input)
     {
         agent = input.self.GetComponent<NavMeshAgent>();
         target = input.target;
 
         agent.SetDestination(target.transform.position);
+        agent.speed = chaseSpeed;
         agent.isStopped = false;
+
+        input.Animation.SetWalk();
 
         Debug.Log("Chase Enter");
     }

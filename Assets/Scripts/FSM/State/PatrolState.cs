@@ -13,17 +13,23 @@ public class PatrolState : IState
     private float wanderTime = 4;
     private float timer;
 
+    private float patrolSpeed = 2f;
+
     private Vector3 wanderPosition;
 
-    public PatrolState(int wanderRadius, float wanderTime)
+    public PatrolState(int wanderRadius, float wanderTime, float patrolSpeed)
     {
         this.wanderRadius = wanderRadius;
         this.wanderTime = wanderTime;
+        this.patrolSpeed = patrolSpeed;
     }
     public void Enter(AIInput input)
     {
         agent = input.self.GetComponent<NavMeshAgent>();
+        agent.speed = patrolSpeed;
         agent.isStopped = false;
+
+        input.Animation.SetWalk();
 
         timer = 0;
         wanderPosition = input.self.transform.position + Utils.RandomPositionFromRadius(wanderRadius);

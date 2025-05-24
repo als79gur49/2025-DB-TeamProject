@@ -25,7 +25,10 @@ public class FSM : MonoBehaviour
     private int attackRange = 7;
     [SerializeField]
     private int chaseRange = 30;
-
+    [SerializeField]
+    private float chaseSpeed = 3.5f;
+    [SerializeField]
+    private float patrolSpeed = 2f;
     public int AttackRange => attackRange;
     public int ChaseRange => chaseRange;
 
@@ -34,10 +37,10 @@ public class FSM : MonoBehaviour
         this.owner = owner;
 
         states = new Dictionary<EntityStates, IState>();
-        states.TryAdd(EntityStates.IdleState, new IdleState(3));
-        states.TryAdd(EntityStates.PatrolState, new PatrolState(20, 3));
+        states.TryAdd(EntityStates.IdleState, new IdleState());
+        states.TryAdd(EntityStates.PatrolState, new PatrolState(20, 3, patrolSpeed));
         states.TryAdd(EntityStates.AttackState, new AttackState());
-        states.TryAdd(EntityStates.ChaseState, new ChaseState());
+        states.TryAdd(EntityStates.ChaseState, new ChaseState(chaseSpeed));
         states.TryAdd(EntityStates.DeadState, new DeadState());
 
         //전이 조건의 경우 넣은 순서대로 검사. Patrol, Idle 같은 조건

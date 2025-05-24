@@ -10,6 +10,7 @@ public class EntityAnimation : MonoBehaviour
 
     private string speed = "Speed_f";
     private string death = "Death_b";
+    private string deathType = "DeathType_int";
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -22,15 +23,27 @@ public class EntityAnimation : MonoBehaviour
         this.agent = agent;
     }
 
-    private void Update()
-    {
-        float tmpSpeed = agent.velocity.magnitude;
-        Debug.Log("현재 속도: " + tmpSpeed);
-        animator.SetFloat(speed, tmpSpeed);
-    }
-
     public void Death()
     {
+        animator.SetInteger(deathType, Random.Range(1, 3));
         animator.SetBool(death, true);
+    }
+
+    public void SetRun()
+    {
+        SetSpeed(1);
+    }
+    public void SetWalk()
+    {
+        SetSpeed(0.5f);
+    }
+    public void SetIdle()
+    {
+        SetSpeed(0);
+    }
+
+    private void SetSpeed(float moveSpeed)
+    {
+        animator.SetFloat(speed, moveSpeed);
     }
 }

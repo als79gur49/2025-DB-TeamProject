@@ -1838,6 +1838,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d42d83c93c126a489a864e8eaa40b94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onTakeDamage:
+    m_PersistentCalls:
+      m_Calls: []
+  onDeath:
+    m_PersistentCalls:
+      m_Calls: []
   firePoint: {fileID: 8817817361546178684}
   projectile: {fileID: 5938167112633497377, guid: 663f623c25f897b46a27928160ba6243,
     type: 3}
@@ -1855,6 +1861,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackRange: 20
   chaseRange: 40
+  chaseSpeed: 3.5
+  patrolSpeed: 1
 --- !u!195 &6700167613136160195
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1868,7 +1876,7 @@ NavMeshAgent:
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
-  m_AngularSpeed: 120
+  m_AngularSpeed: 180
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
