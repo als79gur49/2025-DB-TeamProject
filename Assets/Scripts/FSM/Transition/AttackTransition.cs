@@ -12,13 +12,16 @@ public class AttackTransition : ITransition
 
     protected override bool Check(AIInput input)
     {
-        // 목표 방향에 지형지물이 없을 경우
-        if (Physics.Raycast(input.self.transform.position, (input.target.transform.position - input.self.transform.position).normalized, 100, groundLayer))
+        float distance = input.DistanceToTarget();
+
+        // 범위 안에 있을 경우
+        if (distance > attackRange)
         {
             return false;
         }
-        // 범위 안에 있을 경우
-        if (input.DistanceToTarget() > attackRange)
+
+        // 목표 방향에 지형지물이 없을 경우
+        if (Physics.Raycast(input.self.transform.position, (input.target.transform.position - input.self.transform.position).normalized, distance, groundLayer))
         {
             return false;
         }

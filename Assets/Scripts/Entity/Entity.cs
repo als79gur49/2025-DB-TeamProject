@@ -1,9 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 
-public abstract class Entity : MonoBehaviour, IAttack
+public abstract class Entity : MonoBehaviour, IAttack, IDamageable
 {
+    private UnityEvent<int, int> onTakeDamage;
+    private UnityEvent onDeath;
+
     private AIInput input;
     private FSM brain;
     //private EntityOutput output;
@@ -12,6 +16,7 @@ public abstract class Entity : MonoBehaviour, IAttack
 
     private EntityInfo info;
     protected EntityData data;
+    public bool IsDead => (data.HP <= 0);
 
     private RankingManager rankingManager;
 
@@ -47,10 +52,12 @@ public abstract class Entity : MonoBehaviour, IAttack
         animation = GetComponent<EntityAnimation>();
     }
 
+
     private void Update()
     {
         brain.Execute(input);
     }
+
 
     public void ChangeState(EntityStates nextState)
     {
@@ -62,6 +69,7 @@ public abstract class Entity : MonoBehaviour, IAttack
         rankingManager?.RemoveEntity(this);
     }
 
+    // IAttack
     public void Attack()
     {
         GameObject clone;
@@ -75,5 +83,27 @@ public abstract class Entity : MonoBehaviour, IAttack
 
         clone = Instantiate(projectile, firePoint.position, Quaternion.identity);
         clone.transform.localRotation = Quaternion.LookRotation(transform.forward, Vector3.up);
+    }
+
+    // IDamageable
+    public void TakeDamage(int amount)
+    {
+        int prevHp = data.HP;
+
+        //defense 추가할 꺼면 로직 수정
+        data.TakeDamage(amount);
+
+        //2가지 이벤트, hpUI 수정, 데미지 출력
+        onTakeDamage?.Invoke(prevHp, data.HP);
+
+        if (IsDead)
+        {
+            TryGetComponent<BoxCollider>(out BoxCollider collider);
+            collider.enabled = false;
+
+            animation.Death();
+
+            onDeath?.Invoke();
+        }
     }
 };

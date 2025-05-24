@@ -9,6 +9,9 @@ public class ProjectileMove : MonoBehaviour
     public GameObject muzzlePrefab;
     public GameObject hitPrefab;
 
+    private GameObject owner;
+    public GameObject Owner => owner;
+
     void Start()
     {
         if (muzzlePrefab != null)
@@ -61,6 +64,11 @@ public class ProjectileMove : MonoBehaviour
                 var psChild = hitVFX.transform.GetChild(0).GetComponent<ParticleSystem>();
                 Destroy(hitVFX, psChild.main.duration);
             }
+        }
+
+        if(co.gameObject.TryGetComponent<IDamageable>(out IDamageable target))
+        {
+            target.TakeDamage(10);
         }
         Destroy(gameObject);
     }

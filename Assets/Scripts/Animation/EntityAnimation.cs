@@ -9,7 +9,7 @@ public class EntityAnimation : MonoBehaviour
     private NavMeshAgent agent;
 
     private string speed = "Speed_f";
-
+    private string death = "Death_b";
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -27,5 +27,10 @@ public class EntityAnimation : MonoBehaviour
         float tmpSpeed = agent.velocity.magnitude;
         Debug.Log("현재 속도: " + tmpSpeed);
         animator.SetFloat(speed, tmpSpeed);
+    }
+
+    public void Death()
+    {
+        animator.SetBool(death, true);
     }
 }
