@@ -12,7 +12,7 @@ public class DamagePopupManager : MonoBehaviour
 
     private void Awake()
     {
-        popupPool = new MemoryPool<DamagePopup>(popupPrefab, 10);
+        popupPool = new MemoryPool<DamagePopup>(popupPrefab, this.transform, 10);
     }
 
     public void PrintDamage(Color c, int amount)

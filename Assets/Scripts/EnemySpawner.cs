@@ -10,7 +10,12 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField]
     public RankingManager rankingManager;
 
+    private MemoryPool<Entity> memoryPool;
 
+    private void Awake()
+    {
+        memoryPool = new MemoryPool<Entity>(enemy[0], this.transform, 5);
+    }
     public void Setup(RankingManager rankingManager)
     {
         this.rankingManager = rankingManager;
@@ -20,11 +25,12 @@ public class EnemySpawner : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Q))
         {
-            Entity clone = GameObject.Instantiate(enemy[Random.Range(0, enemy.Length)]);
+            //Entity clone = GameObject.Instantiate(enemy[Random.Range(0, enemy.Length)]);
+            Entity clone = memoryPool.ActivatePoolItem();
 
             string name = "Test_Enemy_" + Random.Range(0, 10000);
 
-            clone.Setup(rankingManager, new EntityInfo(name, "Test_Image"), new EntityData(100, 10, 1));
+            clone.Setup(memoryPool, rankingManager, new EntityInfo(name, "Test_Image"), new EntityData(100, 10, 1));
 
             TestSql.Init();
 

@@ -1,11 +1,15 @@
+using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class DeadState : IState
 {
-    public DeadState()
+    private float delay;
+
+    public DeadState(float delay)
     {
+        this.delay = delay;
     }
 
     public void Enter(AIInput input)
@@ -31,5 +35,4 @@ public class DeadState : IState
     {
         Debug.Log("Dead Exit");
     }
-
 }

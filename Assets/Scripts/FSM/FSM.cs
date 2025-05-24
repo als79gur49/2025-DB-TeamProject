@@ -41,7 +41,7 @@ public class FSM : MonoBehaviour
         states.TryAdd(EntityStates.PatrolState, new PatrolState(20, 3, patrolSpeed));
         states.TryAdd(EntityStates.AttackState, new AttackState());
         states.TryAdd(EntityStates.ChaseState, new ChaseState(chaseSpeed));
-        states.TryAdd(EntityStates.DeadState, new DeadState());
+        states.TryAdd(EntityStates.DeadState, new DeadState(5f));
 
         //전이 조건의 경우 넣은 순서대로 검사. Patrol, Idle 같은 조건
         transitions = new Dictionary<EntityStates, ITransition>();

@@ -20,22 +20,22 @@ public class MemoryPool<T> where T : Component
     public int MaxCount => maxCount;
     public int ActivedCount => activedCount;
 
-
-    public MemoryPool(T poolObjectPrefab, int increaseCount) : this(poolObjectPrefab)
+    // 단순 부모 오브젝트에 하위 오브젝트로 넣어서 접기 위해서
+    private Transform folder;
+    public MemoryPool(T poolObjectPrefab, Transform folder, int increaseCount) : this(poolObjectPrefab, folder)
     {
         this.increaseCount = increaseCount;
     }
-    public MemoryPool(T poolObjectPrefab)
+    public MemoryPool(T poolObjectPrefab, Transform folder)
     {
         maxCount = 0;
         activedCount = 0;
         this.poolObjectPrefab = poolObjectPrefab;
-
+        this.folder = folder;
         poolItemList = new List<PoolItem>();
 
         InstantiateObjects();
     }
-
     public void InstantiateObjects()
     {
         maxCount += increaseCount;
@@ -45,7 +45,12 @@ public class MemoryPool<T> where T : Component
             PoolItem poolItem = new PoolItem();
 
             poolItem.isActive = false;
-            poolItem.item = GameObject.Instantiate(poolObjectPrefab, new Vector3(1000, 1000, 1000), Quaternion.identity);
+            poolItem.item = GameObject.Instantiate(poolObjectPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+            Debug.Log("MemoryPool folder = " + folder?.name);
+            if (folder != null)
+            {
+                poolItem.item.transform.SetParent(folder.transform, true);
+            }
             poolItem.item.gameObject.SetActive(false);
 
             poolItemList.Add(poolItem);
