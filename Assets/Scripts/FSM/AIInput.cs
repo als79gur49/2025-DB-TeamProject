@@ -5,6 +5,11 @@ public class AIInput : MonoBehaviour
     public GameObject self;
     public GameObject target;
 
+    private EntityAnimation animation;
+    private Entity entity;
+    public EntityAnimation Animation => animation;
+    public Entity Entity => entity;
+
     [SerializeField]
     private float detectionRange = 200f;
 
@@ -16,6 +21,14 @@ public class AIInput : MonoBehaviour
         UpdateTarget();
     }
 
+    public void SetAnimation(EntityAnimation animation)
+    {
+        this.animation = animation;
+    }
+    public void SetEntity(Entity entity)
+    {
+        this.entity = entity;
+    }
     private void UpdateTarget()
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, detectionRange, targetLayer);

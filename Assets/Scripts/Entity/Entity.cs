@@ -5,8 +5,8 @@ using UnityEngine.Events;
 
 public abstract class Entity : MonoBehaviour, IAttack, IDamageable
 {
-    private UnityEvent<int, int> onTakeDamage;
-    private UnityEvent onDeath;
+    public UnityEvent<int, int> onTakeDamage;
+    public UnityEvent onDeath;
 
     private AIInput input;
     private FSM brain;
@@ -41,8 +41,6 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
 
     private void Setup()
     {
-        input = GetComponent<AIInput>();
-        input.self = this.gameObject;
         if (TryGetComponent<FSM>(out FSM brain))
         {
             this.brain = brain;
@@ -50,6 +48,11 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
         }
 
         animation = GetComponent<EntityAnimation>();
+
+        input = GetComponent<AIInput>();
+        input.self = this.gameObject;
+        input.SetEntity(this);
+        input.SetAnimation(animation);      
     }
 
 
@@ -95,15 +98,5 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
 
         //2가지 이벤트, hpUI 수정, 데미지 출력
         onTakeDamage?.Invoke(prevHp, data.HP);
-
-        if (IsDead)
-        {
-            TryGetComponent<BoxCollider>(out BoxCollider collider);
-            collider.enabled = false;
-
-            animation.Death();
-
-            onDeath?.Invoke();
-        }
     }
 };
