@@ -31,6 +31,8 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
 
     private DamagePopupManager damagePopupManager;
 
+    private KillLogManager killLogManager;
+
     public EntityData Data => data;
     public EntityInfo Info => info;
 
@@ -50,7 +52,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     private KeyValuePair<Entity, string> lastDamagedInfo;
 
 
-    public void Setup(MemoryPool<Entity> memoryPool,RankingManager rankingManager, DamagePopupManager damagePopupManager,EntityInfo info, EntityData data)
+    public void Setup(MemoryPool<Entity> memoryPool,RankingManager rankingManager, DamagePopupManager damagePopupManager, KillLogManager killLogManager, EntityInfo info, EntityData data)
     {
         this.info = info;
         this.data = data;
@@ -59,6 +61,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
         this.rankingManager = rankingManager;
         rankingManager?.AddEntity(this);
         this.damagePopupManager = damagePopupManager;
+        this.killLogManager = killLogManager;
 
         Setup();
     }
@@ -120,11 +123,12 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
         // defense 추가할 꺼면 로직 수정
         data.TakeDamage(amount);
 
+        // 마지막 공격한 상대의 정보
         lastDamagedInfo = new KeyValuePair<Entity, string>(enemy, weaponName);
 
         damagePopupManager.PrintDamage(Color.black, amount, damageTextPoint.position, 3);
 
-        // 2가지 이벤트, hpUI 수정
+        // hpUI 수정
         onTakeDamage?.Invoke(prevHp, data.HP);
     }
 
@@ -165,10 +169,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
             return;
         }
 
-        GameObject tmp = GameObject.Find("TmpKillLog");
-        TextMeshProUGUI text = tmp.GetComponent<TextMeshProUGUI>();
-        
-        // 향후 무기 이미지 이용하여서 무기 이름 대신 교체하기
-        text.text = $"{lastDamagedInfo.Key.Info.EntityName}가 {lastDamagedInfo.Value}로 {info.EntityName}을 죽였습니다.";
+        KillLog log = new KillLog(info.EntityName, lastDamagedInfo.Value, lastDamagedInfo.Key.Info.EntityName);
+        killLogManager.AddLog(log);
     }
 };
