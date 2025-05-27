@@ -12,6 +12,19 @@ public class ProjectileMove : MonoBehaviour
     private GameObject owner;
     public GameObject Owner => owner;
 
+    public void Setup(GameObject owner)
+    {
+        this.owner = owner;
+
+        Collider projectileCollider = GetComponent<Collider>();
+        Collider[] ownerColliders = owner.GetComponentsInChildren<Collider>();
+        
+        foreach (Collider collider in ownerColliders)
+        {
+            Physics.IgnoreCollision(projectileCollider, collider);
+        }
+    }
+
     void Start()
     {
         if (muzzlePrefab != null)

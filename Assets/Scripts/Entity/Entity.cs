@@ -97,6 +97,10 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
 
         clone = Instantiate(projectile, firePoint.position, Quaternion.identity);
         clone.transform.localRotation = Quaternion.LookRotation(transform.forward, Vector3.up);
+
+        clone.TryGetComponent<ProjectileMove>(out ProjectileMove p);
+        p.Setup(this.gameObject);
+
     }
 
     // IDamageable

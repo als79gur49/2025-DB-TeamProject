@@ -6,6 +6,8 @@ public class EnemySpawner : MonoBehaviour
 {
     [SerializeField]
     private Entity[] enemy;
+    [SerializeField]
+    private Mesh[] enemyMeshes;
 
     [SerializeField]
     public RankingManager rankingManager;
