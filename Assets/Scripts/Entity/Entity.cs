@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -28,21 +29,25 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     // Ranking 관련
     private RankingManager rankingManager;
 
+    private DamagePopupManager damagePopupManager;
+
     public EntityData Data => data;
     public EntityInfo Info => info;
 
     public MemoryPool<Entity> MemoryPool => memoryPool;
-    private DamagePopupManager damagePopupManager;
 
     [SerializeField]
     private Transform damageTextPoint;
     [SerializeField]
     private Transform firePoint;
+
     [SerializeField]
     private GameObject projectile;
 
-
     public bool IsDead => (data.HP <= 0);
+
+    // 마지막을 공격받은 적의 이름, 무기 이름
+    private KeyValuePair<Entity, string> lastDamagedInfo;
 
 
     public void Setup(MemoryPool<Entity> memoryPool,RankingManager rankingManager, DamagePopupManager damagePopupManager,EntityInfo info, EntityData data)
@@ -108,16 +113,18 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     }
 
     // IDamageable
-    public void TakeDamage(int amount)
+    public void TakeDamage(int amount, Entity enemy, string weaponName)
     {
         int prevHp = data.HP;
 
-        //defense 추가할 꺼면 로직 수정
+        // defense 추가할 꺼면 로직 수정
         data.TakeDamage(amount);
+
+        lastDamagedInfo = new KeyValuePair<Entity, string>(enemy, weaponName);
 
         damagePopupManager.PrintDamage(Color.black, amount, damageTextPoint.position, 3);
 
-        //2가지 이벤트, hpUI 수정, 데미지 출력
+        // 2가지 이벤트, hpUI 수정
         onTakeDamage?.Invoke(prevHp, data.HP);
     }
 
@@ -142,11 +149,26 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
         GetComponent<BoxCollider>().enabled = true;
 
         onDeath.AddListener(StartDespawnTimer);
+        onDeath.AddListener(DeathLog);
     }
     private void OnDisable()
     {
         onDeath.RemoveListener(StartDespawnTimer);
         //Enable이 Setup보다 빨리 작동하여 AddEntity위치는 Setup으로 변경   
         rankingManager?.RemoveEntity(this);
+    }
+
+    public void DeathLog()
+    {
+        if (lastDamagedInfo.Key == null || lastDamagedInfo.Value == null)
+        {
+            return;
+        }
+
+        GameObject tmp = GameObject.Find("TmpKillLog");
+        TextMeshProUGUI text = tmp.GetComponent<TextMeshProUGUI>();
+        
+        // 향후 무기 이미지 이용하여서 무기 이름 대신 교체하기
+        text.text = $"{lastDamagedInfo.Key.Info.EntityName}가 {lastDamagedInfo.Value}로 {info.EntityName}을 죽였습니다.";
     }
 };

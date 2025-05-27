@@ -81,7 +81,7 @@ public class ProjectileMove : MonoBehaviour
 
         if(co.gameObject.TryGetComponent<IDamageable>(out IDamageable target))
         {
-            target.TakeDamage(50);
+            target.TakeDamage(50, owner.GetComponent<Entity>(), "TmpBow");
         }
         Destroy(gameObject);
     }
