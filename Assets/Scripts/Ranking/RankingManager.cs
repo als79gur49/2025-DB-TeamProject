@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class RankingManager : MonoBehaviour
 {
@@ -26,15 +27,27 @@ public class RankingManager : MonoBehaviour
         
     }
 
+    private void Update()
+    {
+        foreach(var t in rankingList)
+        {
+            Debug.Log($"이름: {t.Key}, 점수: {t.Value}");
+        }
+    }
+
     public void UpdateSQL()
     {
         //sql 업데이트
     }
+
+    // rankingList에서 entity의 점수 변경
     public void UpdateEntity(Entity entity) // Score 변경되는 경우
     {
-        if(rankingList.TryGetValue(entity.Info.EntityName, out int score))
+        string name = entity.Info.EntityName;
+
+        if (rankingList.ContainsKey(name))
         {
-            score = entity.Data.Score;
+            rankingList[name] = entity.Data.Score;
             Debug.Log($"{entity.Info.EntityName}의 Score:{entity.Data.Score}");
 
             UpdateSQL();
@@ -45,6 +58,7 @@ public class RankingManager : MonoBehaviour
         }
     }
 
+    // rankingList에 entity 추가
     public void AddEntity(Entity entity)
     {
         if(rankingList.TryAdd(entity.Info.EntityName, entity.Data.Score))

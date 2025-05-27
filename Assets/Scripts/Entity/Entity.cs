@@ -73,6 +73,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
         onDeath.AddListener(StartDespawnTimer); // n초 후 memoryPool로 반환
         onDeath.AddListener(DeathLog); // lastDamagedInfo, KillLogManager 
         onDeath.AddListener(GiveScoreToLastAttacker); // lastDamagedInfo, data
+        onDeath.AddListener(RemoveFromRanking); // rankingManager에서 제거
     }
     private void Setup()
     {
@@ -168,12 +169,10 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     private void OnDisable()
     {
         onDeath.RemoveAllListeners();
-
-        rankingManager?.RemoveEntity(this);
     }
 
     // 킬로그 출력 ex) x가 y로 z를 처치
-    public void DeathLog()
+    private void DeathLog()
     {
         if (lastDamagedInfo.Key == null || lastDamagedInfo.Value == null)
         {
@@ -185,7 +184,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     }
 
     // 처치한 적에게 점수 부여
-    public void GiveScoreToLastAttacker()
+    private void GiveScoreToLastAttacker()
     {
         GiveScoreToEnemy(lastDamagedInfo.Key);
 
@@ -194,5 +193,10 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     private void GiveScoreToEnemy(Entity enemy)
     {
         enemy?.data.AddScore(100);
+    }
+
+    private void RemoveFromRanking()
+    {
+        rankingManager?.RemoveEntity(this);
     }
 };
