@@ -32,7 +32,10 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     public EntityInfo Info => info;
 
     public MemoryPool<Entity> MemoryPool => memoryPool;
+    private DamagePopupManager damagePopupManager;
 
+    [SerializeField]
+    private Transform damageTextPoint;
     [SerializeField]
     private Transform firePoint;
     [SerializeField]
@@ -42,7 +45,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     public bool IsDead => (data.HP <= 0);
 
 
-    public void Setup(MemoryPool<Entity> memoryPool,RankingManager rankingManager, EntityInfo info, EntityData data)
+    public void Setup(MemoryPool<Entity> memoryPool,RankingManager rankingManager, DamagePopupManager damagePopupManager,EntityInfo info, EntityData data)
     {
         this.info = info;
         this.data = data;
@@ -50,6 +53,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
         this.memoryPool = memoryPool;
         this.rankingManager = rankingManager;
         rankingManager?.AddEntity(this);
+        this.damagePopupManager = damagePopupManager;
 
         Setup();
     }
@@ -110,6 +114,8 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
 
         //defense 추가할 꺼면 로직 수정
         data.TakeDamage(amount);
+
+        damagePopupManager.PrintDamage(Color.black, amount, damageTextPoint.position, 3);
 
         //2가지 이벤트, hpUI 수정, 데미지 출력
         onTakeDamage?.Invoke(prevHp, data.HP);

@@ -15,19 +15,15 @@ public class DamagePopupManager : MonoBehaviour
         popupPool = new MemoryPool<DamagePopup>(popupPrefab, this.transform, 10);
     }
 
-    public void PrintDamage(Color c, int amount)
+    public void PrintDamage(Color c, int amount, Vector3 point, float duration = 5f)
     {
         DamagePopup popup = popupPool?.ActivatePoolItem();
-        TextMeshProUGUI text = popup?.GetComponent<TextMeshProUGUI>();
-        if (text != null)
-        {
-            text.text = amount.ToString();
+        Debug.Log("print");
+        popup.Setup(c, amount, point, duration, this);
+    }
 
-            text.color = c;
-
-            //이동 모션
-
-            //사라지는 모션
-        }
+    public void DeactiveSelf(DamagePopup popup)
+    {
+        popupPool?.DeactivatePoolItem(popup);
     }
 };

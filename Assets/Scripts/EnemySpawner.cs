@@ -11,6 +11,8 @@ public class EnemySpawner : MonoBehaviour
 
     [SerializeField]
     public RankingManager rankingManager;
+    [SerializeField]
+    public DamagePopupManager damagePopupManager;
 
     private MemoryPool<Entity> memoryPool;
 
@@ -18,9 +20,10 @@ public class EnemySpawner : MonoBehaviour
     {
         memoryPool = new MemoryPool<Entity>(enemy[0], this.transform, 5);
     }
-    public void Setup(RankingManager rankingManager)
+    public void Setup(RankingManager rankingManager, DamagePopupManager damagePopupManager)
     {
         this.rankingManager = rankingManager;
+        this.damagePopupManager = damagePopupManager;
     }
 
     private void Update()
@@ -32,7 +35,7 @@ public class EnemySpawner : MonoBehaviour
 
             string name = "Test_Enemy_" + Random.Range(0, 10000);
 
-            clone.Setup(memoryPool, rankingManager, new EntityInfo(name, "Test_Image"), new EntityData(100, 10, 1));
+            clone.Setup(memoryPool, rankingManager, damagePopupManager,new EntityInfo(name, "Test_Image"), new EntityData(100, 10, 1));
 
             TestSql.Init();
 
