@@ -35,6 +35,7 @@ public class RankingManager : MonoBehaviour
         if(rankingList.TryGetValue(entity.Info.EntityName, out int score))
         {
             score = entity.Data.Score;
+            Debug.Log($"{entity.Info.EntityName}ÀÇ Score:{entity.Data.Score}");
 
             UpdateSQL();
         }

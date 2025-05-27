@@ -50,11 +50,12 @@ public class FSM : MonoBehaviour
         transitions.TryAdd(EntityStates.ChaseState, new ChaseTransition(EntityStates.ChaseState, chaseRange));
         transitions.TryAdd(EntityStates.PatrolState, new PatrolTransition(EntityStates.PatrolState));
         transitions.TryAdd(EntityStates.IdleState, new IdleTransition(EntityStates.IdleState));
-
-
-        currentState = states[EntityStates.IdleState];
     }
 
+    public void Init()
+    {
+        currentState = states[EntityStates.IdleState];
+    }
 
     //주로 상위 Entity에서 호출
     public void ChangeState(EntityStates state, AIInput input)

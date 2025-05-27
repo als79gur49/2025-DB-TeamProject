@@ -16,7 +16,7 @@ public class AttackState : IState
 
         input.Animation.SetIdle();
 
-        Debug.Log("Attack Enter");
+        //Debug.Log("Attack Enter");
     }
 
     public void Execute(AIInput input)
@@ -34,12 +34,12 @@ public class AttackState : IState
             timer = 0;
         }
 
-        Debug.Log("Attack Execute");
+        //Debug.Log("Attack Execute");
     }
 
     public void Exit(AIInput input)
     {
-        Debug.Log("Attack Exit");
+        //Debug.Log("Attack Exit");
     }
 
     private void Attack(AIInput input)

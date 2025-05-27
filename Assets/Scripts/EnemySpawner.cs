@@ -38,7 +38,7 @@ public class EnemySpawner : MonoBehaviour
 
             string name = "Test_Enemy_" + Random.Range(0, 10000);
 
-            clone.Setup(memoryPool, rankingManager, damagePopupManager, killLogManager, new EntityInfo(name, "Test_Image"), new EntityData(100, 10, 1));
+            clone.Setup(new EntityInfo(name, "Test_Image"), new EntityData(100, 10, 1), memoryPool, rankingManager, damagePopupManager, killLogManager);
 
             TestSql.Init();
 

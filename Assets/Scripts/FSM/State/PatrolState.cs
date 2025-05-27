@@ -35,7 +35,7 @@ public class PatrolState : IState
         wanderPosition = input.self.transform.position + Utils.RandomPositionFromRadius(wanderRadius);
 
         agent.SetDestination(wanderPosition);
-        Debug.Log("Patrol Enter");
+        //Debug.Log("Patrol Enter");
     }
 
     public void Execute(AIInput input)
@@ -49,14 +49,14 @@ public class PatrolState : IState
 
             timer = 0;
         }
-        Debug.Log("Patrol Execute");
+        //Debug.Log("Patrol Execute");
     }
 
     public void Exit(AIInput input)
     {
         agent.isStopped = true;
 
-        Debug.Log("Patrol Exit");
+        //Debug.Log("Patrol Exit");
     }
 
 }

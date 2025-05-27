@@ -23,14 +23,9 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     private EntityInfo info;
     protected EntityData data;
 
-    // memoryPool 관련
     private MemoryPool<Entity> memoryPool;
-
-    // Ranking 관련
     private RankingManager rankingManager;
-
     private DamagePopupManager damagePopupManager;
-
     private KillLogManager killLogManager;
 
     public EntityData Data => data;
@@ -51,21 +46,34 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     // 마지막을 공격받은 적의 이름, 무기 이름
     private KeyValuePair<Entity, string> lastDamagedInfo;
 
+    private bool isInitialized = false;
 
-    public void Setup(MemoryPool<Entity> memoryPool,RankingManager rankingManager, DamagePopupManager damagePopupManager, KillLogManager killLogManager, EntityInfo info, EntityData data)
+    public void Setup(
+        EntityInfo info,
+        EntityData data,
+        MemoryPool<Entity> memoryPool = null, RankingManager rankingManager = null,
+        DamagePopupManager damagePopupManager = null, KillLogManager killLogManager = null)
     {
-        this.info = info;
-        this.data = data;
+        if (!isInitialized)
+        {
+            this.damagePopupManager = damagePopupManager;
+            this.killLogManager = killLogManager;
+            this.memoryPool = memoryPool;
+            this.rankingManager = rankingManager;
 
-        this.memoryPool = memoryPool;
-        this.rankingManager = rankingManager;
-        rankingManager?.AddEntity(this);
-        this.damagePopupManager = damagePopupManager;
-        this.killLogManager = killLogManager;
+            Setup();
 
-        Setup();
+            isInitialized = true;
+        }
+
+        Init(info, data);
+
+        GetComponent<BoxCollider>().enabled = true;
+
+        onDeath.AddListener(StartDespawnTimer); // n초 후 memoryPool로 반환
+        onDeath.AddListener(DeathLog); // lastDamagedInfo, KillLogManager 
+        onDeath.AddListener(GiveScoreToLastAttacker); // lastDamagedInfo, data
     }
-
     private void Setup()
     {
         if (TryGetComponent<FSM>(out FSM brain))
@@ -82,7 +90,19 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
         input.SetAnimation(animation);
     }
 
+    private void Init(EntityInfo info, EntityData data)
+    {
+        this.info = info;
+        this.data = data;
 
+        Init();
+    }
+    private void Init()
+    {
+        rankingManager?.AddEntity(this);
+        brain.Init();
+    }
+    
     private void Update()
     {
         brain.Execute(input);
@@ -145,23 +165,14 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
         memoryPool.DeactivatePoolItem(this);
     }
 
-
-
-    private void OnEnable()
-    {
-        // 향후 Setup을 옮기기
-        GetComponent<BoxCollider>().enabled = true;
-
-        onDeath.AddListener(StartDespawnTimer);
-        onDeath.AddListener(DeathLog);
-    }
     private void OnDisable()
     {
-        onDeath.RemoveListener(StartDespawnTimer);
-        //Enable이 Setup보다 빨리 작동하여 AddEntity위치는 Setup으로 변경   
+        onDeath.RemoveAllListeners();
+
         rankingManager?.RemoveEntity(this);
     }
 
+    // 킬로그 출력 ex) x가 y로 z를 처치
     public void DeathLog()
     {
         if (lastDamagedInfo.Key == null || lastDamagedInfo.Value == null)
@@ -171,5 +182,17 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
 
         KillLog log = new KillLog(info.EntityName, lastDamagedInfo.Value, lastDamagedInfo.Key.Info.EntityName);
         killLogManager.AddLog(log);
+    }
+
+    // 처치한 적에게 점수 부여
+    public void GiveScoreToLastAttacker()
+    {
+        GiveScoreToEnemy(lastDamagedInfo.Key);
+
+        rankingManager.UpdateEntity(lastDamagedInfo.Key);
+    }
+    private void GiveScoreToEnemy(Entity enemy)
+    {
+        enemy?.data.AddScore(100);
     }
 };

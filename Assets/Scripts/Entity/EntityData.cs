@@ -39,4 +39,9 @@ public class EntityData
     {
         hp -= amount;
     }
+
+    public void AddScore(int amount)
+    {
+        score += amount;
+    }
 };

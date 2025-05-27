@@ -24,20 +24,20 @@ public class ChaseState : IState
 
         input.Animation.SetWalk();
 
-        Debug.Log("Chase Enter");
+        //Debug.Log("Chase Enter");
     }
 
     public void Execute(AIInput input)
     {
         agent.SetDestination(target.transform.position);
 
-        Debug.Log("Chase Execute");
+        //Debug.Log("Chase Execute");
     }
 
     public void Exit(AIInput input)
     {
         agent.isStopped = true;
 
-        Debug.Log("Chase Exit");
+        //Debug.Log("Chase Exit");
     }
 }

@@ -18,7 +18,7 @@ public class DamagePopupManager : MonoBehaviour
     public void PrintDamage(Color c, int amount, Vector3 point, float duration = 5f)
     {
         DamagePopup popup = popupPool?.ActivatePoolItem();
-        Debug.Log("print");
+
         popup.Setup(c, amount, point, duration, this);
     }
 

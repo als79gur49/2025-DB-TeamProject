@@ -23,16 +23,16 @@ public class DeadState : IState
 
         input.Entity.onDeath?.Invoke();
 
-        Debug.Log("Dead Enter");
+        //Debug.Log("Dead Enter");
     }
 
     public void Execute(AIInput input)
     {
-        Debug.Log("Dead Execute");
+        //Debug.Log("Dead Execute");
     }
 
     public void Exit(AIInput input)
     {
-        Debug.Log("Dead Exit");
+        //Debug.Log("Dead Exit");
     }
 }

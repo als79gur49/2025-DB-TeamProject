@@ -12,17 +12,17 @@ public class IdleState : IState
     {
         input.Animation.SetIdle();
 
-        Debug.Log("Idle Enter");
+        //Debug.Log("Idle Enter");
     }
 
     public void Execute(AIInput input)
     {
-        Debug.Log("Idle Execute");
+        //Debug.Log("Idle Execute");
     }
 
     public void Exit(AIInput input)
     {
-        Debug.Log("Idle Exit");
+        //Debug.Log("Idle Exit");
     }
 
 }
