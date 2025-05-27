@@ -48,7 +48,7 @@ public class RankingManager : MonoBehaviour
         if (rankingList.ContainsKey(name))
         {
             rankingList[name] = entity.Data.Score;
-            Debug.Log($"{entity.Info.EntityName}의 Score:{entity.Data.Score}");
+            Debug.Log($"<color=blue>정보수정| {entity.Info.EntityName}의 Score:{entity.Data.Score}</color>");
 
             UpdateSQL();
         }
@@ -63,7 +63,7 @@ public class RankingManager : MonoBehaviour
     {
         if(rankingList.TryAdd(entity.Info.EntityName, entity.Data.Score))
         {
-            Debug.Log($"{entity.Info?.EntityName} 랭킹에 추가");
+            Debug.Log($"<color=green>{entity.Info?.EntityName} 랭킹에 추가</color>");
 
             UpdateSQL();
         }
@@ -78,7 +78,7 @@ public class RankingManager : MonoBehaviour
     {
         if (rankingList.Remove(entity.Info.EntityName))
         {
-            Debug.Log($"{entity.Info?.EntityName} 랭킹에 삭제");
+            Debug.Log($"<color=red>{entity.Info?.EntityName} 랭킹에 삭제</color>");
 
             UpdateSQL();
         }
