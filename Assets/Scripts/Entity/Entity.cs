@@ -41,7 +41,8 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     [SerializeField]
     private GameObject projectile;
 
-    public bool IsDead => (data.HP <= 0);
+
+    public bool IsDead { get => data.HP <= 0; }
 
     // 마지막을 공격받은 적의 이름, 무기 이름
     private KeyValuePair<Entity, string> lastDamagedInfo;
@@ -143,6 +144,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
 
         // defense 추가할 꺼면 로직 수정
         data.TakeDamage(amount);
+        Debug.Log($"{enemy.Info.EntityName}가 {info.EntityName}에게 {weaponName}으로 {amount}만큼의 피해 입힘");
 
         // 마지막 공격한 상대의 정보
         lastDamagedInfo = new KeyValuePair<Entity, string>(enemy, weaponName);

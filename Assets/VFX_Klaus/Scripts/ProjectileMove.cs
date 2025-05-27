@@ -10,11 +10,15 @@ public class ProjectileMove : MonoBehaviour
     public GameObject hitPrefab;
 
     private GameObject owner;
+    private Entity entity;
     public GameObject Owner => owner;
+
+    private List<ProjectileEffect> effects;
 
     public void Setup(GameObject owner)
     {
         this.owner = owner;
+        entity = owner.GetComponent<Entity>();
 
         Collider projectileCollider = GetComponent<Collider>();
         Collider[] ownerColliders = owner.GetComponentsInChildren<Collider>();
@@ -23,6 +27,10 @@ public class ProjectileMove : MonoBehaviour
         {
             Physics.IgnoreCollision(projectileCollider, collider);
         }
+
+        effects = new List<ProjectileEffect>();
+        effects.Add(new MoreDamageEffect(entity));
+        effects.Add(new PoisonEffect(entity, 5, 0.1f));
     }
 
     void Start()
@@ -81,6 +89,11 @@ public class ProjectileMove : MonoBehaviour
 
         if(co.gameObject.TryGetComponent<IDamageable>(out IDamageable target))
         {
+            foreach(var effect in effects)
+            {
+                effect.ApplyEffect(target);
+            }
+
             target.TakeDamage(50, owner.GetComponent<Entity>(), "TmpBow");
         }
         Destroy(gameObject);
