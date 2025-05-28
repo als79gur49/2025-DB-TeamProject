@@ -8,7 +8,7 @@ using UnityEngine.Events;
 public abstract class Entity : MonoBehaviour, IAttack, IDamageable
 {
     // event
-    public UnityEvent<int, int> onTakeDamage;
+    public UnityEvent<float, float> onTakeDamage;
     public UnityEvent onDeath;
 
     // FSM 관련
@@ -132,15 +132,17 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
         clone = Instantiate(projectile, firePoint.position, Quaternion.identity);
         clone.transform.localRotation = Quaternion.LookRotation(transform.forward, Vector3.up);
 
-        clone.TryGetComponent<ProjectileMove>(out ProjectileMove p);
-        p.Setup(this.gameObject);
+        //clone.TryGetComponent<ProjectileMove>(out ProjectileMove p);
+        clone.TryGetComponent<Projectile>(out Projectile a);
+        a.Setup(gameObject, 1, 1, 1, 1);
+        //p.Setup(this.gameObject);
 
     }
 
     // IDamageable
-    public void TakeDamage(int amount, Entity enemy, string weaponName)
+    public void TakeDamage(float amount, Entity enemy, string weaponName)
     {
-        int prevHp = data.HP;
+        float prevHp = data.HP;
 
         // defense 추가할 꺼면 로직 수정
         data.TakeDamage(amount);

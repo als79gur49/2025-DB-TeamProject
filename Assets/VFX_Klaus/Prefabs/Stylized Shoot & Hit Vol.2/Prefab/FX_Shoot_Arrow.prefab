@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5938167112633497376}
-  - component: {fileID: 5938167112633497383}
   - component: {fileID: 5143980916437850802}
   - component: {fileID: 210337647087535054}
+  - component: {fileID: 8749976692891476331}
   m_Layer: 7
   m_Name: FX_Shoot_Arrow
   m_TagString: Untagged
@@ -35,24 +35,6 @@ Transform:
   - {fileID: 5305753073294339093}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5938167112633497383
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5938167112633497377}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1f8b9d85d920bc042a7f4ad66be17a7a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 70
-  fireRate: 7
-  muzzlePrefab: {fileID: 719657563245746768, guid: 1f39d67347c32db42b5bfa32af20e8b8,
-    type: 3}
-  hitPrefab: {fileID: 7044691720042714530, guid: 618a66bd7838cf14ea3796f525b1edd2,
-    type: 3}
 --- !u!65 &5143980916437850802
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -101,6 +83,23 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &8749976692891476331
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5938167112633497377}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd9c7097ae35487409b37a6558576c2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: {fileID: 11400000, guid: 39a9a34cf5a6be948bb1c1f98b5c1726, type: 2}
+  muzzlePrefab: {fileID: 719657563245746768, guid: 1f39d67347c32db42b5bfa32af20e8b8,
+    type: 3}
+  hitPrefab: {fileID: 7044691720042714530, guid: 618a66bd7838cf14ea3796f525b1edd2,
+    type: 3}
 --- !u!1001 &5228785056622785947
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -113,6 +112,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: FX_Shoot&HItVol2_Arrow_projectile
+      objectReference: {fileID: 0}
+    - target: {fileID: 86045586829760881, guid: 937f93a2dcd49ec408b3912942286860,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 86045586829760910, guid: 937f93a2dcd49ec408b3912942286860,
         type: 3}
@@ -168,6 +172,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6403134118963820828, guid: 937f93a2dcd49ec408b3912942286860,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7552030703396208649, guid: 937f93a2dcd49ec408b3912942286860,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -16,7 +16,7 @@ public class DamagePopup : MonoBehaviour
     private float fadeDuration = 0.5f;
     private Vector3 offset;
 
-    public void Setup(Color color, int amount, Vector3 point, float duration, DamagePopupManager damagePopupManager)
+    public void Setup(Color color, float amount, Vector3 point, float duration, DamagePopupManager damagePopupManager)
     {
         damageText.color = color;
         damageText.text = amount.ToString();

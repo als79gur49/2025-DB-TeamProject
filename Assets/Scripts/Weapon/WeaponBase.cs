@@ -9,4 +9,6 @@ public abstract class WeaponBase : MonoBehaviour
     protected int level;
     protected float cooldown;
 
+    protected Projectile projectile; 
+
 }

@@ -15,7 +15,7 @@ public class DamagePopupManager : MonoBehaviour
         popupPool = new MemoryPool<DamagePopup>(popupPrefab, this.transform, 10);
     }
 
-    public void PrintDamage(Color c, int amount, Vector3 point, float duration = 5f)
+    public void PrintDamage(Color c, float amount, Vector3 point, float duration = 5f)
     {
         DamagePopup popup = popupPool?.ActivatePoolItem();
 

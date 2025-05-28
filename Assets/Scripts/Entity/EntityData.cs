@@ -3,13 +3,13 @@ using UnityEngine.Events;
 
 public class EntityData
 {
-    private int hp;
+    private float hp;
     private int damage;
     private float defense;
 
     private int score;
 
-    public int HP => hp;
+    public float HP => hp;
     public int Score => score;
 
 
@@ -26,7 +26,7 @@ public class EntityData
         Setup(data.HP, data.damage, data.defense);
     }
 
-    public void Setup(int hp, int damage, float defense)
+    public void Setup(float hp, int damage, float defense)
     {
         this.hp = hp;
         this.damage = damage;
@@ -35,7 +35,7 @@ public class EntityData
         score = 0;
     }
 
-    public void TakeDamage(int amount)
+    public void TakeDamage(float amount)
     {
         hp -= amount;
     }
