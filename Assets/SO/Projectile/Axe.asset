@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c71d2d2b684024d4b8fc6d0944b980ee, type: 3}
-  m_Name: Arrow
+  m_Name: Axe
   m_EditorClassIdentifier: 
-  projectileName: "\uD654\uC0B4"
-  damage: 20
-  speed: 70
-  range: 400
-  duration: 10
-  attackRate: 1000
+  projectileName: "\uB3C4\uB07C"
+  damage: 30
+  speed: 60
+  range: 300
+  duration: 8
+  attackRate: 800
   size: 0.3

@@ -134,7 +134,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
 
         //clone.TryGetComponent<ProjectileMove>(out ProjectileMove p);
         clone.TryGetComponent<Projectile>(out Projectile a);
-        a.Setup(gameObject, 1, 1, 1, 1);
+        a.Setup(gameObject, 1, 0.1f);
         //p.Setup(this.gameObject);
 
     }

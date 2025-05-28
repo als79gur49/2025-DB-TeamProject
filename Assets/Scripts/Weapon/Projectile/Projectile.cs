@@ -19,12 +19,13 @@ public abstract class Projectile : MonoBehaviour
 
     private List<ProjectileEffect> effects;
 
-
+    // VFX
     public GameObject muzzlePrefab;
     public GameObject hitPrefab;
 
 
-    public virtual void Setup(GameObject owner, int damage = 1, float speed = 1, int range = 1, float duration = 1)
+    // attackRate의 경우 1000이 초당 1회
+    public virtual void Setup(GameObject owner, int damage = 1, float speed = 1, int range = 1, float duration = 1, float attackRate = 1, float size = 1)
     {
         // 독립 데이터 생성
         data = Instantiate(data);
@@ -35,6 +36,9 @@ public abstract class Projectile : MonoBehaviour
         data.speed *= speed;
         data.range *= range;
         data.duration *= duration;
+        data.attackRate *= attackRate;
+
+        data.size *= size;
 
         Setup();
     }
@@ -42,6 +46,16 @@ public abstract class Projectile : MonoBehaviour
     {
         timer = 0;
         accumulatedDistance = 0;
+
+        transform.localScale *= data.size;
+        if(muzzlePrefab != null )
+        {
+            muzzlePrefab.transform.localScale *= data.size;
+        }
+        if(hitPrefab != null )
+        {
+            hitPrefab.transform.localScale *= data.size;
+        }
 
         effects = new List<ProjectileEffect>();
 
