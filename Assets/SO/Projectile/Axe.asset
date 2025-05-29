@@ -18,4 +18,4 @@ MonoBehaviour:
   range: 300
   duration: 8
   attackRate: 800
-  size: 0.3
+  size: 0.43
