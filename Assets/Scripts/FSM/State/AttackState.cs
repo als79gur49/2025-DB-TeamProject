@@ -1,19 +1,15 @@
 using UnityEditor.Rendering;
 using UnityEditor.UI;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static UnityEngine.GraphicsBuffer;
 
 public class AttackState : IState
 {
-    private float cooldown = 1f;
-    private float timer;
-
-    private float rotateMultiple = 3.0f;
+    private float rotateMultiple = 4.0f;
 
     public void Enter(AIInput input)
     {
-        timer = 0;
-
         input.Animation.SetIdle();
 
         //Debug.Log("Attack Enter");
@@ -21,19 +17,15 @@ public class AttackState : IState
 
     public void Execute(AIInput input)
     {
-        timer += Time.deltaTime;
-
         Vector3 direction = (input.target.transform.position - input.self.transform.position).normalized;
         Quaternion targetRotation = Quaternion.LookRotation(direction);
         input.self.transform.rotation = Quaternion.Lerp(input.self.transform.rotation, targetRotation, Time.deltaTime * rotateMultiple);
 
-        if(timer > cooldown)
+        if(IsAngleSimilar(input.self.transform.forward, direction, 5f))
         {
-            //Attack(input);
-
-            timer = 0;
+            Attack(input);
         }
-        Attack(input);
+        
         //Debug.Log("Attack Execute");
     }
 
@@ -50,4 +42,13 @@ public class AttackState : IState
         }
     }
 
+    private bool IsAngleSimilar(Vector3 self, Vector3 target, float toleranceDegree = 10f)
+    {
+        if(self == Vector3.zero || target == Vector3.zero)
+        {
+            return false;
+        }
+
+        return Vector3.Angle(self, target) < toleranceDegree;
+    }
 }
