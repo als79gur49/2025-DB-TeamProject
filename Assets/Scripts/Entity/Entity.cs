@@ -28,6 +28,12 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     private DamagePopupManager damagePopupManager;
     private KillLogManager killLogManager;
 
+    // 소유 중인 무기 및 공격 클래스
+    private WeaponBase weapon;
+    private ProjectileStorage projectileStorage;
+    [SerializeField]
+    private List<Projectile> storages; // 해당 내용은 임시로 투사체 넣어둔 곳 실제로는 외부에서 레벨 업 등을 통해서 projectileStorage에 넣어주기
+
     public EntityData Data => data;
     public EntityInfo Info => info;
 
@@ -37,16 +43,15 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     private Transform damageTextPoint;
     [SerializeField]
     private Transform firePoint;
-
     [SerializeField]
-    private GameObject projectile;
-
+    private SOWeapon startWeapon;
 
     public bool IsDead { get => data.HP <= 0; }
 
     // 마지막을 공격받은 적의 이름, 무기 이름
     private KeyValuePair<Entity, string> lastDamagedInfo;
 
+    // 풀에서 처음 생성된 경우
     private bool isInitialized = false;
 
     public void Setup(
@@ -90,6 +95,13 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
         input.self = this.gameObject;
         input.SetEntity(this);
         input.SetAnimation(animation);
+
+        weapon = GetComponent<WeaponBase>();
+        weapon.Setup(startWeapon, this, firePoint);
+
+        projectileStorage = GetComponent<ProjectileStorage>();
+        projectileStorage.Setup(storages);
+
     }
 
     private void Init(EntityInfo info, EntityData data)
@@ -120,22 +132,24 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     // IAttack
     public void Attack()
     {
-        GameObject clone;
+        weapon?.Shot(projectileStorage);
 
-        if (firePoint == null || projectile == null)
-        {
-            Debug.Log("발사 위치 혹은 투사체 x");
+     //   GameObject clone;
 
-            return;
-        }
-
-        clone = Instantiate(projectile, firePoint.position, Quaternion.identity);
-        clone.transform.localRotation = Quaternion.LookRotation(transform.forward, Vector3.up);
-
-        //clone.TryGetComponent<ProjectileMove>(out ProjectileMove p);
-        clone.TryGetComponent<Projectile>(out Projectile a);
-        a.Setup(gameObject, 1, 0.1f);
-        //p.Setup(this.gameObject);
+     //   if (firePoint == null || projectile == null)
+     //   {
+     //       Debug.Log("발사 위치 혹은 투사체 x");
+     //
+     //       return;
+     //   }
+     //
+     //   clone = Instantiate(projectile, firePoint.position, Quaternion.identity);
+     //   clone.transform.localRotation = Quaternion.LookRotation(transform.forward, Vector3.up);
+     //
+     //   //clone.TryGetComponent<ProjectileMove>(out ProjectileMove p);
+     //   clone.TryGetComponent<Projectile>(out Projectile a);
+     //   a.Setup(gameObject, 1, 0.1f);
+     //   //p.Setup(this.gameObject);
 
     }
 

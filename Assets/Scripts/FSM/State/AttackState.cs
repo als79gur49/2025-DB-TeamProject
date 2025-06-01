@@ -29,11 +29,11 @@ public class AttackState : IState
 
         if(timer > cooldown)
         {
-            Attack(input);
+            //Attack(input);
 
             timer = 0;
         }
-
+        Attack(input);
         //Debug.Log("Attack Execute");
     }
 

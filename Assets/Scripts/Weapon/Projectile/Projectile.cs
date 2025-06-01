@@ -8,6 +8,7 @@ public abstract class Projectile : MonoBehaviour
     // 기본 속성
     
     public SOProjectile data;
+    public SOProjectile Data => data;
 
     private float timer;
     private Vector3 prevPosition;
@@ -25,7 +26,7 @@ public abstract class Projectile : MonoBehaviour
 
 
     // attackRate의 경우 1000이 초당 1회
-    public virtual void Setup(GameObject owner, int damage = 1, float speed = 1, int range = 1, float duration = 1, float attackRate = 1, float size = 1)
+    public virtual void Setup(GameObject owner, float damage = 1, float speed = 1, float range = 1, float duration = 1, float attackRate = 1, float size = 1)
     {
         // 독립 데이터 생성
         data = Instantiate(data);
