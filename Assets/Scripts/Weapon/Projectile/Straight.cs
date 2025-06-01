@@ -9,6 +9,6 @@ public class Straight : Projectile
 
     protected override void Move()
     {
-        transform.position += transform.forward * (data.speed * Time.deltaTime);
+        transform.position += transform.forward * (Data.speed * Time.deltaTime);
     }
 }

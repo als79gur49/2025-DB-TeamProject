@@ -5,9 +5,12 @@ using System.Data.Common;
 
 public abstract class Projectile : MonoBehaviour
 {
-    // 기본 속성
+    // 원본 SO
+    [SerializeField]
+    private SOProjectile origin_data;
     
-    public SOProjectile data;
+    // 사본 SO, 사본 데이터 이용
+    private SOProjectile data;
     public SOProjectile Data => data;
 
     private float timer;
@@ -24,13 +27,15 @@ public abstract class Projectile : MonoBehaviour
     public GameObject muzzlePrefab;
     public GameObject hitPrefab;
 
+    private void Awake()
+    {
+        // 독립 데이터 생성
+        data = Instantiate(origin_data);
+    }
 
     // attackRate의 경우 1000이 초당 1회
     public virtual void Setup(GameObject owner, float damage = 1, float speed = 1, float range = 1, float duration = 1, float attackRate = 1, float size = 1)
     {
-        // 독립 데이터 생성
-        data = Instantiate(data);
-
         this.owner = owner;
 
         data.damage *= damage;

@@ -95,7 +95,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd9c7097ae35487409b37a6558576c2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data: {fileID: 11400000, guid: 39a9a34cf5a6be948bb1c1f98b5c1726, type: 2}
+  origin_data: {fileID: 11400000, guid: 39a9a34cf5a6be948bb1c1f98b5c1726, type: 2}
   muzzlePrefab: {fileID: 719657563245746768, guid: 1f39d67347c32db42b5bfa32af20e8b8,
     type: 3}
   hitPrefab: {fileID: 7044691720042714530, guid: 618a66bd7838cf14ea3796f525b1edd2,

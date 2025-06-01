@@ -67,4 +67,19 @@ public class AIInput : MonoBehaviour
 
         return Vector3.Distance(target.transform.position, self.transform.position);
     }
+
+    public bool TargetDirection(out Vector3 targetDirection)
+    {
+        targetDirection = Vector3.zero;
+
+        if(target == null)
+        {
+            return false;
+        }
+
+        Vector3 direction = (target.transform.position - self.transform.position);
+        targetDirection = direction.normalized;
+
+        return true;
+    }
 }

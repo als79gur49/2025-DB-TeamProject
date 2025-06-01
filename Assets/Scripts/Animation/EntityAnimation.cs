@@ -31,11 +31,11 @@ public class EntityAnimation : MonoBehaviour
 
     public void SetRun()
     {
-        SetSpeed(1);
+        SetSpeed(0.99f);
     }
     public void SetWalk()
     {
-        SetSpeed(0.5f);
+        SetSpeed(0.49f);
     }
     public void SetIdle()
     {
