@@ -2,31 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemySpawner : MonoBehaviour
+public class EnemySpawner : EntitySpawner
 {
     [SerializeField]
-    private Entity[] enemy;
+    private Enemy[] enemy;
     [SerializeField]
     private Mesh[] enemyMeshes;
 
-    [SerializeField]
-    public RankingManager rankingManager;
-    [SerializeField]
-    public DamagePopupManager damagePopupManager;
-    [SerializeField]
-    public KillLogManager killLogManager;
-
-    private MemoryPool<Entity> memoryPool;
+    private MemoryPool<Enemy> memoryPool;
 
     private void Awake()
     {
-        memoryPool = new MemoryPool<Entity>(enemy[0], this.transform, 5);
+        memoryPool = new MemoryPool<Enemy>(enemy[0], this.transform, 5);
     }
+
     public void Setup(RankingManager rankingManager, DamagePopupManager damagePopupManager, KillLogManager killLogManager)
     {
         this.rankingManager = rankingManager;
         this.damagePopupManager = damagePopupManager;
-        this.killLogManager = killLogManager;   
+        this.killLogManager = killLogManager;
+
+        memoryPool = new MemoryPool<Enemy>(enemy[0], this.transform, 5);
     }
 
     private void Update()
@@ -34,7 +30,7 @@ public class EnemySpawner : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.Q))
         {
             //Entity clone = GameObject.Instantiate(enemy[Random.Range(0, enemy.Length)]);
-            Entity clone = memoryPool.ActivatePoolItem();
+            Enemy clone = memoryPool.ActivatePoolItem();
 
             string name = "Test_Enemy_" + Random.Range(0, 10000);
 
