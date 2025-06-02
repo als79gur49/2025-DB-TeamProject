@@ -9,7 +9,8 @@ public enum EntityStates
     PatrolState,
     AttackState,
     ChaseState,
-    DeadState
+    DeadState,
+    FleeState
 }
 
 
@@ -42,10 +43,12 @@ public class FSM : MonoBehaviour
         states.TryAdd(EntityStates.AttackState, new AttackState());
         states.TryAdd(EntityStates.ChaseState, new ChaseState(chaseSpeed));
         states.TryAdd(EntityStates.DeadState, new DeadState(5f));
+        states.TryAdd(EntityStates.FleeState, new FleeState(2.5f));
 
         //전이 조건의 경우 넣은 순서대로 검사. Patrol, Idle 같은 조건
         transitions = new Dictionary<EntityStates, ITransition>();
         transitions.TryAdd(EntityStates.DeadState, new DeadTransition(EntityStates.DeadState));
+        transitions.TryAdd(EntityStates.FleeState, new FleeTransition(EntityStates.FleeState));
         transitions.TryAdd(EntityStates.AttackState, new AttackTransition(EntityStates.AttackState, attackRange));
         transitions.TryAdd(EntityStates.ChaseState, new ChaseTransition(EntityStates.ChaseState, chaseRange));
         transitions.TryAdd(EntityStates.PatrolState, new PatrolTransition(EntityStates.PatrolState));
@@ -91,7 +94,8 @@ public class FSM : MonoBehaviour
         }
 
         //다른 상태일 경우 변경
-        if(currentState != states[nextState])
+        if(nextState == EntityStates.Default ||
+            currentState != states[nextState])
         {
             ChangeState(nextState, input);
         }

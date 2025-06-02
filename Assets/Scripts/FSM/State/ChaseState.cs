@@ -22,7 +22,8 @@ public class ChaseState : IState
         agent.speed = chaseSpeed;
         agent.isStopped = false;
 
-        input.Animation.SetWalk();
+        input.Animation.SetRun();
+        //input.Animation.SetWalk();
 
         //Debug.Log("Chase Enter");
     }
@@ -31,7 +32,7 @@ public class ChaseState : IState
     {
         agent.SetDestination(target.transform.position);
 
-        //Debug.Log("Chase Execute");
+        Debug.Log("Chase Execute");
     }
 
     public void Exit(AIInput input)

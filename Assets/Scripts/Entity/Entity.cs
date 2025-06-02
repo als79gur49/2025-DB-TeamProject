@@ -11,132 +11,74 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     public UnityEvent<float, float> onTakeDamage;
     public UnityEvent onDeath;
 
-    // FSM 관련
-    private AIInput input;
-    private FSM brain;
-    //private EntityOutput output;
-
     // Animation 관련
-    private EntityAnimation animation;
+    protected EntityAnimation animation;
 
     // data 관련
     private EntityInfo info;
     protected EntityData data;
 
-    private MemoryPool<Entity> memoryPool;
     private RankingManager rankingManager;
     private DamagePopupManager damagePopupManager;
     private KillLogManager killLogManager;
 
+    // 소유 중인 무기 및 공격 클래스
+    private WeaponBase weapon;
+    private ProjectileStorage projectileStorage;
+    [SerializeField]
+    private List<Projectile> storages; // 해당 내용은 임시로 투사체 넣어둔 곳 실제로는 외부에서 레벨 업 등을 통해서 projectileStorage에 넣어주기
+
+    // 이름, 공격력, 스코어 등
     public EntityData Data => data;
     public EntityInfo Info => info;
-
-    public MemoryPool<Entity> MemoryPool => memoryPool;
 
     [SerializeField]
     private Transform damageTextPoint;
     [SerializeField]
     private Transform firePoint;
-
     [SerializeField]
-    private GameObject projectile;
-
+    private SOWeapon startWeapon;
 
     public bool IsDead { get => data.HP <= 0; }
 
     // 마지막을 공격받은 적의 이름, 무기 이름
     private KeyValuePair<Entity, string> lastDamagedInfo;
 
-    private bool isInitialized = false;
 
-    public void Setup(
-        EntityInfo info,
-        EntityData data,
-        MemoryPool<Entity> memoryPool = null, RankingManager rankingManager = null,
-        DamagePopupManager damagePopupManager = null, KillLogManager killLogManager = null)
-    {
-        if (!isInitialized)
-        {
-            this.damagePopupManager = damagePopupManager;
-            this.killLogManager = killLogManager;
-            this.memoryPool = memoryPool;
-            this.rankingManager = rankingManager;
+    public void Setup(EntityInfo info, EntityData data,
+        RankingManager rankingManager = null, DamagePopupManager damagePopupManager = null, KillLogManager killLogManager = null)
+    {  
+        this.damagePopupManager = damagePopupManager;
+        this.killLogManager = killLogManager;
+        this.rankingManager = rankingManager;
 
-            Setup();
+        Setup();
 
-            isInitialized = true;
-        }
-
-        Init(info, data);
+        this.info = info;
+        this.data = data;
+        rankingManager?.AddEntity(this);
 
         GetComponent<BoxCollider>().enabled = true;
 
-        onDeath.AddListener(StartDespawnTimer); // n초 후 memoryPool로 반환
         onDeath.AddListener(DeathLog); // lastDamagedInfo, KillLogManager 
         onDeath.AddListener(GiveScoreToLastAttacker); // lastDamagedInfo, data
         onDeath.AddListener(RemoveFromRanking); // rankingManager에서 제거
     }
-    private void Setup()
+    protected virtual void Setup()
     {
-        if (TryGetComponent<FSM>(out FSM brain))
-        {
-            this.brain = brain;
-            this.brain.Setup(this);
-        }
-
         animation = GetComponent<EntityAnimation>();
 
-        input = GetComponent<AIInput>();
-        input.self = this.gameObject;
-        input.SetEntity(this);
-        input.SetAnimation(animation);
-    }
+        weapon = GetComponent<WeaponBase>();
+        weapon.Setup(startWeapon, this, firePoint);
 
-    private void Init(EntityInfo info, EntityData data)
-    {
-        this.info = info;
-        this.data = data;
-
-        Init();
+        projectileStorage = GetComponent<ProjectileStorage>();
+        projectileStorage.Setup(storages);
     }
-    private void Init()
-    {
-        rankingManager?.AddEntity(this);
-        brain.Init();
-    }
-    
-    private void Update()
-    {
-        brain.Execute(input);
-    }
-
-
-    public void ChangeState(EntityStates nextState)
-    {
-        brain.ChangeState(nextState, input);
-    }
-    
 
     // IAttack
     public void Attack()
     {
-        GameObject clone;
-
-        if (firePoint == null || projectile == null)
-        {
-            Debug.Log("발사 위치 혹은 투사체 x");
-
-            return;
-        }
-
-        clone = Instantiate(projectile, firePoint.position, Quaternion.identity);
-        clone.transform.localRotation = Quaternion.LookRotation(transform.forward, Vector3.up);
-
-        //clone.TryGetComponent<ProjectileMove>(out ProjectileMove p);
-        clone.TryGetComponent<Projectile>(out Projectile a);
-        a.Setup(gameObject, 1, 0.1f);
-        //p.Setup(this.gameObject);
-
+        weapon?.Shot(projectileStorage);
     }
 
     // IDamageable
@@ -155,19 +97,6 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
 
         // hpUI 수정
         onTakeDamage?.Invoke(prevHp, data.HP);
-    }
-
-    //DeadState가 MonoBehavior가 없어서 Coroutine 사용이 되지 않아서 임시로 Entity로 옮겨둚.
-    public void StartDespawnTimer()
-    {
-        StartCoroutine(ReturnToPoolAfterDelay(5));
-    }
-
-    private IEnumerator ReturnToPoolAfterDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        // 메모리 풀로 반환
-        memoryPool.DeactivatePoolItem(this);
     }
 
     private void OnDisable()

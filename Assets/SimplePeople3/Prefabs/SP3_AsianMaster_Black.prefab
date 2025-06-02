@@ -1769,6 +1769,8 @@ GameObject:
   - component: {fileID: -8288576036366522315}
   - component: {fileID: 1938358988567221482}
   - component: {fileID: 241389160433134739}
+  - component: {fileID: 6783142687866595802}
+  - component: {fileID: 2419301846827252422}
   m_Layer: 8
   m_Name: SP3_AsianMaster_Black
   m_TagString: Untagged
@@ -1845,10 +1847,12 @@ MonoBehaviour:
   onDeath:
     m_PersistentCalls:
       m_Calls: []
+  storages:
+  - {fileID: 8749976692891476331, guid: 663f623c25f897b46a27928160ba6243, type: 3}
+  - {fileID: 594696428794325604, guid: d88880830026d2e48b56af0d6ee104e0, type: 3}
   damageTextPoint: {fileID: 3676149398267898271}
   firePoint: {fileID: 8817817361546178684}
-  projectile: {fileID: 5938167112633497377, guid: 663f623c25f897b46a27928160ba6243,
-    type: 3}
+  startWeapon: {fileID: 11400000, guid: b1b9382a1c1498248a9a8a78c0399a4e, type: 2}
 --- !u!114 &9017735697518951089
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1936,6 +1940,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eaed3ecba77dbba4f9496f6c643791e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6783142687866595802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 176600}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b48c2bf4a983dc4e814deb2e7efef28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2419301846827252422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 176600}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 245ca6b550cacd24b8faaad12dcbd9f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &183274
@@ -2215,7 +2243,7 @@ GameObject:
   m_Layer: 0
   m_Name: damageTextPoint
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
