@@ -30,10 +30,15 @@ public abstract class Projectile : MonoBehaviour
     private void Awake()
     {
         // 독립 데이터 생성
+        // data = Instantiate(origin_data);
+    }
+
+    // 독립 데이터 수동 생성, 현재는 ProjectileStorage에서 최초로 받아올 때, 원본 데이터 복사. Awake에서 실행할 경우, 안 될 가능성 존재
+    public void Setup()
+    {
         data = Instantiate(origin_data);
     }
 
-    // attackRate의 경우 1000이 초당 1회
     public virtual void Setup(GameObject owner, float damage = 1, float speed = 1, float range = 1, float duration = 1, float attackRate = 1, float size = 1)
     {
         this.owner = owner;
