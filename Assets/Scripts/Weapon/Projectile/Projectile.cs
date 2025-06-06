@@ -30,11 +30,11 @@ public abstract class Projectile : MonoBehaviour
     private void Awake()
     {
         // 독립 데이터 생성
-        // data = Instantiate(origin_data);
+        Initialize();
     }
 
-    // 독립 데이터 수동 생성, 현재는 ProjectileStorage에서 최초로 받아올 때, 원본 데이터 복사. Awake에서 실행할 경우, 안 될 가능성 존재
-    public void Setup()
+    // Awake에서만 실행할 경우, 종종 안 되는 경우가 있어, ProjectileStorage에서 수동으로 한 번더 Init실행
+    public void Initialize()
     {
         data = Instantiate(origin_data);
     }
