@@ -22,7 +22,7 @@ public abstract class WeaponBase : MonoBehaviour
             }
 
             Projectile clone = Instantiate(projectile.Key, firePoint.position, firePoint.rotation);
-            clone.Setup(owner.gameObject, data.damageMultiplier, data.speedMultiplier, data.rangeMultiplier, data.attackRateMultiplier, data.sizeMultiplier);
+            clone.Setup(owner.gameObject, data.damageMultiplier, data.speedMultiplier, data.rangeMultiplier, data.durationMultiplier,data.attackRateMultiplier, data.sizeMultiplier);
 
             // clone은 사본이기에 원본 projectile 넘기기
             storage.SetTimeCurrent(projectile.Key);

@@ -58,14 +58,14 @@ public abstract class Projectile : MonoBehaviour
         timer = 0;
         accumulatedDistance = 0;
 
-        transform.localScale *= data.size;
+        transform.localScale = Vector3.one * data.size;
         if(muzzlePrefab != null )
         {
-            muzzlePrefab.transform.localScale *= data.size;
+            muzzlePrefab.transform.localScale = Vector3.one * data.size;
         }
         if(hitPrefab != null )
         {
-            hitPrefab.transform.localScale *= data.size;
+            hitPrefab.transform.localScale = Vector3.one * data.size;
         }
 
         effects = new List<ProjectileEffect>();
@@ -85,6 +85,7 @@ public abstract class Projectile : MonoBehaviour
     {
         if (muzzlePrefab != null)
         {
+            //muzzlePrefab.transform.localScale = Vector3.one * data.size;
             var muzzleVFX = Instantiate(muzzlePrefab, transform.position, Quaternion.identity);
             muzzleVFX.transform.forward = gameObject.transform.forward;
             var psMuzzle = muzzleVFX.GetComponent<ParticleSystem>();
@@ -136,6 +137,7 @@ public abstract class Projectile : MonoBehaviour
 
         if (hitPrefab != null)
         {
+            //hitPrefab.transform.localScale = Vector3.one * data.size;
             var hitVFX = Instantiate(hitPrefab, pos, rot);
             var psHit = hitVFX.GetComponent<ParticleSystem>();
             if (psHit != null)

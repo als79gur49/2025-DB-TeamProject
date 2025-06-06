@@ -2,11 +2,14 @@ using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
 public class PlayerSpawner : EntitySpawner
 {
     [SerializeField]
     private Player player;
+    [SerializeField]
+    private CinemachineVirtualCamera virtualCamera;
 
     private void Update()
     {
@@ -19,6 +22,10 @@ public class PlayerSpawner : EntitySpawner
 
             clone.Setup(new EntityInfo("Player", "Test_Image"), new EntityData(100, 10, 1), rankingManager, damagePopupManager, killLogManager);
 
+            if(virtualCamera != null)
+            {
+                virtualCamera.Follow = clone.transform;
+            }
         }
     }
 }

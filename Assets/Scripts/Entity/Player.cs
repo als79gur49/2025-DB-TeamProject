@@ -9,7 +9,7 @@ public class Player : Entity
     //output 행동
     private NavMeshAgent agent;
     private Dictionary<KeyCode, Vector3> arrowVector;
-
+    private LayerMask groundLayer = 1 << 8;
     protected override void Setup()
     {
         base.Setup();
@@ -27,7 +27,8 @@ public class Player : Entity
 
     private void Update()
     {
-        Move(); 
+        Move();
+        //RotateToMouse();
         Attack();
 
         if(data.HP <= 0)
@@ -73,6 +74,21 @@ public class Player : Entity
             agent.isStopped = false;
             agent.SetDestination(transform.position + moveDirection);
             agent.speed = 1.3f;
+        }
+    }
+
+    private void RotateToMouse()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f, groundLayer))
+        {
+            Vector3 lookPos = hit.point - transform.position;
+            lookPos.y = 0; // 수평 회전만
+            if (lookPos != Vector3.zero)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(lookPos);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 10f * Time.deltaTime);
+            }
         }
     }
 }

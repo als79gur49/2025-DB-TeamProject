@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectileName: "\uB3C4\uB07C"
   damage: 30
-  speed: 60
+  speed: 40
   range: 300
   duration: 8
   attackRate: 800
