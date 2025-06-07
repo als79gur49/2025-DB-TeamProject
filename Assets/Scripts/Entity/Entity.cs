@@ -18,7 +18,6 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     private EntityInfo info;
     protected EntityData data;
 
-    private RankingManager rankingManager;
     private DamagePopupManager damagePopupManager;
     private KillLogManager killLogManager;
     private ScoreBlockSpawner scoreBlockSpawner;
@@ -29,7 +28,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     [SerializeField]
     private List<Projectile> storages; // 해당 내용은 임시로 투사체 넣어둔 곳 실제로는 외부에서 레벨 업 등을 통해서 projectileStorage에 넣어주기
 
-    protected WeaponBase Weapon=>weapon;
+    protected WeaponBase Weapon => weapon;
 
     // 이름, 공격력, 스코어 등
     public EntityData Data => data;
@@ -52,24 +51,21 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
 
 
     public void Setup(EntityInfo info, EntityData data,
-        RankingManager rankingManager = null, DamagePopupManager damagePopupManager = null, KillLogManager killLogManager = null, ScoreBlockSpawner scoreBlockSpawner = null)
-    {  
+        DamagePopupManager damagePopupManager = null, KillLogManager killLogManager = null, ScoreBlockSpawner scoreBlockSpawner = null)
+    {
         this.damagePopupManager = damagePopupManager;
         this.killLogManager = killLogManager;
-        this.rankingManager = rankingManager;
         this.scoreBlockSpawner = scoreBlockSpawner;
 
         Setup();
 
         this.info = info;
         this.data = data;
-        rankingManager?.AddEntity(this);
 
         GetComponent<BoxCollider>().enabled = true;
 
         onDeath.AddListener(DeathLog); // lastDamagedInfo, KillLogManager 
         onDeath.AddListener(GiveScoreToLastAttacker); // lastDamagedInfo, data
-        onDeath.AddListener(RemoveFromRanking); // rankingManager에서 제거
         onDeath.AddListener(SpawnLevelupBlocks); // 죽으면 경험치블럭들 생성
     }
     protected virtual void Setup()
@@ -132,13 +128,12 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     // 처치한 적에게 점수 부여
     private void GiveScoreToLastAttacker()
     {
-        if(lastDamagedInfo.Key != null)
+        if (lastDamagedInfo.Key != null)
         {
             lastDamagedInfo.Key.AddScore(100);
-
-            rankingManager.UpdateEntity(lastDamagedInfo.Key);
         }
     }
+
     public void AddScore(int amount)
     {
         const int levelupAmount = 1000;
@@ -147,10 +142,10 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
         int levelupNum = (remainExp + amount) / levelupAmount;
         data.AddScore(amount);
 
-        for(int i = 0; i < levelupNum; ++i)
+        for (int i = 0; i < levelupNum; ++i)
         {
             //Do Levelup
-            if(levelupPrefab != null)
+            if (levelupPrefab != null)
             {
                 GameObject clone = Instantiate(levelupPrefab, transform.position, Quaternion.identity);
                 clone.transform.localScale *= 1.5f;
@@ -169,8 +164,4 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
         scoreBlockSpawner.SpawnScoreBlocksByKilling(transform.position, amount);
     }
 
-    private void RemoveFromRanking()
-    {
-        rankingManager?.RemoveEntity(this);
-    }
 };
