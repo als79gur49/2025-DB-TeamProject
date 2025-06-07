@@ -10,6 +10,9 @@ public class Player : Entity
     private NavMeshAgent agent;
     private Dictionary<KeyCode, Vector3> arrowVector;
     private LayerMask groundLayer = 1 << 8;
+
+    private bool flag = true;
+
     protected override void Setup()
     {
         base.Setup();
@@ -29,6 +32,14 @@ public class Player : Entity
     {
         if(IsDead)
         {
+            if(flag)
+            {
+                animation.Death();
+                GetComponent<BoxCollider>().enabled = false;
+
+                flag = false;
+            }
+
             return;
         }
 

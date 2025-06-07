@@ -102,7 +102,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
         damagePopupManager.PrintDamage(Color.black, amount, damageTextPoint.position, 3);
 
         // hpUI ¼öÁ¤
-        onTakeDamage?.Invoke(prevHp, data.HP);
+        onTakeDamage?.Invoke(data.HP, data.MaxHp);
     }
 
     private void OnDisable()
