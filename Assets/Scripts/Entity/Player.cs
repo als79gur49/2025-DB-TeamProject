@@ -40,6 +40,7 @@ public class Player : Entity
         };
 
         levelupStorage.AddLevelupable(Weapon);
+        //StartWeapon을 levelupStorage에 적용
     }
 
     private void Update()

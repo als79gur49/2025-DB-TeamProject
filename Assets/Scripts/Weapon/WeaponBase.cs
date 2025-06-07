@@ -20,7 +20,15 @@ public abstract class WeaponBase : MonoBehaviour, ILevelup
             }
 
             Projectile clone = Instantiate(projectile.Key, firePoint.position, firePoint.rotation);
-            clone.Setup(owner.gameObject, data.damageMultiplier, data.speedMultiplier, data.rangeMultiplier, data.durationMultiplier,data.attackRateMultiplier, data.sizeMultiplier);
+
+            float levelupAmount = Mathf.Log(data.level + 1); // log2 =1,
+            clone.Setup(owner.gameObject, 
+                data.damageMultiplier * levelupAmount, 
+                data.speedMultiplier * levelupAmount, 
+                data.rangeMultiplier * levelupAmount,
+                data.durationMultiplier * levelupAmount,
+                data.attackRateMultiplier * levelupAmount,   
+                data.sizeMultiplier * levelupAmount);
 
             // clone은 사본이기에 원본 projectile 넘기기
             storage.SetTimeCurrent(projectile.Key);

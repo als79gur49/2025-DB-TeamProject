@@ -1,9 +1,10 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class LevelupStorage : MonoBehaviour
 {
-    //모든 가능한 무기 및 스킬들 넣어두기. 0 -> 1
+    // 위의 두 클래스 합치기. 인터페이스 or 추상클래스는 직렬화 불가
     private List<ILevelup> levelupable;
     public List<ILevelup> Levelupable => levelupable;
 
@@ -16,6 +17,7 @@ public class LevelupStorage : MonoBehaviour
         levelupable = new List<ILevelup>();
         this.skillIconManager = skillIconManager;
 
+        levelupable = skillIconManager.GetLevelupable();
     }
 
     public void Levelup()
@@ -36,13 +38,36 @@ public class LevelupStorage : MonoBehaviour
 
     public void AddLevelupable(ILevelup item)
     {
-        if(levelupable.Contains(item))
+        Debug.Log("Test");
+        // 참조가 아닌 같은 클래스로 비교
+        if(levelupable.Any(x => x.GetType() == item.GetType()))
         {
+            Debug.Log("Test11");
             // 해당 아이템 레벨 업
+            levelupable.Remove(item);
+
+            item.LevelUp();
+            levelupable.Add(item);
         }
         else
         {
+            Debug.Log($"{levelupable[0]} And {item}");
             levelupable.Add(item);
         }
+
+        //if(levelupable.Contains(item))
+        //{
+        //    Debug.Log("Test11");
+        //    // 해당 아이템 레벨 업
+        //    levelupable.Remove(item);
+        //
+        //    item.LevelUp();
+        //    levelupable.Add(item);
+        //}
+        //else
+        //{
+        //    Debug.Log($"{levelupable[0]} And {item}");
+        //    levelupable.Add(item);
+        //}
     }
 }
