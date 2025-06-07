@@ -30,10 +30,15 @@ public abstract class Projectile : MonoBehaviour
     private void Awake()
     {
         // 독립 데이터 생성
+        Initialize();
+    }
+
+    // Awake에서만 실행할 경우, 종종 안 되는 경우가 있어, ProjectileStorage에서 수동으로 한 번더 Init실행
+    public void Initialize()
+    {
         data = Instantiate(origin_data);
     }
 
-    // attackRate의 경우 1000이 초당 1회
     public virtual void Setup(GameObject owner, float damage = 1, float speed = 1, float range = 1, float duration = 1, float attackRate = 1, float size = 1)
     {
         this.owner = owner;
@@ -53,14 +58,14 @@ public abstract class Projectile : MonoBehaviour
         timer = 0;
         accumulatedDistance = 0;
 
-        transform.localScale *= data.size;
+        transform.localScale = Vector3.one * data.size;
         if(muzzlePrefab != null )
         {
-            muzzlePrefab.transform.localScale *= data.size;
+            muzzlePrefab.transform.localScale = Vector3.one * data.size;
         }
         if(hitPrefab != null )
         {
-            hitPrefab.transform.localScale *= data.size;
+            hitPrefab.transform.localScale = Vector3.one * data.size;
         }
 
         effects = new List<ProjectileEffect>();
@@ -80,6 +85,7 @@ public abstract class Projectile : MonoBehaviour
     {
         if (muzzlePrefab != null)
         {
+            //muzzlePrefab.transform.localScale = Vector3.one * data.size;
             var muzzleVFX = Instantiate(muzzlePrefab, transform.position, Quaternion.identity);
             muzzleVFX.transform.forward = gameObject.transform.forward;
             var psMuzzle = muzzleVFX.GetComponent<ParticleSystem>();
@@ -131,6 +137,7 @@ public abstract class Projectile : MonoBehaviour
 
         if (hitPrefab != null)
         {
+            //hitPrefab.transform.localScale = Vector3.one * data.size;
             var hitVFX = Instantiate(hitPrefab, pos, rot);
             var psHit = hitVFX.GetComponent<ParticleSystem>();
             if (psHit != null)

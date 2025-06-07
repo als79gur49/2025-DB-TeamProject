@@ -13,6 +13,7 @@ public class ProjectileStorage : MonoBehaviour
 
         foreach(var projectile in p)
         {
+            projectile.Initialize();
             projectiles.Add(projectile, 0);
         }
     }

@@ -4,11 +4,14 @@ using System.Collections.Generic;
 
 public class Player : Entity
 {
-    //input  데이터 입력
-    //brain  데이터 계산
-    //output 행동
+    [SerializeField]
+    LevelupStorage levelupStorage;
+
     private NavMeshAgent agent;
     private Dictionary<KeyCode, Vector3> arrowVector;
+    private LayerMask groundLayer = 1 << 8;
+
+    private bool flag = true;
 
     protected override void Setup()
     {
@@ -23,11 +26,27 @@ public class Player : Entity
             {KeyCode.DownArrow, Vector3.back},
             {KeyCode.LeftArrow, Vector3.left}
         };
+
+        levelupStorage.AddLevelupable(Weapon);
     }
 
     private void Update()
     {
-        Move(); 
+        if(IsDead)
+        {
+            if(flag)
+            {
+                animation.Death();
+                GetComponent<BoxCollider>().enabled = false;
+
+                flag = false;
+            }
+
+            return;
+        }
+
+        Move();
+        RotateToMouse();
         Attack();
 
         if(data.HP <= 0)
@@ -60,7 +79,7 @@ public class Player : Entity
             animation.SetIdle();
             agent.isStopped = true;
         }
-        else if(Input.GetKey(KeyCode.LeftShift))
+        else if(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
         {
             animation.SetRun();
             agent.isStopped = false;
@@ -74,5 +93,41 @@ public class Player : Entity
             agent.SetDestination(transform.position + moveDirection);
             agent.speed = 1.3f;
         }
+    }
+
+    private void RotateToMouse()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f))
+        {
+            Vector3 lookPos = hit.point - transform.position;
+            lookPos.y = 0; // 수평 회전만
+            if (lookPos != Vector3.zero)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(lookPos);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 10f * Time.deltaTime);
+            }
+
+            float angle = Vector3.Angle((agent.destination - transform.position).normalized, lookPos.normalized);
+            
+            if(angle <= 90f)
+            {
+                //animation.SetForwardLoop();
+            }
+            else
+            {
+                //animation.SetBackwardLoop();
+            }
+        }
+
+        
+    }
+
+    protected override void levelup()
+    {
+        // hp회복
+        data.AddHp(30);
+        // 스킬 창 띄우기
+        levelupStorage.Levelupable[0].LevelUp();
     }
 }

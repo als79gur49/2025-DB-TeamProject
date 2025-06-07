@@ -14,7 +14,7 @@ TagManager:
   - 
   - Attack
   - AttackCollision
-  - 
+  - NotAttackCollision
   - GroundCollision
   - Ground
   - 

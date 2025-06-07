@@ -10,11 +10,14 @@ public class EntitySpawner : MonoBehaviour
     public DamagePopupManager damagePopupManager;
     [SerializeField]
     public KillLogManager killLogManager;
+    [SerializeField]
+    public ScoreBlockSpawner scoreBlockSpawner;
 
-    public void Setup(RankingManager rankingManager, DamagePopupManager damagePopupManager, KillLogManager killLogManager)
+    public void Setup(RankingManager rankingManager, DamagePopupManager damagePopupManager, KillLogManager killLogManager, ScoreBlockSpawner scoreBlockSpawner)
     {
         this.rankingManager = rankingManager;
         this.damagePopupManager = damagePopupManager;
         this.killLogManager = killLogManager;
+        this.scoreBlockSpawner = scoreBlockSpawner;
     }
 }

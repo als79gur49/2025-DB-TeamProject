@@ -40,7 +40,17 @@ public class EntityData
     {
         hp -= amount;
     }
-
+    public void AddHp(float amount)
+    {
+        if (hp + amount > maxHp)
+        {
+            hp = maxHp;
+        }
+        else
+        {
+            hp += amount;
+        }
+    }
     public void AddScore(int amount)
     {
         score += amount;
