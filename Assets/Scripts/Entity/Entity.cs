@@ -52,7 +52,8 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
 
 
     public void Setup(EntityInfo info, EntityData data,
-        RankingManager rankingManager = null, DamagePopupManager damagePopupManager = null, KillLogManager killLogManager = null, ScoreBlockSpawner scoreBlockSpawner = null)
+        RankingManager rankingManager, DamagePopupManager damagePopupManager,
+        KillLogManager killLogManager, ScoreBlockSpawner scoreBlockSpawner)
     {  
         this.damagePopupManager = damagePopupManager;
         this.killLogManager = killLogManager;

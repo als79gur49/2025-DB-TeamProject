@@ -40,6 +40,33 @@ public class ScoreBlock : MonoBehaviour
     // Entity 죽여서 쏟아져 나오는 모션
     public void LaunchUpwards()
     {
+        // 포물선 형태 이동 이후 둥둥 떠다니는 트윈
+        Sequence launchSeq = DOTween.Sequence();
+
+        // x, z축 무작위 방향 이동값
+        float xOffset = 3f * Random.Range(-1f, 1f);
+        float zOffset = 3f * Random.Range(-1f, 1f);
+        float upHeight = 2f;
+        float duration = 1.2f;
+
+        Vector3 startPos = transform.position;
+        Vector3 endPos = startPos + new Vector3(xOffset, 0f, zOffset);
+        Vector3 midPos = startPos + new Vector3(xOffset * 0.3f, upHeight, zOffset * 0.3f);
+
+        Vector3[] path = new Vector3[] { startPos, midPos, endPos };
+
+        launchSeq.Append(transform.DOPath(path, duration, PathType.CatmullRom)
+            .SetEase(Ease.OutSine))
+            .AppendCallback(() =>
+            {
+                // 도착 후 둥둥 떠다니기 시작
+                transform.DOMoveY(0.5f, 1f)
+                    .SetRelative(true)
+                    .SetEase(Ease.InOutQuad)
+                    .SetLoops(-1, LoopType.Yoyo);
+            });
+
+        /*
         Sequence launchSeq = DOTween.Sequence();
         Tween yoyoTween = transform.DOMoveY(0.5f, 1f).SetRelative(true).SetEase(Ease.InOutQuad).SetLoops(-1, LoopType.Yoyo).Pause();
 
@@ -57,10 +84,10 @@ public class ScoreBlock : MonoBehaviour
         launchSeq.Append(transform.DOMoveY(upHeight, upDuration) //y축 이동
                     .SetRelative(true)
                     .SetEase(Ease.OutQuad))
-                .Join(transform.DOMoveX(0.5f * Random.Range(-1f, 1), upDuration * 0.8f) // x, z축 이동
+                .Join(transform.DOMoveX(5f * Random.Range(-1f, 1), upDuration * 0.8f) // x, z축 이동
                     .SetRelative(true)
                     .SetEase(Ease.OutQuad))
-                .Join(transform.DOMoveZ(0.5f * Random.Range(-1f, 1), upDuration * 0.8f)
+                .Join(transform.DOMoveZ(5f * Random.Range(-1f, 1), upDuration * 0.8f)
                     .SetRelative(true)
                     .SetEase(Ease.OutQuad))
                 .AppendCallback(() =>
@@ -68,7 +95,7 @@ public class ScoreBlock : MonoBehaviour
                     //yoyoTween.Goto(Random.Range(0, 1f), true); // 해당 위치로 바로 가서 실행해서, 순간이동하는 문제점
                     yoyoTween.Play();
                 });
-
+        */
     }
 
     public void YoYoMoving()

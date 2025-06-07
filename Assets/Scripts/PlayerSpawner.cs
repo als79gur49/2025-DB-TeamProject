@@ -10,7 +10,8 @@ public class PlayerSpawner : EntitySpawner
     private Player player;
     [SerializeField]
     private CinemachineVirtualCamera virtualCamera;
-
+    [SerializeField]
+    private SkillIconManager skillIconManager;
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.W))
@@ -20,7 +21,7 @@ public class PlayerSpawner : EntitySpawner
 
             string name = "Test_Enemy_" + Random.Range(0, 10000);
 
-            clone.Setup(new EntityInfo("Player", "Test_Image"), new EntityData(100, 10, 1), rankingManager, damagePopupManager, killLogManager, scoreBlockSpawner);
+            clone.Setup(new EntityInfo("Player", "Test_Image"), new EntityData(100, 10, 1), rankingManager, damagePopupManager, killLogManager, scoreBlockSpawner, skillIconManager);
 
             if(virtualCamera != null)
             {

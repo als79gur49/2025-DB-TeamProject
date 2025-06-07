@@ -13,6 +13,18 @@ public class Player : Entity
 
     private bool flag = true;
 
+    public void Setup(
+        EntityInfo info,
+        EntityData data,
+        RankingManager rankingManager, DamagePopupManager damagePopupManager,
+        KillLogManager killLogManager, ScoreBlockSpawner scoreBlockSpawner,
+        SkillIconManager skillIconManager)
+    {
+        levelupStorage.Setup(skillIconManager);
+
+        base.Setup(info, data, rankingManager, damagePopupManager, killLogManager, scoreBlockSpawner);
+    }
+
     protected override void Setup()
     {
         base.Setup();

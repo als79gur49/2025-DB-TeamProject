@@ -1,4 +1,4 @@
 public interface ILevelup
 {
-    public bool LevelUp();
+    public void LevelUp();
 }

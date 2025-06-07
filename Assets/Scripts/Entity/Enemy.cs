@@ -17,8 +17,9 @@ public class Enemy : Entity
     public void Setup(
         EntityInfo info,
         EntityData data,
-        MemoryPool<Enemy> memoryPool = null, RankingManager rankingManager = null,
-        DamagePopupManager damagePopupManager = null, KillLogManager killLogManager = null, ScoreBlockSpawner scoreBlockSpawner = null)
+        MemoryPool<Enemy> memoryPool, RankingManager rankingManager,
+        DamagePopupManager damagePopupManager, KillLogManager killLogManager,
+        ScoreBlockSpawner scoreBlockSpawner)
     {
         Setup(info, data, rankingManager, damagePopupManager, killLogManager, scoreBlockSpawner);
         this.memoryPool = memoryPool;
