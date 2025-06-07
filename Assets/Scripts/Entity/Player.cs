@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 public class Player : Entity
 {
-    //input  데이터 입력
-    //brain  데이터 계산
-    //output 행동
+    [SerializeField]
+    LevelupStorage levelupStorage;
+
     private NavMeshAgent agent;
     private Dictionary<KeyCode, Vector3> arrowVector;
     private LayerMask groundLayer = 1 << 8;
@@ -26,6 +26,8 @@ public class Player : Entity
             {KeyCode.DownArrow, Vector3.back},
             {KeyCode.LeftArrow, Vector3.left}
         };
+
+        levelupStorage.AddLevelupable(Weapon);
     }
 
     private void Update()
@@ -123,5 +125,9 @@ public class Player : Entity
 
     protected override void levelup()
     {
+        // hp회복
+        data.AddHp(30);
+        // 스킬 창 띄우기
+        levelupStorage.Levelupable[0].LevelUp();
     }
 }

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public abstract class WeaponBase : MonoBehaviour
+public abstract class WeaponBase : MonoBehaviour, ILevelup
 {
     protected Entity owner;
     protected Transform firePoint;
@@ -35,5 +35,13 @@ public abstract class WeaponBase : MonoBehaviour
 
         this.owner = owner;
         this.firePoint = firePoint;
+    }
+
+    public bool LevelUp()
+    {
+        Debug.Log($"{data.level} Prev WeaponLevel");
+        data.level += 1;
+        Debug.Log($"{data.level} After WeaponLevel");
+        return true;
     }
 }

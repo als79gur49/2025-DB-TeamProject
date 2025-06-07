@@ -156,6 +156,7 @@ GameObject:
   - component: {fileID: 5667145223245644442}
   - component: {fileID: -6482481511268637976}
   - component: {fileID: -6010720967496088254}
+  - component: {fileID: 3376394969416401188}
   m_Layer: 8
   m_Name: SP3_AsianMaster_White
   m_TagString: Untagged
@@ -241,6 +242,7 @@ MonoBehaviour:
   startWeapon: {fileID: 11400000, guid: 0afc5e296edb5644fbfc9720384e9b2c, type: 2}
   levelupPrefab: {fileID: 1624714524768532, guid: c9eb15264aa6c4348b00d5b9b3daab2a,
     type: 3}
+  levelupStorage: {fileID: 3376394969416401188}
 --- !u!114 &6557342948470428465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -334,6 +336,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 245ca6b550cacd24b8faaad12dcbd9f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3376394969416401188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 110846}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fde4cbc3a5eb0d479cd1c4e8f56a2e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &112384

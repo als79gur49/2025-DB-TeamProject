@@ -29,6 +29,8 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     [SerializeField]
     private List<Projectile> storages; // 해당 내용은 임시로 투사체 넣어둔 곳 실제로는 외부에서 레벨 업 등을 통해서 projectileStorage에 넣어주기
 
+    protected WeaponBase Weapon=>weapon;
+
     // 이름, 공격력, 스코어 등
     public EntityData Data => data;
     public EntityInfo Info => info;
@@ -104,7 +106,12 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
         // hpUI 수정
         onTakeDamage?.Invoke(data.HP, data.MaxHp);
     }
+    public void RecoverHP(float amount)
+    {
+        data.AddHp(amount);
 
+        onTakeDamage?.Invoke(data.HP, data.MaxHp);
+    }
     private void OnDisable()
     {
         onDeath.RemoveAllListeners();
