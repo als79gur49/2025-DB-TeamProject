@@ -18,9 +18,9 @@ public class Enemy : Entity
         EntityInfo info,
         EntityData data,
         MemoryPool<Enemy> memoryPool = null, RankingManager rankingManager = null,
-        DamagePopupManager damagePopupManager = null, KillLogManager killLogManager = null)
+        DamagePopupManager damagePopupManager = null, KillLogManager killLogManager = null, ScoreBlockSpawner scoreBlockSpawner = null)
     {
-        Setup(info, data, rankingManager, damagePopupManager, killLogManager);
+        Setup(info, data, rankingManager, damagePopupManager, killLogManager, scoreBlockSpawner);
         this.memoryPool = memoryPool;
     }
 
@@ -45,6 +45,10 @@ public class Enemy : Entity
     private void Update()
     {
         brain.Execute(input);
+        if(Input.GetKeyDown(KeyCode.E))
+        {
+            AddScore(1000);
+        }
     }
 
     public void ChangeState(EntityStates nextState)
@@ -62,5 +66,9 @@ public class Enemy : Entity
         yield return new WaitForSeconds(delay);
         // 메모리 풀로 반환
         memoryPool.DeactivatePoolItem(this);
+    }
+
+    protected override void levelup()
+    {
     }
 }

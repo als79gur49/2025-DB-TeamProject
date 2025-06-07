@@ -238,6 +238,8 @@ MonoBehaviour:
   damageTextPoint: {fileID: 1179584786900852030}
   firePoint: {fileID: 4702556248005322023}
   startWeapon: {fileID: 11400000, guid: 0afc5e296edb5644fbfc9720384e9b2c, type: 2}
+  levelupPrefab: {fileID: 1624714524768532, guid: c9eb15264aa6c4348b00d5b9b3daab2a,
+    type: 3}
 --- !u!114 &6557342948470428465
 MonoBehaviour:
   m_ObjectHideFlags: 0

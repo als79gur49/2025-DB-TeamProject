@@ -27,8 +27,13 @@ public class Player : Entity
 
     private void Update()
     {
+        if(IsDead)
+        {
+            return;
+        }
+
         Move();
-        //RotateToMouse();
+        RotateToMouse();
         Attack();
 
         if(data.HP <= 0)
@@ -61,7 +66,7 @@ public class Player : Entity
             animation.SetIdle();
             agent.isStopped = true;
         }
-        else if(Input.GetKey(KeyCode.LeftShift))
+        else if(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
         {
             animation.SetRun();
             agent.isStopped = false;
@@ -80,7 +85,7 @@ public class Player : Entity
     private void RotateToMouse()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out RaycastHit hit, 100f, groundLayer))
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f))
         {
             Vector3 lookPos = hit.point - transform.position;
             lookPos.y = 0; // 수평 회전만
@@ -89,6 +94,23 @@ public class Player : Entity
                 Quaternion targetRotation = Quaternion.LookRotation(lookPos);
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 10f * Time.deltaTime);
             }
+
+            float angle = Vector3.Angle((agent.destination - transform.position).normalized, lookPos.normalized);
+            
+            if(angle <= 90f)
+            {
+                //animation.SetForwardLoop();
+            }
+            else
+            {
+                //animation.SetBackwardLoop();
+            }
         }
+
+        
+    }
+
+    protected override void levelup()
+    {
     }
 }

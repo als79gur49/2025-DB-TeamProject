@@ -46,4 +46,13 @@ public class EntityAnimation : MonoBehaviour
     {
         animator.SetFloat(speed, moveSpeed);
     }
+
+    public void SetForwardLoop()
+    {
+        animator.speed = 1;
+    }
+    public void SetBackwardLoop()
+    {
+        animator.speed = -1;
+    }
 }

@@ -21,6 +21,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     private RankingManager rankingManager;
     private DamagePopupManager damagePopupManager;
     private KillLogManager killLogManager;
+    private ScoreBlockSpawner scoreBlockSpawner;
 
     // 소유 중인 무기 및 공격 클래스
     private WeaponBase weapon;
@@ -39,6 +40,9 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     [SerializeField]
     private SOWeapon startWeapon;
 
+    [SerializeField]
+    private GameObject levelupPrefab;
+
     public bool IsDead { get => data.HP <= 0; }
 
     // 마지막을 공격받은 적의 이름, 무기 이름
@@ -46,11 +50,12 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
 
 
     public void Setup(EntityInfo info, EntityData data,
-        RankingManager rankingManager = null, DamagePopupManager damagePopupManager = null, KillLogManager killLogManager = null)
+        RankingManager rankingManager = null, DamagePopupManager damagePopupManager = null, KillLogManager killLogManager = null, ScoreBlockSpawner scoreBlockSpawner = null)
     {  
         this.damagePopupManager = damagePopupManager;
         this.killLogManager = killLogManager;
         this.rankingManager = rankingManager;
+        this.scoreBlockSpawner = scoreBlockSpawner;
 
         Setup();
 
@@ -63,6 +68,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
         onDeath.AddListener(DeathLog); // lastDamagedInfo, KillLogManager 
         onDeath.AddListener(GiveScoreToLastAttacker); // lastDamagedInfo, data
         onDeath.AddListener(RemoveFromRanking); // rankingManager에서 제거
+        onDeath.AddListener(SpawnLevelupBlocks); // 죽으면 경험치블럭들 생성
     }
     protected virtual void Setup()
     {
@@ -119,13 +125,41 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     // 처치한 적에게 점수 부여
     private void GiveScoreToLastAttacker()
     {
-        GiveScoreToEnemy(lastDamagedInfo.Key);
+        if(lastDamagedInfo.Key != null)
+        {
+            lastDamagedInfo.Key.AddScore(100);
 
-        rankingManager.UpdateEntity(lastDamagedInfo.Key);
+            rankingManager.UpdateEntity(lastDamagedInfo.Key);
+        }
     }
-    private void GiveScoreToEnemy(Entity enemy)
+    public void AddScore(int amount)
     {
-        enemy?.data.AddScore(100);
+        const int levelupAmount = 1000;
+
+        int remainExp = data.Score % levelupAmount;
+        int levelupNum = (remainExp + amount) / levelupAmount;
+        data.AddScore(amount);
+
+        for(int i = 0; i < levelupNum; ++i)
+        {
+            //Do Levelup
+            if(levelupPrefab != null)
+            {
+                GameObject clone = Instantiate(levelupPrefab, transform.position, Quaternion.identity);
+                clone.transform.localScale *= 1.5f;
+                clone.transform.SetParent(transform, true);
+                Destroy(clone, 5f);
+            }
+            levelup();
+        }
+
+    }
+    protected abstract void levelup();
+
+    private void SpawnLevelupBlocks()
+    {
+        int amount = 3 + data.Score / 1000;
+        scoreBlockSpawner.SpawnScoreBlocksByKilling(transform.position, amount);
     }
 
     private void RemoveFromRanking()

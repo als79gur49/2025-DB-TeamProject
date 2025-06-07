@@ -20,7 +20,7 @@ public class PlayerSpawner : EntitySpawner
 
             string name = "Test_Enemy_" + Random.Range(0, 10000);
 
-            clone.Setup(new EntityInfo("Player", "Test_Image"), new EntityData(100, 10, 1), rankingManager, damagePopupManager, killLogManager);
+            clone.Setup(new EntityInfo("Player", "Test_Image"), new EntityData(100, 10, 1), rankingManager, damagePopupManager, killLogManager, scoreBlockSpawner);
 
             if(virtualCamera != null)
             {
