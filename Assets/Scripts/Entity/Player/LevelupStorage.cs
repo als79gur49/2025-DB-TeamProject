@@ -5,7 +5,7 @@ public class LevelupStorage : MonoBehaviour
 {
     private List<ILevelup> levelupable;
     public List<ILevelup> Levelupable => levelupable;
-
+    // UI쪽에 필요 개수만큼 보내서. 해당 스크립트에서 처리하기.
     private void Awake()
     {
         levelupable = new List<ILevelup>();
