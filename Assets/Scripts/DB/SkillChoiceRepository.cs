@@ -17,7 +17,7 @@ public static class SkillChoiceRepository
         {
             string query = @"
                 INSERT INTO SessionSkillChoices (SessionID, SkillID, ChoiceOrder, PlayerLevel, ChosenAt)
-                VALUES (@sessionId, @skillId, @choiceOrder, @playerLevel, CURRENT_TIMESTAMP)
+                VALUES (@sessionId, @skillId, @choiceOrder, @playerLevel, datetime('now', '+9 hours'))
             ";
 
             int rowsAffected = DatabaseManager.ExecuteNonQuery(query,
@@ -64,7 +64,7 @@ public static class SkillChoiceRepository
                         SkillID = (int)(long)reader["SkillID"],
                         ChoiceOrder = (int)(long)reader["ChoiceOrder"],
                         PlayerLevel = (int)(long)reader["PlayerLevel"],
-                        ChosenAt = DateTime.Parse(reader["ChosenAt"].ToString()),
+                        ChosenAt = DateTime.Parse(reader["ChosenAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal),
                         SkillName = reader["SkillName"]?.ToString() ?? "Unknown",
                         SkillType = reader["SkillType"]?.ToString() ?? "Unknown"
                     });

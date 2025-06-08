@@ -17,14 +17,14 @@ public static class GameSessionRepository
         {
             string query = @"
                 INSERT INTO GameSessions (PlayerID, Score, Level, EnemiesKilled, DeathCount, StartedAt)
-                VALUES (@playerId, 0, 1, 0, 0, CURRENT_TIMESTAMP)
+                VALUES (@playerId, 0, 1, 0, 0, datetime('now', '+9 hours'))
             ";
 
             DatabaseManager.ExecuteNonQuery(query, ("@playerId", playerId));
 
             // 생성된 세션 ID 조회
             var sessionId = DatabaseManager.ExecuteScalar("SELECT last_insert_rowid()");
-            
+
             if (sessionId != null)
             {
                 return GetSessionById((int)(long)sessionId);
@@ -65,8 +65,8 @@ public static class GameSessionRepository
                         Level = (int)(long)reader["Level"],
                         EnemiesKilled = (int)(long)reader["EnemiesKilled"],
                         DeathCount = (int)(long)reader["DeathCount"],
-                        StartedAt = DateTime.Parse(reader["StartedAt"].ToString()),
-                        EndedAt = reader["EndedAt"] == DBNull.Value ? null : DateTime.Parse(reader["EndedAt"].ToString()),
+                        StartedAt = DateTime.Parse(reader["StartedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal),
+                        EndedAt = reader["EndedAt"] == DBNull.Value ? null : DateTime.Parse(reader["EndedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal),
                         PlayTime = reader["PlayTime"] == DBNull.Value ? null : (int)(long)reader["PlayTime"]
                     };
                 }
@@ -120,14 +120,36 @@ public static class GameSessionRepository
     {
         try
         {
+            // PlayTime은 C#에서 계산해서 정수로 저장 (부동소수점 문제)
+            var session = GetSessionById(sessionId);
+            if (session == null)
+            {
+                Debug.LogError($"세션 ID {sessionId}를 찾을 수 없습니다.");
+                return false;
+            }
+
+            DateTime endTime = DateTime.Now;
+            DateTime startTime = session.StartedAt;
+
+            if (startTime.Kind != endTime.Kind)
+            {
+                // StartedAt이 Unspecified라면 Local로 가정
+                if (startTime.Kind == DateTimeKind.Unspecified)
+                {
+                    startTime = DateTime.SpecifyKind(startTime, DateTimeKind.Local);
+                }
+            }
+
+            int playTimeSeconds = (int)(endTime - startTime).TotalSeconds;
+
             string query = @"
                 UPDATE GameSessions SET
                     Score = @finalScore,
                     Level = @finalLevel,
                     EnemiesKilled = @enemiesKilled,
                     DeathCount = @deathCount,
-                    EndedAt = CURRENT_TIMESTAMP,
-                    PlayTime = (julianday(CURRENT_TIMESTAMP) - julianday(StartedAt)) * 86400
+                    EndedAt = datetime('now', '+9 hours'),
+                    PlayTime = @playTime
                 WHERE SessionID = @sessionId
             ";
 
@@ -136,7 +158,10 @@ public static class GameSessionRepository
                 ("@finalLevel", finalLevel),
                 ("@enemiesKilled", enemiesKilled),
                 ("@deathCount", deathCount),
+                ("@playTime", playTimeSeconds),
                 ("@sessionId", sessionId));
+
+            Debug.Log($"게임 세션 종료: PlayTime = {playTimeSeconds}초 ({playTimeSeconds / 60}분 {playTimeSeconds % 60}초)");
 
             return rowsAffected > 0;
         }
@@ -165,8 +190,8 @@ public static class GameSessionRepository
                 LIMIT @limit
             ";
 
-            using (var reader = DatabaseManager.ExecuteReader(query, 
-                ("@playerId", playerId), 
+            using (var reader = DatabaseManager.ExecuteReader(query,
+                ("@playerId", playerId),
                 ("@limit", limit)))
             {
                 while (reader.Read())
@@ -179,8 +204,8 @@ public static class GameSessionRepository
                         Level = (int)(long)reader["Level"],
                         EnemiesKilled = (int)(long)reader["EnemiesKilled"],
                         DeathCount = (int)(long)reader["DeathCount"],
-                        StartedAt = DateTime.Parse(reader["StartedAt"].ToString()),
-                        EndedAt = DateTime.Parse(reader["EndedAt"].ToString()),
+                        StartedAt = DateTime.Parse(reader["StartedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal),
+                        EndedAt = DateTime.Parse(reader["EndedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal),
                         PlayTime = (int)(long)reader["PlayTime"]
                     });
                 }
@@ -222,7 +247,7 @@ public static class GameSessionRepository
                         Level = (int)(long)reader["Level"],
                         EnemiesKilled = (int)(long)reader["EnemiesKilled"],
                         DeathCount = (int)(long)reader["DeathCount"],
-                        StartedAt = DateTime.Parse(reader["StartedAt"].ToString()),
+                        StartedAt = DateTime.Parse(reader["StartedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal),
                         EndedAt = null,
                         PlayTime = null
                     };

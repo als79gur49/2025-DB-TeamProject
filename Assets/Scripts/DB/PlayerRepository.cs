@@ -17,7 +17,7 @@ public static class PlayerRepository
         {
             string query = @"
                 INSERT INTO Players (PlayerName, CreatedAt, LastPlayedAt)
-                VALUES (@playerName, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+                VALUES (@playerName, datetime('now', '+9 hours'), datetime('now', '+9 hours'))
             ";
 
             DatabaseManager.ExecuteNonQuery(query, ("@playerName", playerName));
@@ -66,8 +66,8 @@ public static class PlayerRepository
                         ExpToNextLevel = (int)(long)reader["ExpToNextLevel"],
                         HighestScore = (int)(long)reader["HighestScore"],
                         TotalPlayTime = (int)(long)reader["TotalPlayTime"],
-                        CreatedAt = DateTime.Parse(reader["CreatedAt"].ToString()),
-                        LastPlayedAt = DateTime.Parse(reader["LastPlayedAt"].ToString())
+                        CreatedAt = DateTime.Parse(reader["CreatedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal),
+                        LastPlayedAt = DateTime.Parse(reader["LastPlayedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal)
                     };
                 }
             }
@@ -95,7 +95,7 @@ public static class PlayerRepository
                     ExpToNextLevel = @expToNextLevel,
                     HighestScore = @highestScore,
                     TotalPlayTime = @totalPlayTime,
-                    LastPlayedAt = CURRENT_TIMESTAMP
+                    LastPlayedAt = datetime('now', '+9 hours')
                 WHERE PlayerID = @playerId
             ";
 
@@ -126,7 +126,7 @@ public static class PlayerRepository
             string query = @"
                 UPDATE Players SET
                     HighestScore = @newScore,
-                    LastPlayedAt = CURRENT_TIMESTAMP
+                    LastPlayedAt = datetime('now', '+9 hours')
                 WHERE PlayerID = @playerId AND HighestScore < @newScore
             ";
 
@@ -173,8 +173,8 @@ public static class PlayerRepository
                         ExpToNextLevel = (int)(long)reader["ExpToNextLevel"],
                         HighestScore = (int)(long)reader["HighestScore"],
                         TotalPlayTime = (int)(long)reader["TotalPlayTime"],
-                        CreatedAt = DateTime.Parse(reader["CreatedAt"].ToString()),
-                        LastPlayedAt = DateTime.Parse(reader["LastPlayedAt"].ToString())
+                        CreatedAt = DateTime.Parse(reader["CreatedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal),
+                        LastPlayedAt = DateTime.Parse(reader["LastPlayedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal)
                     });
                 }
             }

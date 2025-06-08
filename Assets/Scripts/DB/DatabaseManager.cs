@@ -13,7 +13,7 @@ public static class DatabaseManager
     private static string dbPath;
 
     // 현재 데이터베이스 버전
-    private const int CURRENT_DB_VERSION = 1;
+    private const int CURRENT_DB_VERSION = 2;
 
     /// <summary>
     /// 데이터베이스 초기화
@@ -106,8 +106,8 @@ public static class DatabaseManager
                 ExpToNextLevel INTEGER DEFAULT 100,
                 HighestScore INTEGER DEFAULT 0,
                 TotalPlayTime INTEGER DEFAULT 0,
-                CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-                LastPlayedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+                CreatedAt DATETIME DEFAULT (datetime('now', '+9 hours')),
+                LastPlayedAt DATETIME DEFAULT (datetime('now', '+9 hours'))
             )
         ");
 
@@ -120,7 +120,7 @@ public static class DatabaseManager
                 Level INTEGER NOT NULL DEFAULT 1,
                 EnemiesKilled INTEGER DEFAULT 0,
                 DeathCount INTEGER DEFAULT 0,
-                StartedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+                StartedAt DATETIME DEFAULT (datetime('now', '+9 hours')),
                 EndedAt DATETIME,
                 PlayTime INTEGER,
                 FOREIGN KEY (PlayerID) REFERENCES Players(PlayerID) ON DELETE CASCADE
@@ -196,7 +196,7 @@ public static class DatabaseManager
                 SkillID INTEGER NOT NULL,
                 ChoiceOrder INTEGER NOT NULL,
                 PlayerLevel INTEGER NOT NULL,
-                ChosenAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+                ChosenAt DATETIME DEFAULT (datetime('now', '+9 hours')),
                 FOREIGN KEY (SessionID) REFERENCES GameSessions(SessionID) ON DELETE CASCADE,
                 FOREIGN KEY (SkillID) REFERENCES Skills(SkillID) ON DELETE CASCADE,
                 UNIQUE(SessionID, ChoiceOrder)
@@ -209,7 +209,7 @@ public static class DatabaseManager
                 PlayerID INTEGER NOT NULL,
                 SkillID INTEGER NOT NULL,
                 CurrentLevel INTEGER DEFAULT 1,
-                AcquiredAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+                AcquiredAt DATETIME DEFAULT (datetime('now', '+9 hours')),
                 PRIMARY KEY (PlayerID, SkillID),
                 FOREIGN KEY (PlayerID) REFERENCES Players(PlayerID) ON DELETE CASCADE,
                 FOREIGN KEY (SkillID) REFERENCES Skills(SkillID) ON DELETE CASCADE
@@ -223,7 +223,7 @@ public static class DatabaseManager
                 WeaponID INTEGER NOT NULL,
                 IsEquipped BOOLEAN DEFAULT FALSE,
                 WeaponLevel INTEGER DEFAULT 1,
-                UnlockedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+                UnlockedAt DATETIME DEFAULT (datetime('now', '+9 hours')),
                 PRIMARY KEY (PlayerID, WeaponID),
                 FOREIGN KEY (PlayerID) REFERENCES Players(PlayerID) ON DELETE CASCADE,
                 FOREIGN KEY (WeaponID) REFERENCES Weapons(WeaponID) ON DELETE CASCADE
@@ -236,30 +236,11 @@ public static class DatabaseManager
                 PlayerID INTEGER NOT NULL,
                 ProjectileID INTEGER NOT NULL,
                 IsActive BOOLEAN DEFAULT FALSE,
-                UnlockedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+                UnlockedAt DATETIME DEFAULT (datetime('now', '+9 hours')),
                 PRIMARY KEY (PlayerID, ProjectileID),
                 FOREIGN KEY (PlayerID) REFERENCES Players(PlayerID) ON DELETE CASCADE,
                 FOREIGN KEY (ProjectileID) REFERENCES Projectiles(ProjectileID) ON DELETE CASCADE
             )
-        ");
-
-        // 게임 설정 테이블
-        ExecuteNonQuery(@"
-            CREATE TABLE IF NOT EXISTS GameSettings (
-                SettingID INTEGER PRIMARY KEY DEFAULT 1,
-                MasterVolume REAL DEFAULT 1.0,
-                SFXVolume REAL DEFAULT 1.0,
-                BGMVolume REAL DEFAULT 1.0,
-                GraphicsQuality INTEGER DEFAULT 2,
-                FullScreen BOOLEAN DEFAULT TRUE,
-                UpdatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-                CHECK (SettingID = 1)
-            )
-        ");
-
-        // 기본 게임 설정 삽입
-        ExecuteNonQuery(@"
-            INSERT OR IGNORE INTO GameSettings (SettingID) VALUES (1)
         ");
 
         // 인덱스 생성
@@ -442,7 +423,7 @@ public static class DatabaseManager
             // 버전 정보 삽입 또는 업데이트
             ExecuteNonQuery(@"
                 INSERT OR REPLACE INTO DatabaseVersion (ID, Version, UpdatedAt) 
-                VALUES (1, @version, CURRENT_TIMESTAMP)
+                VALUES (1, @version, datetime('now', '+9 hours'))
             ", ("@version", version));
         }
         catch (System.Exception ex)

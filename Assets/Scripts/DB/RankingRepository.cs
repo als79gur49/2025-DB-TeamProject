@@ -33,8 +33,8 @@ public static class RankingRepository
                         Score = (int)(long)reader["Score"],
                         Level = (int)(long)reader["Level"],
                         PlayTime = reader["PlayTime"] != System.DBNull.Value ? (int)(long)reader["PlayTime"] : 0,
-                        StartedAt = System.DateTime.Parse(reader["StartedAt"].ToString()),
-                        EndedAt = System.DateTime.Parse(reader["EndedAt"].ToString()),
+                        StartedAt = System.DateTime.Parse(reader["StartedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal),
+                        EndedAt = System.DateTime.Parse(reader["EndedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal),
                         Rank = (int)(long)reader["Rank"]
                     });
                 }
@@ -73,8 +73,8 @@ public static class RankingRepository
                         Score = (int)(long)reader["Score"],
                         Level = (int)(long)reader["Level"],
                         PlayTime = reader["PlayTime"] != System.DBNull.Value ? (int)(long)reader["PlayTime"] : 0,
-                        StartedAt = System.DateTime.Parse(reader["StartedAt"].ToString()),
-                        EndedAt = System.DateTime.Parse(reader["EndedAt"].ToString()),
+                        StartedAt = System.DateTime.Parse(reader["StartedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal),
+                        EndedAt = System.DateTime.Parse(reader["EndedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal),
                         Rank = (int)(long)reader["Rank"]
                     });
                 }
@@ -166,8 +166,8 @@ public static class RankingRepository
                         Score = (int)(long)reader["Score"],
                         Level = (int)(long)reader["Level"],
                         PlayTime = reader["PlayTime"] != System.DBNull.Value ? (int)(long)reader["PlayTime"] : 0,
-                        StartedAt = System.DateTime.Parse(reader["StartedAt"].ToString()),
-                        EndedAt = System.DateTime.Parse(reader["EndedAt"].ToString()),
+                        StartedAt = System.DateTime.Parse(reader["StartedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal),
+                        EndedAt = System.DateTime.Parse(reader["EndedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal),
                         Rank = (int)(long)reader["Rank"]
                     });
                 }
@@ -210,8 +210,8 @@ public static class RankingRepository
                         Score = (int)(long)reader["Score"],
                         Level = (int)(long)reader["Level"],
                         PlayTime = reader["PlayTime"] != System.DBNull.Value ? (int)(long)reader["PlayTime"] : 0,
-                        StartedAt = System.DateTime.Parse(reader["StartedAt"].ToString()),
-                        EndedAt = System.DateTime.Parse(reader["EndedAt"].ToString()),
+                        StartedAt = System.DateTime.Parse(reader["StartedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal),
+                        EndedAt = System.DateTime.Parse(reader["EndedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal),
                         Rank = (int)(long)reader["Rank"]
                     });
                 }
