@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 using static UnityEngine.UI.GridLayoutGroup;
 
 public class SkillIconManager : MonoBehaviour
@@ -23,6 +24,8 @@ public class SkillIconManager : MonoBehaviour
     private Sprite defaultIconSprite;
     private string defaultName = "존재하지 않음.";
     private string defaultDescription = "세부 내용 없음.";
+
+    public UnityEvent<ILevelup> onSkillSelected;
 
     public List<ILevelup> GetLevelupable()
     {
@@ -67,8 +70,10 @@ public class SkillIconManager : MonoBehaviour
                 // 레벨업 기능
                 list[capturedIndex].LevelUp();
 
+                onSkillSelected?.Invoke(list[capturedIndex]);
+
                 // 모든 아이콘 삭제
-                foreach(var icon in iconLists)
+                foreach (var icon in iconLists)
                 {
                     Destroy(icon.gameObject);
                 }

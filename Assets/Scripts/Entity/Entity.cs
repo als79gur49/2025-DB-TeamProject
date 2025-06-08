@@ -29,7 +29,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     [SerializeField]
     private List<Projectile> storages; // 해당 내용은 임시로 투사체 넣어둔 곳 실제로는 외부에서 레벨 업 등을 통해서 projectileStorage에 넣어주기
 
-    protected WeaponBase Weapon=>weapon;
+    public WeaponBase Weapon=>weapon;
 
     // 이름, 공격력, 스코어 등
     public EntityData Data => data;
@@ -172,4 +172,10 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     {
         rankingManager?.RemoveEntity(this);
     }
+
+    public void ChangeWeapon(WeaponBase weapon)
+    {
+        this.weapon = weapon;
+    }
+
 };

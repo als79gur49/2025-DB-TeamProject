@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -35,6 +36,21 @@ public class LevelupStorage : MonoBehaviour
                 weapon.Setup(owner, firePoint);
             }
         }
+
+        skillIconManager.onSkillSelected.AddListener(Calculate);
+    }
+
+    public void Calculate(ILevelup obj)
+    {
+        Debug.Log("Calculate");
+        if(obj is  BaseSkill skill)
+        {
+
+        }
+        else if(obj is  WeaponBase weapon)
+        {
+            owner.ChangeWeapon(weapon);
+        }
     }
 
     public void Levelup()
@@ -51,6 +67,8 @@ public class LevelupStorage : MonoBehaviour
         List<ILevelup> selected = randomSkills.GetRange(0, count);
 
         skillIconManager.ShowSkillIcons(selected);
+
+        
     }
 
     public void AddLevelupable(ILevelup item)
