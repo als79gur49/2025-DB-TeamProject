@@ -49,6 +49,7 @@ public class LevelupStorage : MonoBehaviour
         }
         else if(obj is  WeaponBase weapon)
         {
+            // 현재는 이전 무기의 값 유지
             owner.ChangeWeapon(weapon);
         }
     }

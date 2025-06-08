@@ -1963,6 +1963,9 @@ MonoBehaviour:
   iconPrefab: {fileID: 7760365401198996477, guid: e058fab1e31d4054bbe2060657882ff4,
     type: 3}
   defaultIconSprite: {fileID: 21300000, guid: 6a0c84a7ae51b43ae9e2c0aefdfee31e, type: 3}
+  onSkillSelected:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &1316908588
 Transform:
   m_ObjectHideFlags: 0

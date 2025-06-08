@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: SO_Weapon_Axe
   m_EditorClassIdentifier: 
   weaponName: "\uB3C4\uB07C"
+  sprite: {fileID: 21300000, guid: 8da8be757cacb434a9f84b3baad451b0, type: 3}
   level: 6
   damageMultiplier: 1
   speedMultiplier: 1
