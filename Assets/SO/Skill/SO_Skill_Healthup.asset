@@ -9,14 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e6f013b1da4d394f842d5d2c05209c3, type: 3}
-  m_Name: SO_Weapon_Axe
+  m_Script: {fileID: 11500000, guid: 8ad0cfd3a919f184c99e1826a0ae5846, type: 3}
+  m_Name: SO_Skill_Healthup
   m_EditorClassIdentifier: 
-  weaponName: "\uB3C4\uB07C"
-  level: 6
-  damageMultiplier: 1
-  speedMultiplier: 1
-  rangeMultiplier: 1
-  durationMultiplier: 1
-  attackRateMultiplier: 1
-  sizeMultiplier: 1
+  skillName: "\uCCB4\uB825\uC99D\uAC00"
+  level: 0
+  description: "\uCD5C\uB300 \uCCB4\uB825 \uC99D\uAC00"

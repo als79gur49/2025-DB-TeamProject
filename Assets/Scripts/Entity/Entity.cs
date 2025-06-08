@@ -38,9 +38,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     [SerializeField]
     private Transform damageTextPoint;
     [SerializeField]
-    private Transform firePoint;
-    [SerializeField]
-    private SOWeapon startWeapon;
+    protected Transform firePoint;
 
     [SerializeField]
     private GameObject levelupPrefab;
@@ -78,7 +76,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
         animation = GetComponent<EntityAnimation>();
 
         weapon = GetComponent<WeaponBase>();
-        weapon.Setup(startWeapon, this, firePoint);
+        weapon.Setup(this, firePoint, weapon.Data);
 
         projectileStorage = GetComponent<ProjectileStorage>();
         projectileStorage.Setup(storages);

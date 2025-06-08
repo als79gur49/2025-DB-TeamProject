@@ -8,6 +8,9 @@ public abstract class WeaponBase : MonoBehaviour, ILevelup
     protected Transform firePoint;
 
     protected SOWeapon data;
+    public SOWeapon Data => data;
+    [SerializeField]
+    private SOWeapon origin_data;
 
     public virtual void Shot(ProjectileStorage storage)
     {
@@ -23,7 +26,7 @@ public abstract class WeaponBase : MonoBehaviour, ILevelup
 
             float levelupAmount = Mathf.Log(data.level + 1); // log2 =1,
             clone.Setup(owner.gameObject, 
-                data.damageMultiplier * levelupAmount, 
+                Mathf.Round(data.damageMultiplier * levelupAmount), 
                 data.speedMultiplier * levelupAmount, 
                 data.rangeMultiplier * levelupAmount,
                 data.durationMultiplier * levelupAmount,
@@ -35,12 +38,12 @@ public abstract class WeaponBase : MonoBehaviour, ILevelup
         }
     }
 
-    public virtual void Setup(SOWeapon data, Entity owner, Transform firePoint)
+    public virtual void Setup(Entity owner, Transform firePoint, SOWeapon data = null)
     {
-        this.data = Instantiate(data);
-
         this.owner = owner;
         this.firePoint = firePoint;
+
+        this.data = (data == null) ? Instantiate(origin_data) : Instantiate(data); 
     }
 
     public void LevelUp()

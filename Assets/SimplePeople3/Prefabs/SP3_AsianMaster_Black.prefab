@@ -1853,7 +1853,6 @@ MonoBehaviour:
   - {fileID: 594696428794325604, guid: d88880830026d2e48b56af0d6ee104e0, type: 3}
   damageTextPoint: {fileID: 3676149398267898271}
   firePoint: {fileID: 8817817361546178684}
-  startWeapon: {fileID: 11400000, guid: b1b9382a1c1498248a9a8a78c0399a4e, type: 2}
   levelupPrefab: {fileID: 1624714524768532, guid: c9eb15264aa6c4348b00d5b9b3daab2a,
     type: 3}
 --- !u!114 &9017735697518951089
@@ -1957,6 +1956,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b48c2bf4a983dc4e814deb2e7efef28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  origin_data: {fileID: 11400000, guid: b1b9382a1c1498248a9a8a78c0399a4e, type: 2}
 --- !u!114 &2419301846827252422
 MonoBehaviour:
   m_ObjectHideFlags: 0

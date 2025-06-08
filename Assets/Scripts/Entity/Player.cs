@@ -20,7 +20,7 @@ public class Player : Entity
         KillLogManager killLogManager, ScoreBlockSpawner scoreBlockSpawner,
         SkillIconManager skillIconManager)
     {
-        levelupStorage.Setup(skillIconManager);
+        levelupStorage.Setup(skillIconManager, this, firePoint);
 
         base.Setup(info, data, rankingManager, damagePopupManager, killLogManager, scoreBlockSpawner);
     }
@@ -141,6 +141,7 @@ public class Player : Entity
         // hp회복
         data.AddHp(30);
         // 스킬 창 띄우기
-        levelupStorage.Levelupable[0].LevelUp();
+        //levelupStorage.Levelupable[0].LevelUp();
+        levelupStorage.Levelup();
     }
 }

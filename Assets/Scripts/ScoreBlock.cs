@@ -9,11 +9,11 @@ public class ScoreBlock : MonoBehaviour
 {
     private int score = 10;
 
-    private float upHeight = 2.3f;
-    private float upDuration = 0.5f;
+    //private float upHeight = 2.3f;
+    //private float upDuration = 0.5f;
 
     private bool flag = true;
-    private float absorbedTime = 1f;
+    //private float absorbedTime = 1f;
 
     public void Setup(int score, Color c, float size)
     {
