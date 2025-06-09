@@ -47,12 +47,11 @@ public class Player : Entity
             return;
         }
 
-        Move();
-        RotateToMouse();
+        Move(RotateToMouse());
         Attack();
     }
 
-    private void Move()
+    private void Move(Vector3 target)
     {
         // 현재 위치에서 입력된 방향으로 이동
         Vector3 moveDirection = Vector3.zero;
@@ -83,9 +82,20 @@ public class Player : Entity
             agent.SetDestination(transform.position + moveDirection);
             agent.speed = 1.3f;
         }
+
+        if(moveDirection != Vector3.zero)
+        {
+            Quaternion rotation = transform.rotation;
+
+            // 로컬 공간 기준 방향
+            Vector3 localDir = Quaternion.Inverse(rotation) * target;
+            localDir = localDir.normalized;
+            animation.SetDirection(localDir.x, localDir.z);
+        }
+
     }
 
-    private void RotateToMouse()
+    private Vector3 RotateToMouse()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit, 100f))
@@ -108,9 +118,10 @@ public class Player : Entity
             {
                 //animation.SetBackwardLoop();
             }
+
+            return lookPos;
         }
-
-
+        return Vector3.zero;
     }
 
     protected override void levelup()

@@ -11,6 +11,9 @@ public class EntityAnimation : MonoBehaviour
     private string speed = "Speed_f";
     private string death = "Death_b";
     private string deathType = "DeathType_int";
+
+    private string dirX = "DirectionX";
+    private string dirY = "DirectionY";
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -31,14 +34,17 @@ public class EntityAnimation : MonoBehaviour
 
     public void SetRun()
     {
+        SetDirection(0, 1);
         SetSpeed(0.99f);
     }
     public void SetWalk()
     {
+        SetDirection(0, 0.5f);
         SetSpeed(0.49f);
     }
     public void SetIdle()
     {
+        SetDirection(0, 0);
         SetSpeed(0);
     }
 
@@ -46,7 +52,11 @@ public class EntityAnimation : MonoBehaviour
     {
         animator.SetFloat(speed, moveSpeed);
     }
-
+    public void SetDirection(float x, float y)
+    {
+        animator.SetFloat(dirX, x);
+        animator.SetFloat(dirY, y);
+    }
     public void SetForwardLoop()
     {
         animator.speed = 1;
