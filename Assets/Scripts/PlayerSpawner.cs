@@ -10,6 +10,8 @@ public class PlayerSpawner : EntitySpawner
     [SerializeField]
     private Player player;
     [SerializeField]
+    private UIController uiController;
+    [SerializeField]
     private CinemachineVirtualCamera virtualCamera;
 
     [SerializeField]
@@ -26,7 +28,8 @@ public class PlayerSpawner : EntitySpawner
 
             string name = "Test_Enemy_" + Random.Range(0, 10000);
 
-            clone.Setup(new EntityInfo(name, "Test_Image"), new EntityData(100, 10, 1), damagePopupManager, killLogManager, scoreBlockSpawner);
+            clone.Setup(new EntityInfo(name, "Test_Image"), new EntityData(1, 100, 10, 1), damagePopupManager, killLogManager, scoreBlockSpawner);
+            uiController.Setup(clone);
 
             currentPlayer = PlayerRepository.CreatePlayer(clone.Info.EntityName);
             currentSession = GameSessionRepository.StartNewSession(currentPlayer.PlayerID);

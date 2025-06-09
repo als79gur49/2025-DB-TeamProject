@@ -3,6 +3,7 @@ using UnityEngine.Events;
 
 public class EntityData
 {
+    private int level;
     private float maxHp;
     private float hp;
     private int damage;
@@ -10,24 +11,26 @@ public class EntityData
 
     private int score;
 
+    public int Level => level;
     public float MaxHp => maxHp;
     public float HP => hp;
     public int Score => score;
 
     public float HPPercent => hp / maxHp * 100;
 
-    public EntityData(int hp, int damage, float defense)
+    public EntityData(int level, int hp, int damage, float defense)
     {
-        Setup(hp, damage,defense);
+        Setup(level, hp, damage,defense);
     }
 
     public void Setup(EntityData data)
     {
-        Setup(data.HP, data.damage, data.defense);
+        Setup(data.level, data.HP, data.damage, data.defense);
     }
 
-    public void Setup(float hp, int damage, float defense)
+    public void Setup(int level, float hp, int damage, float defense)
     {
+        this.level = level;
         this.maxHp = hp;
         this.hp = hp;
         this.damage = damage;
@@ -51,6 +54,11 @@ public class EntityData
             hp += amount;
         }
     }
+    public void Levelup()
+    {
+        level++;
+    }
+
     public void AddScore(int amount)
     {
         score += amount;

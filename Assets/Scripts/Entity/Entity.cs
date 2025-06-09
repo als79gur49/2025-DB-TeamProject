@@ -10,7 +10,8 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     // event
     public UnityEvent<float, float> onTakeDamage;
     public UnityEvent onDeath;
-
+    public UnityEvent<int> onLevelup;
+    public UnityEvent<int, int> onAddExperience;
     // Animation 관련
     protected EntityAnimation animation;
 
@@ -49,7 +50,8 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     // 마지막을 공격받은 적의 이름, 무기 이름
     private KeyValuePair<Entity, string> lastDamagedInfo;
 
-
+    const int levelupAmount = 1000;
+    public int LevelupAmount => levelupAmount;
     public void Setup(EntityInfo info, EntityData data,
         DamagePopupManager damagePopupManager = null, KillLogManager killLogManager = null, ScoreBlockSpawner scoreBlockSpawner = null)
     {
@@ -57,10 +59,10 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
         this.killLogManager = killLogManager;
         this.scoreBlockSpawner = scoreBlockSpawner;
 
-        Setup();
-
         this.info = info;
         this.data = data;
+
+        Setup();
 
         GetComponent<BoxCollider>().enabled = true;
 
@@ -136,12 +138,12 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
 
     public void AddScore(int amount)
     {
-        const int levelupAmount = 1000;
-
         int remainExp = data.Score % levelupAmount;
         int levelupNum = (remainExp + amount) / levelupAmount;
         data.AddScore(amount);
-        
+
+        remainExp = (remainExp + amount) % levelupAmount;
+        onAddExperience?.Invoke(remainExp, levelupAmount);
 
         for (int i = 0; i < levelupNum; ++i)
         {
@@ -154,6 +156,8 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
                 Destroy(clone, 5f);
             }
             levelup();
+            data.Levelup();
+            onLevelup?.Invoke(data.Level);
         }
 
     }

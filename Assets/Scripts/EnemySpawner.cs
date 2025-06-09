@@ -33,7 +33,7 @@ public class EnemySpawner : EntitySpawner
 
             string name = "Test_Enemy_" + Random.Range(0, 10000);
 
-            clone.Setup(new EntityInfo(name, "Test_Image"), new EntityData(100, 10, 1), memoryPool, damagePopupManager, killLogManager, scoreBlockSpawner);
+            clone.Setup(new EntityInfo(name, "Test_Image"), new EntityData(1, 100, 10, 1), memoryPool, damagePopupManager, killLogManager, scoreBlockSpawner);
 
             clone.ChangeState(EntityStates.IdleState);
         }

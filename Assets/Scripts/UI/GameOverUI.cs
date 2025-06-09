@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Search;
@@ -16,11 +17,21 @@ public class GameOverUI : MonoBehaviour
 
     private int showInfoNum = 10;
 
+    private RectTransform rect;
+    private float duration = 1.5f;
 
     public void ShowGameOver()
     {
+        MoveAnimation();
         ShowEntityInfo();
         ShowPlayerInfo();
+    }
+
+    // 아래에서 위로 올라오는 애니메이션
+    private void MoveAnimation()
+    {
+        rect = GetComponent<RectTransform>();
+        rect.DOAnchorPosY(1000, duration).From().SetEase(Ease.OutBack);
     }
 
     // 전체 랭킹 
