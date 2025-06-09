@@ -11,7 +11,8 @@ public class Player : Entity
     private Dictionary<KeyCode, Vector3> arrowVector;
     private LayerMask groundLayer = 1 << 8;
 
-    private bool flag = true;
+    // 죽음 상태 플래그
+    private bool _isDead = false;
 
     protected override void Setup()
     {
@@ -32,34 +33,23 @@ public class Player : Entity
 
     private void Update()
     {
-        if(IsDead)
+        if (IsDead && !_isDead) // 처음 죽었을 때만
         {
-            if(flag)
-            {
-                animation.Death();
-                GetComponent<BoxCollider>().enabled = false;
+            _isDead = true;
+            animation.Death();
+            GetComponent<BoxCollider>().enabled = false;
+            onDeath?.Invoke();
+            return;
+        }
 
-                flag = false;
-            }
-
+        if (_isDead) // 이미 죽었다면 아무것도 하지 않음
+        {
             return;
         }
 
         Move();
         RotateToMouse();
         Attack();
-
-        if(data.HP <= 0)
-        {
-            if (TryGetComponent<BoxCollider>(out var collider))
-            {
-                collider.enabled = false;
-            }
-
-            animation.Death();
-
-            onDeath?.Invoke();
-        }
     }
 
     private void Move()
@@ -68,18 +58,18 @@ public class Player : Entity
         Vector3 moveDirection = Vector3.zero;
         foreach (var pair in arrowVector)
         {
-            if(Input.GetKey(pair.Key))
-            {                
+            if (Input.GetKey(pair.Key))
+            {
                 moveDirection += pair.Value;
             }
         }
 
-        if(moveDirection == Vector3.zero)
+        if (moveDirection == Vector3.zero)
         {
             animation.SetIdle();
             agent.isStopped = true;
         }
-        else if(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+        else if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
         {
             animation.SetRun();
             agent.isStopped = false;
@@ -109,8 +99,8 @@ public class Player : Entity
             }
 
             float angle = Vector3.Angle((agent.destination - transform.position).normalized, lookPos.normalized);
-            
-            if(angle <= 90f)
+
+            if (angle <= 90f)
             {
                 //animation.SetForwardLoop();
             }
@@ -120,7 +110,7 @@ public class Player : Entity
             }
         }
 
-        
+
     }
 
     protected override void levelup()

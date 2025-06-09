@@ -16,47 +16,47 @@ public static class RankingRepository
 
         try
         {
-            //string query = @"
-            //    SELECT PlayerID, PlayerName, Score, Level, PlayTime, StartedAt, EndedAt, Rank
-            //    FROM RankingView
-            //    LIMIT @limit
-            //";
-
-            string testQuery = @"
-                SELECT PlayerID, PlayerName, HighestScore
-                FROM Players 
+            string query = @"
+                SELECT PlayerID, PlayerName, Score, Level, PlayTime, StartedAt, EndedAt, Rank
+                FROM RankingView
                 LIMIT @limit
             ";
 
-             //   using (var reader = DatabaseManager.ExecuteReader(query, ("@limit", limit)))
-             //   {
-             //       while (reader.Read())
-             //       {
-             //           rankings.Add(new RankingData
-             //           {
-             //               PlayerID = (int)(long)reader["PlayerID"],
-             //               PlayerName = reader["PlayerName"].ToString(),
-             //               Score = (int)(long)reader["Score"],
-             //               Level = (int)(long)reader["Level"],
-             //               PlayTime = reader["PlayTime"] != System.DBNull.Value ? (int)(long)reader["PlayTime"] : 0,
-             //               StartedAt = System.DateTime.Parse(reader["StartedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal),
-             //               EndedAt = System.DateTime.Parse(reader["EndedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal),
-             //               Rank = (int)(long)reader["Rank"]
-             //           });
-             //       }
-             //   }
-            using (var reader = DatabaseManager.ExecuteReader(testQuery, ("@limit", limit)))
-            {
-                while (reader.Read())
+            //string testQuery = @"
+            //    SELECT PlayerID, PlayerName, HighestScore
+            //    FROM Players 
+            //    LIMIT @limit
+            //";
+
+                using (var reader = DatabaseManager.ExecuteReader(query, ("@limit", limit)))
                 {
-                    rankings.Add(new RankingData
+                    while (reader.Read())
                     {
-                        PlayerID = (int)(long)reader["PlayerID"],
-                        PlayerName = reader["PlayerName"].ToString(),
-                        Score = (int)(long)reader["HighestScore"]
-                    });
+                        rankings.Add(new RankingData
+                        {
+                            PlayerID = (int)(long)reader["PlayerID"],
+                            PlayerName = reader["PlayerName"].ToString(),
+                            Score = (int)(long)reader["Score"],
+                            Level = (int)(long)reader["Level"],
+                            PlayTime = reader["PlayTime"] != System.DBNull.Value ? (int)(long)reader["PlayTime"] : 0,
+                            StartedAt = System.DateTime.Parse(reader["StartedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal),
+                            EndedAt = System.DateTime.Parse(reader["EndedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal),
+                            Rank = (int)(long)reader["Rank"]
+                        });
+                    }
                 }
-            }
+            //using (var reader = DatabaseManager.ExecuteReader(testQuery, ("@limit", limit)))
+            //{
+            //    while (reader.Read())
+            //    {
+            //        rankings.Add(new RankingData
+            //        {
+            //            PlayerID = (int)(long)reader["PlayerID"],
+            //            PlayerName = reader["PlayerName"].ToString(),
+            //            Score = (int)(long)reader["HighestScore"]
+            //        });
+            //    }
+            //}
         }
         catch (System.Exception ex)
         {

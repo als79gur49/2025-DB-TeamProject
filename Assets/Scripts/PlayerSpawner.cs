@@ -24,7 +24,7 @@ public class PlayerSpawner : EntitySpawner
             //Entity clone = GameObject.Instantiate(enemy[Random.Range(0, enemy.Length)]);
             Player clone = Instantiate(player, Vector3.zero, Quaternion.identity);
 
-            string name = "Test_Player_" + Random.Range(0, 10000);
+            string name = "Test_Enemy_" + Random.Range(0, 10000);
 
             clone.Setup(new EntityInfo(name, "Test_Image"), new EntityData(100, 10, 1), damagePopupManager, killLogManager, scoreBlockSpawner);
 
@@ -52,6 +52,6 @@ public class PlayerSpawner : EntitySpawner
     private void SampleOnDeath()
     {
         Debug.Log("SampleOnDeath : SampleOnDeath : SampleOnDeath : SampleOnDeath");
-        GameSessionRepository.EndSession(currentSession.SessionID, 0, 0, currentSession.DeathCount, 0);
+        GameSessionRepository.EndSession(currentSession.SessionID, currentSession.Score, currentSession.Level, currentSession.EnemiesKilled, currentSession.DeathCount);
     }
 }
