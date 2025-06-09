@@ -24,9 +24,9 @@ public class PlayerSpawner : EntitySpawner
             //Entity clone = GameObject.Instantiate(enemy[Random.Range(0, enemy.Length)]);
             Player clone = Instantiate(player, Vector3.zero, Quaternion.identity);
 
-            string name = "Test_Enemy_" + Random.Range(0, 10000);
+            string name = "Test_Player_" + Random.Range(0, 10000);
 
-            clone.Setup(new EntityInfo("Player", "Test_Image"), new EntityData(100, 10, 1), damagePopupManager, killLogManager, scoreBlockSpawner);
+            clone.Setup(new EntityInfo(name, "Test_Image"), new EntityData(100, 10, 1), damagePopupManager, killLogManager, scoreBlockSpawner);
 
             currentPlayer = PlayerRepository.CreatePlayer(clone.Info.EntityName);
             currentSession = GameSessionRepository.StartNewSession(currentPlayer.PlayerID);
