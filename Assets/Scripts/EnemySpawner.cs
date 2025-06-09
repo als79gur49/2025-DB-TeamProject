@@ -16,8 +16,9 @@ public class EnemySpawner : EntitySpawner
         memoryPool = new MemoryPool<Enemy>(enemy[0], this.transform, 5);
     }
 
-    public void Setup(DamagePopupManager damagePopupManager, KillLogManager killLogManager)
+    public void Setup(RankingManager rankingManager, DamagePopupManager damagePopupManager, KillLogManager killLogManager)
     {
+        this.rankingManager = rankingManager;
         this.damagePopupManager = damagePopupManager;
         this.killLogManager = killLogManager;
 
@@ -26,14 +27,18 @@ public class EnemySpawner : EntitySpawner
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Q))
+        if(Input.GetKeyDown(KeyCode.Q))
         {
             //Entity clone = GameObject.Instantiate(enemy[Random.Range(0, enemy.Length)]);
             Enemy clone = memoryPool.ActivatePoolItem();
 
             string name = "Test_Enemy_" + Random.Range(0, 10000);
 
-            clone.Setup(new EntityInfo(name, "Test_Image"), new EntityData(100, 10, 1), memoryPool, damagePopupManager, killLogManager, scoreBlockSpawner);
+            clone.Setup(new EntityInfo(name, "Test_Image"), new EntityData(100, 10, 1), memoryPool, rankingManager, damagePopupManager, killLogManager, scoreBlockSpawner);
+
+            TestSql.Init();
+
+            TestSql.GetScore("test00");
 
             clone.ChangeState(EntityStates.IdleState);
         }

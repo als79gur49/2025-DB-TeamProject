@@ -8,7 +8,55 @@ using UnityEngine;
 public static class RankingRepository
 {
     /// <summary>
-    /// 상위 N명의 랭킹 조회 (게임 세션 기반)
+    /// 플레이어 점수 추가 또는 업데이트
+    /// </summary>
+    public static bool UpsertPlayerScore(string playerName, int score)
+    {
+        try
+        {
+            string query = @"
+                INSERT INTO Rankings (PlayerName, Score, UpdatedAt) 
+                VALUES (@playerName, @score, CURRENT_TIMESTAMP)
+                ON CONFLICT(PlayerName) DO UPDATE SET 
+                    Score = @score, 
+                    UpdatedAt = CURRENT_TIMESTAMP
+            ";
+
+            int rowsAffected = DatabaseManager.ExecuteNonQuery(query,
+                ("@playerName", playerName),
+                ("@score", score));
+
+            return rowsAffected > 0;
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"플레이어 점수 업데이트 오류: {ex.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// 플레이어 점수 조회
+    /// </summary>
+    public static int GetPlayerScore(string playerName)
+    {
+        try
+        {
+            string query = "SELECT Score FROM Rankings WHERE PlayerName = @playerName";
+
+            var result = DatabaseManager.ExecuteScalar(query, ("@playerName", playerName));
+
+            return result != null ? (int)(long)result : 0;
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"플레이어 점수 조회 오류: {ex.Message}");
+            return 0;
+        }
+    }
+
+    /// <summary>
+    /// 상위 N명의 랭킹 조회
     /// </summary>
     public static List<RankingData> GetTopRankings(int limit = 10)
     {
@@ -17,8 +65,9 @@ public static class RankingRepository
         try
         {
             string query = @"
-                SELECT PlayerID, PlayerName, Score, Level, PlayTime, StartedAt, EndedAt, Rank
-                FROM RankingView
+                SELECT PlayerName, Score 
+                FROM Rankings 
+                ORDER BY Score DESC, UpdatedAt ASC 
                 LIMIT @limit
             ";
 
@@ -26,17 +75,10 @@ public static class RankingRepository
             {
                 while (reader.Read())
                 {
-                    rankings.Add(new RankingData
-                    {
-                        PlayerID = (int)(long)reader["PlayerID"],
-                        PlayerName = reader["PlayerName"].ToString(),
-                        Score = (int)(long)reader["Score"],
-                        Level = (int)(long)reader["Level"],
-                        PlayTime = reader["PlayTime"] != System.DBNull.Value ? (int)(long)reader["PlayTime"] : 0,
-                        StartedAt = System.DateTime.Parse(reader["StartedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal),
-                        EndedAt = System.DateTime.Parse(reader["EndedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal),
-                        Rank = (int)(long)reader["Rank"]
-                    });
+                    string playerName = reader["PlayerName"].ToString();
+                    int score = (int)(long)reader["Score"];
+
+                    rankings.Add(new RankingData(playerName, score));
                 }
             }
         }
@@ -58,25 +100,19 @@ public static class RankingRepository
         try
         {
             string query = @"
-                SELECT PlayerID, PlayerName, Score, Level, PlayTime, StartedAt, EndedAt, Rank
-                FROM RankingView
+                SELECT PlayerName, Score 
+                FROM Rankings 
+                ORDER BY Score DESC, UpdatedAt ASC
             ";
 
             using (var reader = DatabaseManager.ExecuteReader(query))
             {
                 while (reader.Read())
                 {
-                    rankings.Add(new RankingData
-                    {
-                        PlayerID = (int)(long)reader["PlayerID"],
-                        PlayerName = reader["PlayerName"].ToString(),
-                        Score = (int)(long)reader["Score"],
-                        Level = (int)(long)reader["Level"],
-                        PlayTime = reader["PlayTime"] != System.DBNull.Value ? (int)(long)reader["PlayTime"] : 0,
-                        StartedAt = System.DateTime.Parse(reader["StartedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal),
-                        EndedAt = System.DateTime.Parse(reader["EndedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal),
-                        Rank = (int)(long)reader["Rank"]
-                    });
+                    string playerName = reader["PlayerName"].ToString();
+                    int score = (int)(long)reader["Score"];
+
+                    rankings.Add(new RankingData(playerName, score));
                 }
             }
         }
@@ -89,159 +125,70 @@ public static class RankingRepository
     }
 
     /// <summary>
-    /// 특정 점수보다 높은 게임 수 조회 (순위 계산용)
+    /// 특정 플레이어의 순위 조회
     /// </summary>
-    public static int GetRankByScore(int score)
+    public static int GetPlayerRank(string playerName)
     {
         try
         {
             string query = @"
                 SELECT COUNT(*) + 1 as Rank
-                FROM GameSessions gs
-                WHERE gs.Score > @score AND gs.EndedAt IS NOT NULL
+                FROM Rankings 
+                WHERE Score > (
+                    SELECT Score 
+                    FROM Rankings 
+                    WHERE PlayerName = @playerName
+                )
             ";
 
-            var result = DatabaseManager.ExecuteScalar(query, ("@score", score));
+            var result = DatabaseManager.ExecuteScalar(query, ("@playerName", playerName));
 
             return result != null ? (int)(long)result : -1;
         }
         catch (System.Exception ex)
         {
-            Debug.LogError($"점수별 순위 조회 오류: {ex.Message}");
+            Debug.LogError($"플레이어 순위 조회 오류: {ex.Message}");
             return -1;
         }
     }
 
     /// <summary>
-    /// 특정 플레이어의 최고 순위 조회
+    /// 플레이어 삭제
     /// </summary>
-    public static int GetPlayerBestRank(int playerId)
+    public static bool DeletePlayer(string playerName)
     {
         try
         {
-            string query = @"
-                SELECT MIN(Rank) as BestRank
-                FROM (
-                    SELECT ROW_NUMBER() OVER (ORDER BY gs.Score DESC, gs.EndedAt ASC) as Rank
-                    FROM GameSessions gs
-                    WHERE gs.EndedAt IS NOT NULL AND gs.PlayerID = @playerId
-                )
-            ";
+            string query = "DELETE FROM Rankings WHERE PlayerName = @playerName";
 
-            var result = DatabaseManager.ExecuteScalar(query, ("@playerId", playerId));
+            int rowsAffected = DatabaseManager.ExecuteNonQuery(query, ("@playerName", playerName));
 
-            return result != System.DBNull.Value && result != null ? (int)(long)result : -1;
+            return rowsAffected > 0;
         }
         catch (System.Exception ex)
         {
-            Debug.LogError($"플레이어 최고 순위 조회 오류: {ex.Message}");
-            return -1;
+            Debug.LogError($"플레이어 삭제 오류: {ex.Message}");
+            return false;
         }
     }
 
     /// <summary>
-    /// 특정 플레이어의 모든 게임 순위 조회
+    /// 전체 랭킹 데이터 삭제
     /// </summary>
-    public static List<RankingData> GetPlayerRankings(int playerId)
-    {
-        var rankings = new List<RankingData>();
-
-        try
-        {
-            string query = @"
-                SELECT PlayerID, PlayerName, Score, Level, PlayTime, StartedAt, EndedAt, Rank
-                FROM RankingView
-                WHERE PlayerID = @playerId
-                ORDER BY Score DESC
-            ";
-
-            using (var reader = DatabaseManager.ExecuteReader(query, ("@playerId", playerId)))
-            {
-                while (reader.Read())
-                {
-                    rankings.Add(new RankingData
-                    {
-                        PlayerID = (int)(long)reader["PlayerID"],
-                        PlayerName = reader["PlayerName"].ToString(),
-                        Score = (int)(long)reader["Score"],
-                        Level = (int)(long)reader["Level"],
-                        PlayTime = reader["PlayTime"] != System.DBNull.Value ? (int)(long)reader["PlayTime"] : 0,
-                        StartedAt = System.DateTime.Parse(reader["StartedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal),
-                        EndedAt = System.DateTime.Parse(reader["EndedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal),
-                        Rank = (int)(long)reader["Rank"]
-                    });
-                }
-            }
-        }
-        catch (System.Exception ex)
-        {
-            Debug.LogError($"플레이어 랭킹 조회 오류: {ex.Message}");
-        }
-
-        return rankings;
-    }
-
-    /// <summary>
-    /// 특정 점수 범위의 랭킹 조회
-    /// </summary>
-    public static List<RankingData> GetRankingsByScoreRange(int minScore, int maxScore)
-    {
-        var rankings = new List<RankingData>();
-
-        try
-        {
-            string query = @"
-                SELECT PlayerID, PlayerName, Score, Level, PlayTime, StartedAt, EndedAt, Rank
-                FROM RankingView
-                WHERE Score BETWEEN @minScore AND @maxScore
-                ORDER BY Score DESC
-            ";
-
-            using (var reader = DatabaseManager.ExecuteReader(query,
-                ("@minScore", minScore),
-                ("@maxScore", maxScore)))
-            {
-                while (reader.Read())
-                {
-                    rankings.Add(new RankingData
-                    {
-                        PlayerID = (int)(long)reader["PlayerID"],
-                        PlayerName = reader["PlayerName"].ToString(),
-                        Score = (int)(long)reader["Score"],
-                        Level = (int)(long)reader["Level"],
-                        PlayTime = reader["PlayTime"] != System.DBNull.Value ? (int)(long)reader["PlayTime"] : 0,
-                        StartedAt = System.DateTime.Parse(reader["StartedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal),
-                        EndedAt = System.DateTime.Parse(reader["EndedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal),
-                        Rank = (int)(long)reader["Rank"]
-                    });
-                }
-            }
-        }
-        catch (System.Exception ex)
-        {
-            Debug.LogError($"점수 범위별 랭킹 조회 오류: {ex.Message}");
-        }
-
-        return rankings;
-    }
-
-    /// <summary>
-    /// 전체 게임 수 조회
-    /// </summary>
-    public static int GetTotalGameCount()
+    public static bool ClearAllRankings()
     {
         try
         {
-            string query = "SELECT COUNT(*) FROM GameSessions WHERE EndedAt IS NOT NULL";
+            string query = "DELETE FROM Rankings";
 
-            var result = DatabaseManager.ExecuteScalar(query);
+            DatabaseManager.ExecuteNonQuery(query);
 
-            return result != null ? (int)(long)result : 0;
+            return true;
         }
         catch (System.Exception ex)
         {
-            Debug.LogError($"전체 게임 수 조회 오류: {ex.Message}");
-            return 0;
+            Debug.LogError($"랭킹 전체 삭제 오류: {ex.Message}");
+            return false;
         }
     }
 }

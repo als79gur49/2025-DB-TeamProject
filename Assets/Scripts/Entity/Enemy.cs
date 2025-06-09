@@ -6,7 +6,7 @@ using UnityEngine.Events;
 
 public class Enemy : Entity
 {
-    // FSM ï¿½ï¿½ï¿½ï¿½
+    // FSM °ü·Ã
     private AIInput input;
     private FSM brain;
     //private EntityOutput output;
@@ -21,7 +21,7 @@ public class Enemy : Entity
         DamagePopupManager damagePopupManager, KillLogManager killLogManager,
         ScoreBlockSpawner scoreBlockSpawner)
     {
-        Setup(info, data, damagePopupManager, killLogManager, scoreBlockSpawner);
+        Setup(info, data, rankingManager, damagePopupManager, killLogManager, scoreBlockSpawner);
         this.memoryPool = memoryPool;
     }
 
@@ -40,13 +40,13 @@ public class Enemy : Entity
         input.SetEntity(this);
         input.SetAnimation(animation);
 
-        onDeath.AddListener(StartDespawnTimer); // nï¿½ï¿½ ï¿½ï¿½ memoryPoolï¿½ï¿½ ï¿½ï¿½È¯
+        onDeath.AddListener(StartDespawnTimer); // nÃÊ ÈÄ memoryPool·Î ¹ÝÈ¯
     }
 
     private void Update()
     {
         brain.Execute(input);
-        if (Input.GetKeyDown(KeyCode.E))
+        if(Input.GetKeyDown(KeyCode.E))
         {
             AddScore(1000);
         }
@@ -65,7 +65,7 @@ public class Enemy : Entity
     private IEnumerator ReturnToPoolAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
-        // ï¿½Þ¸ï¿½ Ç®ï¿½ï¿½ ï¿½ï¿½È¯
+        // ¸Þ¸ð¸® Ç®·Î ¹ÝÈ¯
         memoryPool.DeactivatePoolItem(this);
     }
 
