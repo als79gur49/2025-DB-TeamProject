@@ -11,27 +11,26 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     public UnityEvent<float, float> onTakeDamage;
     public UnityEvent onDeath;
 
-    // Animation °ü·Ã
+    // Animation ï¿½ï¿½ï¿½ï¿½
     protected EntityAnimation animation;
 
-    // data °ü·Ã
+    // data ï¿½ï¿½ï¿½ï¿½
     private EntityInfo info;
     protected EntityData data;
 
-    private RankingManager rankingManager;
     private DamagePopupManager damagePopupManager;
     private KillLogManager killLogManager;
     private ScoreBlockSpawner scoreBlockSpawner;
 
-    // ¼ÒÀ¯ ÁßÀÎ ¹«±â ¹× °ø°Ý Å¬·¡½º
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½
     private WeaponBase weapon;
     private ProjectileStorage projectileStorage;
     [SerializeField]
-    private List<Projectile> storages; // ÇØ´ç ³»¿ëÀº ÀÓ½Ã·Î Åõ»çÃ¼ ³Ö¾îµÐ °÷ ½ÇÁ¦·Î´Â ¿ÜºÎ¿¡¼­ ·¹º§ ¾÷ µîÀ» ÅëÇØ¼­ projectileStorage¿¡ ³Ö¾îÁÖ±â
+    private List<Projectile> storages; // ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ó½Ã·ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¼ ï¿½Ö¾ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½ ï¿½ÜºÎ¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½ projectileStorageï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½Ö±ï¿½
 
     public WeaponBase Weapon=>weapon;
 
-    // ÀÌ¸§, °ø°Ý·Â, ½ºÄÚ¾î µî
+    // ï¿½Ì¸ï¿½, ï¿½ï¿½ï¿½Ý·ï¿½, ï¿½ï¿½ï¿½Ú¾ï¿½ ï¿½ï¿½
     public EntityData Data => data;
     public EntityInfo Info => info;
 
@@ -45,7 +44,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
 
     public bool IsDead { get => data.HP <= 0; }
 
-    // ¸¶Áö¸·À» °ø°Ý¹ÞÀº ÀûÀÇ ÀÌ¸§, ¹«±â ÀÌ¸§
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ý¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½
     private KeyValuePair<Entity, string> lastDamagedInfo;
 
 
@@ -55,21 +54,18 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     {  
         this.damagePopupManager = damagePopupManager;
         this.killLogManager = killLogManager;
-        this.rankingManager = rankingManager;
         this.scoreBlockSpawner = scoreBlockSpawner;
 
         Setup();
 
         this.info = info;
         this.data = data;
-        rankingManager?.AddEntity(this);
 
         GetComponent<BoxCollider>().enabled = true;
 
         onDeath.AddListener(DeathLog); // lastDamagedInfo, KillLogManager 
         onDeath.AddListener(GiveScoreToLastAttacker); // lastDamagedInfo, data
-        onDeath.AddListener(RemoveFromRanking); // rankingManager¿¡¼­ Á¦°Å
-        onDeath.AddListener(SpawnLevelupBlocks); // Á×À¸¸é °æÇèÄ¡ºí·°µé »ý¼º
+        onDeath.AddListener(SpawnLevelupBlocks); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     }
     protected virtual void Setup()
     {
@@ -93,16 +89,16 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     {
         float prevHp = data.HP;
 
-        // defense Ãß°¡ÇÒ ²¨¸é ·ÎÁ÷ ¼öÁ¤
+        // defense ï¿½ß°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         data.TakeDamage(amount);
-        Debug.Log($"{enemy.Info.EntityName}°¡ {info.EntityName}¿¡°Ô {weaponName}À¸·Î {amount}¸¸Å­ÀÇ ÇÇÇØ ÀÔÈû");
+        Debug.Log($"{enemy.Info.EntityName}ï¿½ï¿½ {info.EntityName}ï¿½ï¿½ï¿½ï¿½ {weaponName}ï¿½ï¿½ï¿½ï¿½ {amount}ï¿½ï¿½Å­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½");
 
-        // ¸¶Áö¸· °ø°ÝÇÑ »ó´ëÀÇ Á¤º¸
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         lastDamagedInfo = new KeyValuePair<Entity, string>(enemy, weaponName);
 
         damagePopupManager.PrintDamage(Color.black, amount, damageTextPoint.position, 3);
 
-        // hpUI ¼öÁ¤
+        // hpUI ï¿½ï¿½ï¿½ï¿½
         onTakeDamage?.Invoke(data.HP, data.MaxHp);
     }
     public void RecoverHP(float amount)
@@ -116,7 +112,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
         onDeath.RemoveAllListeners();
     }
 
-    // Å³·Î±× Ãâ·Â ex) x°¡ y·Î z¸¦ Ã³Ä¡
+    // Å³ï¿½Î±ï¿½ ï¿½ï¿½ï¿½ ex) xï¿½ï¿½ yï¿½ï¿½ zï¿½ï¿½ Ã³Ä¡
     private void DeathLog()
     {
         if (lastDamagedInfo.Key == null || lastDamagedInfo.Value == null)
@@ -128,16 +124,15 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
         killLogManager.AddLog(log);
     }
 
-    // Ã³Ä¡ÇÑ Àû¿¡°Ô Á¡¼ö ºÎ¿©
+    // Ã³Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Î¿ï¿½
     private void GiveScoreToLastAttacker()
     {
-        if(lastDamagedInfo.Key != null)
+        if (lastDamagedInfo.Key != null)
         {
             lastDamagedInfo.Key.AddScore(100);
-
-            rankingManager.UpdateEntity(lastDamagedInfo.Key);
         }
     }
+
     public void AddScore(int amount)
     {
         const int levelupAmount = 1000;
@@ -146,10 +141,10 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
         int levelupNum = (remainExp + amount) / levelupAmount;
         data.AddScore(amount);
 
-        for(int i = 0; i < levelupNum; ++i)
+        for (int i = 0; i < levelupNum; ++i)
         {
             //Do Levelup
-            if(levelupPrefab != null)
+            if (levelupPrefab != null)
             {
                 GameObject clone = Instantiate(levelupPrefab, transform.position, Quaternion.identity);
                 clone.transform.localScale *= 1.5f;
@@ -177,5 +172,4 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     {
         this.weapon = weapon;
     }
-
 };
