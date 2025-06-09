@@ -141,6 +141,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
         int remainExp = data.Score % levelupAmount;
         int levelupNum = (remainExp + amount) / levelupAmount;
         data.AddScore(amount);
+        
 
         for (int i = 0; i < levelupNum; ++i)
         {
