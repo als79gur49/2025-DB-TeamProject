@@ -21,13 +21,7 @@ public class RankingUI : MonoBehaviour
             string rankingText = $"{ranking.Rank}µî | {ranking.PlayerName}: {ranking.Score}\n";
             text.text += rankingText;
         }
-    }
 
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.S))
-        {
-            UpdateRankingUI();
-        }
+
     }
 }

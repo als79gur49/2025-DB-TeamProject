@@ -12,9 +12,14 @@ public class UIController : MonoBehaviour
     private GameOverUI gameOverPanel;
 
     private Entity player;
-    public void Setup(Entity player)
+    private int playerId;
+
+    public void Setup(Entity player, int playerId)
     {
         this.player = player;
+        this.playerId = playerId;
+
+        gameOverPanel?.Setup(playerId);
 
         player.onDeath.AddListener(ShowGameOverPanel);
         player.onLevelup.AddListener(UpdateLevelHUD);

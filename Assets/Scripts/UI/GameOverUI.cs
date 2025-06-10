@@ -9,9 +9,11 @@ public class GameOverUI : MonoBehaviour
 {
     [SerializeField]
     private InfoList infoPrefab;
+    // 랭킹 정보들의 부모Transform
     [SerializeField]
     private Transform ListParent;
 
+    // 플레이어 랭킹 정보 UI(개인)
     [SerializeField]
     private InfoList player;
 
@@ -19,6 +21,12 @@ public class GameOverUI : MonoBehaviour
 
     private RectTransform rect;
     private float duration = 1.5f;
+
+    private int playerId;
+    public void Setup(int playerId)
+    {
+        this.playerId = playerId;
+    }
 
     public void ShowGameOver()
     {
@@ -52,6 +60,8 @@ public class GameOverUI : MonoBehaviour
     // 플레이어 랭킹
     private void ShowPlayerInfo()
     {
+        PlayerModel p = PlayerRepository.GetPlayerById(playerId);
+        player.Setup(111, p.PlayerName, p.HighestScore);
         //RankingData data = RankingRepository.GetTopRankings;
         //
         //player.Setup(data.Rank, data.PlayerName, data.Score);
