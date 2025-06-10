@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using System.Buffers;
+using DG.Tweening.Core.Easing;
+using UnityEngine.AI;
 
 
 
@@ -12,6 +14,8 @@ public class ScoreBlock : MonoBehaviour
 
     private float upHeight = 2.3f;
     private float upDuration = 0.5f;
+
+    private Transform targetTransform;
 
     // 흡수 1회만 작동 플래그
     private bool flag = true;
@@ -105,11 +109,17 @@ public class ScoreBlock : MonoBehaviour
         {
             float t = 1f;
 
-            Sequence rotateSeq = DOTween.Sequence();
-            rotateSeq.Append(transform.DORotate(new Vector3(0, 1000, 0), t, RotateMode.FastBeyond360)) //제자리 회전
-                .Join(transform.DOMove(target.transform.position, t).SetEase(Ease.InOutBack)) // 타겟 방향으로 이동
-                .Join(transform.DOScale(0, t).SetEase(Ease.InElastic)) // 스케일 조정
-                .AppendCallback(() => AddScoreTo(entity));
+            // 임시: target의 예상 위치 계산
+            Vector3 dir = (target.GetComponent<NavMeshAgent>().destination - target.transform.position) * target.GetComponent<NavMeshAgent>().speed * 0.7f;
+
+            // 회전 트윈
+            Tween rotateTween = transform.DORotate(new Vector3(0, 1000, 0), t, RotateMode.FastBeyond360);
+            // 약간 커졌다 작아지는 트윈
+            Tween scaleTween = transform.DOScale(0, t).SetEase(Ease.InElastic);
+            // 목표 위치 이동 트윈. 
+            Tweener moveTweener = transform.DOMove(target.transform.position + dir * t, t)
+                .SetEase(Ease.InOutBack)
+                .OnComplete(() => AddScoreTo(entity));
 
             flag = false;
         }
@@ -127,3 +137,44 @@ public class ScoreBlock : MonoBehaviour
         }
     }
 }
+
+/*
+ if (flag == true)
+        {
+            float t = 1f;
+            GameObject tmpT = target;
+            targetTransform = target.transform;
+
+            Sequence rotateSeq = DOTween.Sequence();
+
+            Tween rotateTween = transform.DORotate(new Vector3(0, 1000, 0), t, RotateMode.FastBeyond360);
+            Tweener moveTweener = transform.DOMove(targetTransform.position, t)
+                .SetEase(Ease.InOutBack);
+            Tween scaleTween = transform.DOScale(0, t).SetEase(Ease.InElastic);
+
+            // 별도의 업데이트 로직으로 타겟 위치 추적
+            DOTween.To(() => 0f, x => {
+                // 매 프레임마다 타겟의 현재 위치로 목표점 업데이트
+                if (targetTransform != null && moveTweener != null)
+                {
+                    moveTweener.ChangeEndValue(targetTransform.position, true);
+                }
+            }, 1f, t);
+
+            rotateSeq.Append(rotateTween) // 제자리 회전
+                .Join(moveTweener) // 타겟 방향으로 이동
+                .Join(scaleTween) // 스케일 조정
+                .OnUpdate(() => {
+                    // 매 프레임마다 현재 타겟 위치로 이동
+                    if (tmpT != null)
+                    {
+                        Debug.Log("upd");
+                        targetTransform = tmpT.transform;
+                        moveTweener.ChangeEndValue(targetTransform.position, false);
+                    }
+                })
+                .AppendCallback(() => AddScoreTo(entity)); // 시퀀스 끝나면 점수 추가
+
+            flag = false;
+        }
+ */

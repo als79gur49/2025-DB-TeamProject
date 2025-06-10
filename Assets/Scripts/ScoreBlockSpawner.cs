@@ -130,7 +130,6 @@ public class ScoreBlockSpawner : MonoBehaviour
     {
         while(true)
         {
-            Debug.Log("Loop");
             if (respawnPoints.Count <= 0)
             {
                 yield return null;
@@ -138,7 +137,6 @@ public class ScoreBlockSpawner : MonoBehaviour
                 continue;
             }
 
-            Debug.Log("Respawn");
             // 저장된 위치 가져오기
             Vector3 position = respawnPoints.Dequeue();
 
