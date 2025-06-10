@@ -17,11 +17,11 @@ public class Enemy : Entity
     public void Setup(
         EntityInfo info,
         EntityData data,
-        MemoryPool<Enemy> memoryPool, RankingManager rankingManager,
+        MemoryPool<Enemy> memoryPool,
         DamagePopupManager damagePopupManager, KillLogManager killLogManager,
         ScoreBlockSpawner scoreBlockSpawner)
     {
-        Setup(info, data, rankingManager, damagePopupManager, killLogManager, scoreBlockSpawner);
+        Setup(info, data, damagePopupManager, killLogManager, scoreBlockSpawner);
         this.memoryPool = memoryPool;
     }
 

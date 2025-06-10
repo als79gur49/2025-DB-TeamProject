@@ -11,18 +11,19 @@ public class Player : Entity
     private Dictionary<KeyCode, Vector3> arrowVector;
     private LayerMask groundLayer = 1 << 8;
 
-    private bool flag = true;
+    // ì£½ìŒ ìƒíƒœ í”Œë˜ê·¸
+    private bool _isDead = false;
 
     public void Setup(
         EntityInfo info,
         EntityData data,
-        RankingManager rankingManager, DamagePopupManager damagePopupManager,
+        DamagePopupManager damagePopupManager,
         KillLogManager killLogManager, ScoreBlockSpawner scoreBlockSpawner,
         SkillIconManager skillIconManager)
     {
         levelupStorage.Setup(skillIconManager, this, firePoint);
 
-        base.Setup(info, data, rankingManager, damagePopupManager, killLogManager, scoreBlockSpawner);
+        base.Setup(info, data, damagePopupManager, killLogManager, scoreBlockSpawner);
     }
 
     protected override void Setup()
@@ -40,21 +41,22 @@ public class Player : Entity
         };
 
         levelupStorage.AddLevelupable(Weapon);
-        //StartWeaponÀ» levelupStorage¿¡ Àû¿ë
+        //StartWeaponì„ levelupStorageì— ì ìš©
     }
 
     private void Update()
     {
-        if(IsDead)
+        if (IsDead && !_isDead) // ì²˜ìŒ ì£½ì—ˆì„ ë•Œë§Œ
         {
-            if(flag)
-            {
-                animation.Death();
-                GetComponent<BoxCollider>().enabled = false;
+            _isDead = true;
+            animation.Death();
+            GetComponent<BoxCollider>().enabled = false;
+            onDeath?.Invoke();
+            return;
+        }
 
-                flag = false;
-            }
-
+        if (_isDead) // ì´ë¯¸ ì£½ì—ˆë‹¤ë©´ ì•„ë¬´ê²ƒë„ í•˜ì§€ ì•ŠìŒ
+        {
             return;
         }
 
@@ -62,7 +64,7 @@ public class Player : Entity
         RotateToMouse();
         Attack();
 
-        if(data.HP <= 0)
+        if (data.HP <= 0)
         {
             if (TryGetComponent<BoxCollider>(out var collider))
             {
@@ -77,22 +79,22 @@ public class Player : Entity
 
     private void Move()
     {
-        // ÇöÀç À§Ä¡¿¡¼­ ÀÔ·ÂµÈ ¹æÇâÀ¸·Î ÀÌµ¿
+        // í˜„ì¬ ìœ„ì¹˜ì—ì„œ ì…ë ¥ëœ ë°©í–¥ìœ¼ë¡œ ì´ë™
         Vector3 moveDirection = Vector3.zero;
         foreach (var pair in arrowVector)
         {
-            if(Input.GetKey(pair.Key))
-            {                
+            if (Input.GetKey(pair.Key))
+            {
                 moveDirection += pair.Value;
             }
         }
 
-        if(moveDirection == Vector3.zero)
+        if (moveDirection == Vector3.zero)
         {
             animation.SetIdle();
             agent.isStopped = true;
         }
-        else if(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+        else if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
         {
             animation.SetRun();
             agent.isStopped = false;
@@ -114,7 +116,7 @@ public class Player : Entity
         if (Physics.Raycast(ray, out RaycastHit hit, 100f))
         {
             Vector3 lookPos = hit.point - transform.position;
-            lookPos.y = 0; // ¼öÆò È¸Àü¸¸
+            lookPos.y = 0; // ìˆ˜í‰ íšŒì „ë§Œ
             if (lookPos != Vector3.zero)
             {
                 Quaternion targetRotation = Quaternion.LookRotation(lookPos);
@@ -122,8 +124,8 @@ public class Player : Entity
             }
 
             float angle = Vector3.Angle((agent.destination - transform.position).normalized, lookPos.normalized);
-            
-            if(angle <= 90f)
+
+            if (angle <= 90f)
             {
                 //animation.SetForwardLoop();
             }
@@ -133,14 +135,14 @@ public class Player : Entity
             }
         }
 
-        
+
     }
 
     protected override void levelup()
     {
-        // hpÈ¸º¹
+        // hpíšŒë³µ
         data.AddHp(30);
-        // ½ºÅ³ Ã¢ ¶ç¿ì±â
+        // ìŠ¤í‚¬ ì°½ ë„ìš°ê¸°
         //levelupStorage.Levelupable[0].LevelUp();
         levelupStorage.Levelup();
     }
