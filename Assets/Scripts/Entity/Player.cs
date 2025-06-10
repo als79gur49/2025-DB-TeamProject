@@ -14,6 +14,12 @@ public class Player : Entity
     // 죽음 상태 플래그
     private bool _isDead = false;
 
+    private Vector3 inputVector;
+    private Vector3 mouseDirection;
+    private Vector3 mouseWorldPosition;
+    private float directionX;
+    private float directionY;
+
     protected override void Setup()
     {
         base.Setup();
@@ -47,81 +53,128 @@ public class Player : Entity
             return;
         }
 
-        Move(RotateToMouse());
         Attack();
+
+        KeyboardInput();
+        CalculateMouseDirection();
+        LookMouse();
+        CalculateAnimDirection();
+        Move();
+        Animation();
     }
 
-    private void Move(Vector3 target)
+    private void KeyboardInput()
     {
-        // 현재 위치에서 입력된 방향으로 이동
-        Vector3 moveDirection = Vector3.zero;
+        inputVector = Vector3.zero;
+
         foreach (var pair in arrowVector)
         {
             if (Input.GetKey(pair.Key))
             {
-                moveDirection += pair.Value;
+                inputVector += pair.Value;
             }
         }
+    }
 
-        if (moveDirection == Vector3.zero)
+    private void CalculateMouseDirection()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f, groundLayer))
         {
-            animation.SetIdle();
-            agent.isStopped = true;
-        }
-        else if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
-        {
-            animation.SetRun();
-            agent.isStopped = false;
-            agent.SetDestination(transform.position + moveDirection);
-            agent.speed = 2.5f;
+            mouseWorldPosition = hit.point;
         }
         else
         {
-            animation.SetWalk();
-            agent.isStopped = false;
-            agent.SetDestination(transform.position + moveDirection);
-            agent.speed = 1.3f;
+            // 레이캐스트가 실패하면 평면에 투영
+            Plane groundPlane = new Plane(Vector3.up, transform.position);
+            if (groundPlane.Raycast(ray, out float distance))
+            {
+                mouseWorldPosition = ray.GetPoint(distance);
+            }
         }
 
-        if(moveDirection != Vector3.zero)
-        {
-            Quaternion rotation = transform.rotation;
-
-            // 로컬 공간 기준 방향
-            Vector3 localDir = Quaternion.Inverse(rotation) * target;
-            localDir = localDir.normalized;
-            animation.SetDirection(localDir.x, localDir.z);
-        }
-
+        mouseDirection = (mouseWorldPosition - transform.position).normalized;
+        mouseDirection.y = 0;
     }
 
-    private Vector3 RotateToMouse()
+    private void CalculateAnimDirection()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out RaycastHit hit, 100f))
+        if (inputVector.magnitude < 0.1f)
         {
-            Vector3 lookPos = hit.point - transform.position;
-            lookPos.y = 0; // 수평 회전만
-            if (lookPos != Vector3.zero)
-            {
-                Quaternion targetRotation = Quaternion.LookRotation(lookPos);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 10f * Time.deltaTime);
-            }
-
-            float angle = Vector3.Angle((agent.destination - transform.position).normalized, lookPos.normalized);
-
-            if (angle <= 90f)
-            {
-                //animation.SetForwardLoop();
-            }
-            else
-            {
-                //animation.SetBackwardLoop();
-            }
-
-            return lookPos;
+            directionX = 0;
+            directionY = 0;
         }
-        return Vector3.zero;
+        else
+        {
+            float angle = GetAngle360(mouseDirection, inputVector);
+            float angleRadian = angle * Mathf.Deg2Rad;
+
+            directionX = Mathf.Sin(angleRadian);
+            directionY = Mathf.Cos(angleRadian);
+            
+            Debug.Log($"Angle: {angle:F1}° → Direction: ({directionX}, {directionY})");
+        }
+    }
+
+    private float GetAngle360(Vector3 from, Vector3 to)
+    {
+        float signedAngle = Vector3.SignedAngle(from, to, Vector3.up);
+
+        // 0~ 360 범위로 변환
+        if (signedAngle < 0)
+        {
+            signedAngle += 360f;
+        }
+
+        return signedAngle;
+    }
+
+    private void LookMouse()
+    {
+        if (mouseDirection != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(mouseDirection);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 10f * Time.deltaTime);
+        }
+    }
+
+    private void Move()
+    {
+        if (inputVector == Vector3.zero) // idle
+        {
+            agent.isStopped = true;
+        }
+        else if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) // run
+        {
+            agent.isStopped = false;
+            agent.SetDestination(transform.position + inputVector);
+            agent.speed = 2.5f;
+        }
+        else // walk
+        {
+            agent.isStopped = false;
+            agent.SetDestination(transform.position + inputVector);
+            agent.speed = 1.3f;
+        }
+    }
+
+    private void Animation()
+    {
+        // 애니메이션 방향 설정
+        animation.SetDirection(directionX, directionY);
+
+        if (inputVector == Vector3.zero) // idle
+        {
+            animation.SetIdle();
+        }
+        else if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) // run
+        {
+            animation.SetRun();
+        }
+        else // walk
+        {
+            animation.SetWalk();
+        }
     }
 
     protected override void levelup()
@@ -130,5 +183,21 @@ public class Player : Entity
         data.AddHp(30);
         // 스킬 창 띄우기
         levelupStorage.Levelupable[0].LevelUp();
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (Application.isPlaying)
+        {
+            Vector3 origin = transform.position;
+
+            // 마우스 방향 표시 (빨간색)
+            Gizmos.color = Color.red;
+            Gizmos.DrawRay(origin, mouseDirection * 2f);
+
+            // 입력 방향 표시 (파란색)
+            Gizmos.color = Color.blue;
+            Gizmos.DrawRay(origin, inputVector * 2f);
+        }
     }
 }

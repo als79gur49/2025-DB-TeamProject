@@ -23,7 +23,7 @@ public class ChaseState : IState
         agent.isStopped = false;
 
         input.Animation.SetRun();
-        //input.Animation.SetWalk();
+        input.Animation.SetDirection(0, 1);
 
         //Debug.Log("Chase Enter");
     }

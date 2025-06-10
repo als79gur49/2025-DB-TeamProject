@@ -14,8 +14,6 @@ public abstract class WeaponBase : MonoBehaviour, ILevelup
         // List로 복사본 생성 - 복사본 생성하지 않고 원본 수정 시 foreach 순회 중 건드려서 에러 발생
         foreach(var projectile in storage.Projectiles.ToList())
         {
-            Debug.Log(projectile.Key.Data);
-            Debug.Log(projectile.Key.Data.attackRate);
             if((Time.time - projectile.Value) * 1000 < projectile.Key.Data.attackRate)
             {
                 continue;

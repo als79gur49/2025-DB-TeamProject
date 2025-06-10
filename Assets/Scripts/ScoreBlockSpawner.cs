@@ -53,8 +53,9 @@ public class ScoreBlockSpawner : MonoBehaviour
                 Vector3 addedAmount = new Vector3(j, 0, i);
                 if(! Physics.CheckBox(standardPosition + addedAmount, new Vector3(0.5f, 0.3f, 0.5f), Quaternion.identity))
                 {
-                    Spawn(standardPosition + addedAmount).YoYoMoving();
-
+                    ScoreBlock clone = Spawn(standardPosition + addedAmount);
+                    clone.YoYoMoving();
+                    clone.gameObject.transform.SetParent(transform, true);
                 }
             }
         }
@@ -64,7 +65,9 @@ public class ScoreBlockSpawner : MonoBehaviour
     {
         for (int i = 0;i < amount; ++i)
         {
-            Spawn(spawnPosition).LaunchUpwards();
+            ScoreBlock clone = Spawn(spawnPosition);
+            clone.LaunchUpwards();
+            clone.gameObject.transform.SetParent(transform, true);
         }
     }
 

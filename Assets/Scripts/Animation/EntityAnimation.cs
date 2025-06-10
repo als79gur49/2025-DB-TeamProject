@@ -34,17 +34,14 @@ public class EntityAnimation : MonoBehaviour
 
     public void SetRun()
     {
-        SetDirection(0, 1);
         SetSpeed(0.99f);
     }
     public void SetWalk()
     {
-        SetDirection(0, 0.5f);
         SetSpeed(0.49f);
     }
     public void SetIdle()
     {
-        SetDirection(0, 0);
         SetSpeed(0);
     }
 

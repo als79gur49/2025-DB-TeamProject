@@ -27,6 +27,7 @@ public class FleeState : IState
         agent.isStopped = false;
 
         input.Animation.SetRun();
+        input.Animation.SetDirection(0, 1f);
 
         //Debug.Log("Flee Enter");
     }

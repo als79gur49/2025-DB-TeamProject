@@ -30,6 +30,7 @@ public class PatrolState : IState
         agent.isStopped = false;
 
         input.Animation.SetWalk();
+        input.Animation.SetDirection(0, 0.5f);
 
         timer = 0;
         wanderPosition = input.self.transform.position + Utils.RandomPositionFromRadius(wanderRadius);
