@@ -111,8 +111,6 @@ public class Player : Entity
 
             directionX = Mathf.Sin(angleRadian);
             directionY = Mathf.Cos(angleRadian);
-            
-            Debug.Log($"Angle: {angle:F1}¡Æ ¡æ Direction: ({directionX}, {directionY})");
         }
     }
 

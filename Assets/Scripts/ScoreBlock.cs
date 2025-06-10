@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using System.Buffers;
 
 
 
@@ -12,21 +13,41 @@ public class ScoreBlock : MonoBehaviour
     private float upHeight = 2.3f;
     private float upDuration = 0.5f;
 
+    // 흡수 1회만 작동 플래그
     private bool flag = true;
     private float absorbedTime = 1f;
 
-    public void Setup(int score, Color c, float size)
+    private MemoryPool<ScoreBlock> memoryPool;
+
+    // 기본 생성되는 객체 재생성 여부
+    private ScoreBlockSpawner spawner;
+    private bool canRespawn;
+    private Vector3 originPosition;
+
+    public void Setup(int score, Color c, float size,
+        MemoryPool<ScoreBlock> memoryPool,
+        bool canRespawn,
+            ScoreBlockSpawner spawner = null)
     {
         this.score = score;
-        
+
+        flag = true;
+
+        // 메쉬 인스턴스화 시켜서 각자
         MeshRenderer renderer = GetComponent<MeshRenderer>();
         MaterialPropertyBlock block = new MaterialPropertyBlock();
         
         renderer.GetPropertyBlock(block);
-        block.SetColor("_BaseColor", c); // "_BaseColor"일 수도 있음 (URP 등)
+        block.SetColor("_BaseColor", c); 
         renderer.SetPropertyBlock(block);
         
         transform.localScale = Vector3.one * size;
+
+        this.memoryPool = memoryPool;
+        
+        this.canRespawn = canRespawn;
+            this.spawner = spawner;
+            this.originPosition = transform.position;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -97,6 +118,12 @@ public class ScoreBlock : MonoBehaviour
     private void AddScoreTo(Entity entity)
     {
         entity.AddScore(score);
-        Destroy(gameObject);
+        
+        memoryPool.DeactivatePoolItem(this);
+
+        if(canRespawn)
+        {
+            spawner.EnQueuePosition(originPosition);
+        }
     }
 }
