@@ -13035,19 +13035,6 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 23cd651be4adf8241bfcbae23439d4ae, type: 2}
   enemy:
   - {fileID: 6036340914966094974, guid: 68dd9aad3dedc114ab3dd2d4777bf242, type: 3}
-  enemyMeshes:
-  - {fileID: 4300038, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
-  - {fileID: 4300028, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
-  - {fileID: 4300042, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
-  - {fileID: 4300030, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
-  - {fileID: 4300036, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
-  - {fileID: 4300044, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
-  - {fileID: 4300032, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
-  - {fileID: 4300046, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
-  - {fileID: 4300034, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
-  - {fileID: 4300040, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
-  - {fileID: 4300026, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
-  - {fileID: 4300024, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
 --- !u!4 &2039136163
 Transform:
   m_ObjectHideFlags: 0

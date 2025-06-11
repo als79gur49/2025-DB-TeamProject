@@ -21,9 +21,14 @@ public class PlayerSpawner : EntitySpawner
         {
             //Entity clone = GameObject.Instantiate(enemy[Random.Range(0, enemy.Length)]);
             Player clone = Instantiate(player, Vector3.zero, Quaternion.identity);
-
-            string name = "Test_Player_" + Random.Range(0, 10000);
+        
+            string name = PlayerDataManager.Instance.PlayerName;
+            if(name == "")
+            {
+                name = "Test_Player_" + Random.Range(0, 10000);
+            }
             Debug.Log($"Player Name: {name}");
+
             clone.Setup(new EntityInfo(name, "Test_Image"), new EntityData(1, 100, 10, 1), damagePopupManager, killLogManager, scoreBlockSpawner);
 
             if(skinnedMesh != null || material != null) 
