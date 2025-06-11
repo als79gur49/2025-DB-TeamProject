@@ -54,9 +54,17 @@ public class EntityData
             hp += amount;
         }
     }
+
     public void Levelup()
     {
         level++;
+    }
+
+
+    public void IncreaseMaxHp(float amount)
+    {
+        maxHp += amount;
+        hp += amount;
     }
 
     public void AddScore(int amount)

@@ -10,12 +10,14 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     // event
     public UnityEvent<float, float> onTakeDamage;
     public UnityEvent onDeath;
+
     public UnityEvent<int> onLevelup;
     public UnityEvent<int, int> onAddExperience;
-    // Animation °ü·Ã
+    // Animation ï¿½ï¿½ï¿½ï¿½
+
     protected EntityAnimation animation;
 
-    // data °ü·Ã
+    // data ê´€ë ¨
     private EntityInfo info;
     protected EntityData data;
 
@@ -23,38 +25,37 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     private KillLogManager killLogManager;
     private ScoreBlockSpawner scoreBlockSpawner;
 
-    // ¼ÒÀ¯ ÁßÀÎ ¹«±â ¹× °ø°İ Å¬·¡½º
+    // ì†Œìœ  ì¤‘ì¸ ë¬´ê¸° ë° ê³µê²© í´ë˜ìŠ¤
     private WeaponBase weapon;
     private ProjectileStorage projectileStorage;
     [SerializeField]
-    private List<Projectile> storages; // ÇØ´ç ³»¿ëÀº ÀÓ½Ã·Î Åõ»çÃ¼ ³Ö¾îµĞ °÷ ½ÇÁ¦·Î´Â ¿ÜºÎ¿¡¼­ ·¹º§ ¾÷ µîÀ» ÅëÇØ¼­ projectileStorage¿¡ ³Ö¾îÁÖ±â
+    private List<Projectile> storages; // í•´ë‹¹ ë‚´ìš©ì€ ì„ì‹œë¡œ íˆ¬ì‚¬ì²´ ë„£ì–´ë‘” ê³³ ì‹¤ì œë¡œëŠ” ì™¸ë¶€ì—ì„œ ë ˆë²¨ ì—… ë“±ì„ í†µí•´ì„œ projectileStorageì— ë„£ì–´ì£¼ê¸°
 
-    protected WeaponBase Weapon => weapon;
+    public WeaponBase Weapon=>weapon;
 
-    // ÀÌ¸§, °ø°İ·Â, ½ºÄÚ¾î µî
+    // ì´ë¦„, ê³µê²©ë ¥, ìŠ¤ì½”ì–´ ë“±
     public EntityData Data => data;
     public EntityInfo Info => info;
 
     [SerializeField]
     private Transform damageTextPoint;
     [SerializeField]
-    private Transform firePoint;
-    [SerializeField]
-    private SOWeapon startWeapon;
+    protected Transform firePoint;
 
     [SerializeField]
     private GameObject levelupPrefab;
 
     public bool IsDead { get => data.HP <= 0; }
 
-    // ¸¶Áö¸·À» °ø°İ¹ŞÀº ÀûÀÇ ÀÌ¸§, ¹«±â ÀÌ¸§
+    // ë§ˆì§€ë§‰ì„ ê³µê²©ë°›ì€ ì ì˜ ì´ë¦„, ë¬´ê¸° ì´ë¦„
     private KeyValuePair<Entity, string> lastDamagedInfo;
 
     const int levelupAmount = 1000;
     public int LevelupAmount => levelupAmount;
     public void Setup(EntityInfo info, EntityData data,
-        DamagePopupManager damagePopupManager = null, KillLogManager killLogManager = null, ScoreBlockSpawner scoreBlockSpawner = null)
-    {
+        DamagePopupManager damagePopupManager,
+        KillLogManager killLogManager, ScoreBlockSpawner scoreBlockSpawner)
+    {  
         this.damagePopupManager = damagePopupManager;
         this.killLogManager = killLogManager;
         this.scoreBlockSpawner = scoreBlockSpawner;
@@ -68,17 +69,26 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
 
         onDeath.AddListener(DeathLog); // lastDamagedInfo, KillLogManager 
         onDeath.AddListener(GiveScoreToLastAttacker); // lastDamagedInfo, data
-        onDeath.AddListener(SpawnLevelupBlocks); // Á×À¸¸é °æÇèÄ¡ºí·°µé »ı¼º
+        onDeath.AddListener(SpawnLevelupBlocks); // ì£½ìœ¼ë©´ ê²½í—˜ì¹˜ë¸”ëŸ­ë“¤ ìƒì„±
     }
+
     protected virtual void Setup()
     {
         animation = GetComponent<EntityAnimation>();
 
         weapon = GetComponent<WeaponBase>();
-        weapon.Setup(startWeapon, this, firePoint);
+        weapon.Setup(this, firePoint, weapon.Data);
 
         projectileStorage = GetComponent<ProjectileStorage>();
         projectileStorage.Setup(storages);
+    }
+    protected virtual void Start()
+    {
+        // AI ì—”í‹°í‹°ì¸ ê²½ìš° DBì— ìë™ ë“±ë¡
+        if (this is not Player)
+        {
+            EntityGameManager.AddAIEntity(GetInstanceID(), info.EntityName);
+        }
     }
 
     // IAttack
@@ -92,16 +102,16 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     {
         float prevHp = data.HP;
 
-        // defense Ãß°¡ÇÒ ²¨¸é ·ÎÁ÷ ¼öÁ¤
+        // defense ì¶”ê°€í•  êº¼ë©´ ë¡œì§ ìˆ˜ì •
         data.TakeDamage(amount);
-        Debug.Log($"{enemy.Info.EntityName}°¡ {info.EntityName}¿¡°Ô {weaponName}À¸·Î {amount}¸¸Å­ÀÇ ÇÇÇØ ÀÔÈû");
+        Debug.Log($"{enemy.Info.EntityName}ê°€ {info.EntityName}ì—ê²Œ {weaponName}ìœ¼ë¡œ {amount}ë§Œí¼ì˜ í”¼í•´ ì…í˜");
 
-        // ¸¶Áö¸· °ø°İÇÑ »ó´ëÀÇ Á¤º¸
+        // ë§ˆì§€ë§‰ ê³µê²©í•œ ìƒëŒ€ì˜ ì •ë³´
         lastDamagedInfo = new KeyValuePair<Entity, string>(enemy, weaponName);
 
         damagePopupManager.PrintDamage(Color.black, amount, damageTextPoint.position, 3);
 
-        // hpUI ¼öÁ¤
+        // hpUI ìˆ˜ì •
         onTakeDamage?.Invoke(data.HP, data.MaxHp);
     }
     public void RecoverHP(float amount)
@@ -115,7 +125,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
         onDeath.RemoveAllListeners();
     }
 
-    // Å³·Î±× Ãâ·Â ex) x°¡ y·Î z¸¦ Ã³Ä¡
+    // í‚¬ë¡œê·¸ ì¶œë ¥ ex) xê°€ yë¡œ zë¥¼ ì²˜ì¹˜
     private void DeathLog()
     {
         if (lastDamagedInfo.Key == null || lastDamagedInfo.Value == null)
@@ -127,15 +137,17 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
         killLogManager.AddLog(log);
     }
 
-    // Ã³Ä¡ÇÑ Àû¿¡°Ô Á¡¼ö ºÎ¿©
+    // ì²˜ì¹˜í•œ ì ì—ê²Œ ì ìˆ˜ ë¶€ì—¬
     private void GiveScoreToLastAttacker()
     {
-        if (lastDamagedInfo.Key != null)
+        if(lastDamagedInfo.Key != null)
         {
             lastDamagedInfo.Key.AddScore(100);
+
+            // DBì— ì ìˆ˜ ì¶”ê°€
+            EntityGameManager.OnEntityScoreAddbyName(lastDamagedInfo.Key.info.EntityName, 100);
         }
     }
-
     public void AddScore(int amount)
     {
         int remainExp = data.Score % levelupAmount;
@@ -148,7 +160,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
         for (int i = 0; i < levelupNum; ++i)
         {
             //Do Levelup
-            if (levelupPrefab != null)
+            if(levelupPrefab != null)
             {
                 GameObject clone = Instantiate(levelupPrefab, transform.position, Quaternion.identity);
                 clone.transform.localScale *= 1.5f;
@@ -167,6 +179,11 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     {
         int amount = 3 + data.Score / 1000;
         scoreBlockSpawner.SpawnScoreBlocksByKilling(transform.position, amount);
+    }
+
+    public void ChangeWeapon(WeaponBase weapon)
+    {
+        this.weapon = weapon;
     }
 
 };

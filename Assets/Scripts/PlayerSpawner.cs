@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
-using System.Linq.Expressions;
 
 public class PlayerSpawner : EntitySpawner
 {
@@ -13,12 +12,8 @@ public class PlayerSpawner : EntitySpawner
     private UIController uiController;
     [SerializeField]
     private CinemachineVirtualCamera virtualCamera;
-
     [SerializeField]
-    private PlayerModel currentPlayer;
-    [SerializeField]
-    private GameSessionModel currentSession;
-
+    private SkillIconManager skillIconManager;
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.W))
@@ -37,25 +32,43 @@ public class PlayerSpawner : EntitySpawner
 
             clone.onDeath.AddListener(SampleOnDeath);
 
-            // Á¡¼ö, ·¹º§, Å³ ¼ö º¯°æ
+            // ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½, Å³ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             currentSession.Score = 1500;
             currentSession.Level = 5;
             currentSession.EnemiesKilled = 120;
             GameSessionRepository.UpdateSession(currentSession);
 
+            //clone.Setup(new EntityInfo(name, "Test_Image"), new EntityData(100, 10, 1), damagePopupManager, killLogManager, scoreBlockSpawner, skillIconManager);
+
             if (virtualCamera != null)
             {
                 virtualCamera.Follow = clone.transform;
+            }
+
+            clone.onDeath.AddListener(SampleOnDeath);
+
+            // ì‚¬ìš©ìê°€ ì´ë¦„ì„ ì…ë ¥í•˜ê³  ê²Œì„ ì‹œì‘ ë²„íŠ¼ í´ë¦­ ì‹œ
+            var playerName = clone.Info.EntityName;
+            var currentSession = EntityGameManager.StartNewGame(playerName);
+
+            if (currentSession != null)
+            {
+                Debug.Log($"ê²Œì„ ì‹œì‘! ì„¸ì…˜ ID: {currentSession.SessionID}");
+
+                // í”Œë ˆì´ì–´ GameObject ë§¤í•‘ ë“±ë¡
+                int playerInstanceId = GetInstanceID(); // ì‹¤ì œ GameObject
+                EntityGameManager.RegisterPlayerEntity(playerInstanceId);
             }
         }
     }
 
     /// <summary>
-    /// Å×½ºÆ® (Á×¾úÀ» ¶§ °ÔÀÓ Á¾·á) - ¾ÆÁ÷ È®½ÇÇÑ process ¹Ì±¸Çö
+    /// í…ŒìŠ¤íŠ¸ (ì£½ì—ˆì„ ë•Œ ê²Œì„ ì¢…ë£Œ) - ì•„ì§ í™•ì‹¤í•œ process ë¯¸êµ¬í˜„
     /// </summary>
     private void SampleOnDeath()
     {
         Debug.Log("SampleOnDeath : SampleOnDeath : SampleOnDeath : SampleOnDeath");
-        GameSessionRepository.EndSession(currentSession.SessionID, currentSession.Score, currentSession.Level, currentSession.EnemiesKilled, currentSession.DeathCount);
+        //GameSessionRepository.EndSession(currentSession.SessionID, currentSession.Score, currentSession.Level, currentSession.EnemiesKilled, currentSession.DeathCount);
+        GameSessionManager.OnPlayerDeath();
     }
 }

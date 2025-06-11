@@ -8,6 +8,9 @@ public abstract class WeaponBase : MonoBehaviour, ILevelup
     protected Transform firePoint;
 
     protected SOWeapon data;
+    public SOWeapon Data => data;
+    [SerializeField]
+    private SOWeapon origin_data;
 
     public virtual void Shot(ProjectileStorage storage)
     {
@@ -20,26 +23,33 @@ public abstract class WeaponBase : MonoBehaviour, ILevelup
             }
 
             Projectile clone = Instantiate(projectile.Key, firePoint.position, firePoint.rotation);
-            clone.Setup(owner.gameObject, data.damageMultiplier, data.speedMultiplier, data.rangeMultiplier, data.durationMultiplier,data.attackRateMultiplier, data.sizeMultiplier);
+
+            float levelupAmount = Mathf.Log(data.level + 1); // log2 =1,
+            clone.Setup(owner.gameObject, 
+                Mathf.Round(data.damageMultiplier * levelupAmount), 
+                data.speedMultiplier * levelupAmount, 
+                data.rangeMultiplier * levelupAmount,
+                data.durationMultiplier * levelupAmount,
+                data.attackRateMultiplier * levelupAmount,   
+                data.sizeMultiplier * levelupAmount);
 
             // clone은 사본이기에 원본 projectile 넘기기
             storage.SetTimeCurrent(projectile.Key);
         }
     }
 
-    public virtual void Setup(SOWeapon data, Entity owner, Transform firePoint)
+    public virtual void Setup(Entity owner, Transform firePoint, SOWeapon data = null)
     {
-        this.data = Instantiate(data);
-
         this.owner = owner;
         this.firePoint = firePoint;
+
+        this.data = (data == null) ? Instantiate(origin_data) : Instantiate(data); 
     }
 
-    public bool LevelUp()
+    public void LevelUp()
     {
         Debug.Log($"{data.level} Prev WeaponLevel");
         data.level += 1;
         Debug.Log($"{data.level} After WeaponLevel");
-        return true;
     }
 }

@@ -9,15 +9,24 @@ using UnityEngine;
 public static class PlayerRepository
 {
     /// <summary>
-    /// 새 플레이어 생성
+    /// 새 플레이어 생성 또는 기존 플레이어 조회
     /// </summary>
     public static PlayerModel CreatePlayer(string playerName)
     {
         try
         {
+            //// 기존 플레이어 확인
+            //var existingPlayer = GetPlayerByName(playerName);
+            //if (existingPlayer != null)
+            //{
+            //    Debug.Log($"기존 플레이어 발견: {playerName} (ID: {existingPlayer.PlayerID})");
+            //    return existingPlayer;
+            //}
+
+            // 새 플레이어 생성
             string query = @"
                 INSERT INTO Players (PlayerName, CreatedAt, LastPlayedAt)
-                VALUES (@playerName, datetime('now', '+9 hours'), datetime('now', '+9 hours'))
+                VALUES (@playerName, datetime('now'), datetime('now'))
             ";
 
             DatabaseManager.ExecuteNonQuery(query, ("@playerName", playerName));
@@ -27,6 +36,7 @@ public static class PlayerRepository
 
             if (playerId != null)
             {
+                Debug.Log($"새 플레이어 생성: {playerName} (ID: {(int)(long)playerId})");
                 return GetPlayerById((int)(long)playerId);
             }
 
@@ -40,6 +50,47 @@ public static class PlayerRepository
     }
 
     /// <summary>
+    /// 플레이어 이름으로 조회
+    /// </summary>
+    public static PlayerModel GetPlayerByName(string playerName)
+    {
+        try
+        {
+            string query = @"
+                SELECT PlayerID, PlayerName, HighestScore, TotalPlayTime, TotalGames, CreatedAt, LastPlayedAt
+                FROM Players
+                WHERE PlayerName = @playerName
+                ORDER BY LastPlayedAt DESC
+                LIMIT 1
+            ";
+
+            using (var reader = DatabaseManager.ExecuteReader(query, ("@playerName", playerName)))
+            {
+                if (reader.Read())
+                {
+                    return new PlayerModel
+                    {
+                        PlayerID = (int)(long)reader["PlayerID"],
+                        PlayerName = reader["PlayerName"].ToString(),
+                        HighestScore = (int)(long)reader["HighestScore"],
+                        TotalPlayTime = (int)(long)reader["TotalPlayTime"],
+                        TotalGames = (int)(long)reader["TotalGames"],
+                        CreatedAt = DatabaseManager.ConvertUtcToLocal(DateTime.Parse(reader["CreatedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeUniversal)),
+                        LastPlayedAt = DatabaseManager.ConvertUtcToLocal(DateTime.Parse(reader["LastPlayedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeUniversal))
+                    };
+                }
+            }
+
+            return null;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"플레이어 이름 조회 오류: {ex.Message}");
+            return null;
+        }
+    }
+
+    /// <summary>
     /// PlayerID로 플레이어 조회
     /// </summary>
     public static PlayerModel GetPlayerById(int playerId)
@@ -47,8 +98,7 @@ public static class PlayerRepository
         try
         {
             string query = @"
-                SELECT PlayerID, PlayerName, CurrentLevel, CurrentExp, ExpToNextLevel,
-                       HighestScore, TotalPlayTime, CreatedAt, LastPlayedAt
+                SELECT PlayerID, PlayerName, HighestScore, TotalPlayTime, TotalGames, CreatedAt, LastPlayedAt
                 FROM Players
                 WHERE PlayerID = @playerId
             ";
@@ -61,13 +111,11 @@ public static class PlayerRepository
                     {
                         PlayerID = (int)(long)reader["PlayerID"],
                         PlayerName = reader["PlayerName"].ToString(),
-                        CurrentLevel = (int)(long)reader["CurrentLevel"],
-                        CurrentExp = (int)(long)reader["CurrentExp"],
-                        ExpToNextLevel = (int)(long)reader["ExpToNextLevel"],
                         HighestScore = (int)(long)reader["HighestScore"],
                         TotalPlayTime = (int)(long)reader["TotalPlayTime"],
-                        CreatedAt = DateTime.Parse(reader["CreatedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal),
-                        LastPlayedAt = DateTime.Parse(reader["LastPlayedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal)
+                        TotalGames = (int)(long)reader["TotalGames"],
+                        CreatedAt = DatabaseManager.ConvertUtcToLocal(DateTime.Parse(reader["CreatedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeUniversal)),
+                        LastPlayedAt = DatabaseManager.ConvertUtcToLocal(DateTime.Parse(reader["LastPlayedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeUniversal))
                     };
                 }
             }
@@ -77,10 +125,10 @@ public static class PlayerRepository
         catch (Exception ex)
         {
             Debug.LogError($"플레이어 조회 오류: {ex.Message}");
+            Debug.LogError($"스택 트레이스: {ex.StackTrace}");
             return null;
         }
     }
-
     /// <summary>
     /// 플레이어 정보 업데이트
     /// </summary>
@@ -90,21 +138,17 @@ public static class PlayerRepository
         {
             string query = @"
                 UPDATE Players SET
-                    CurrentLevel = @currentLevel,
-                    CurrentExp = @currentExp,
-                    ExpToNextLevel = @expToNextLevel,
                     HighestScore = @highestScore,
                     TotalPlayTime = @totalPlayTime,
-                    LastPlayedAt = datetime('now', '+9 hours')
+                    TotalGames = @totalGames,
+                    LastPlayedAt = datetime('now')
                 WHERE PlayerID = @playerId
             ";
 
             int rowsAffected = DatabaseManager.ExecuteNonQuery(query,
-                ("@currentLevel", player.CurrentLevel),
-                ("@currentExp", player.CurrentExp),
-                ("@expToNextLevel", player.ExpToNextLevel),
                 ("@highestScore", player.HighestScore),
                 ("@totalPlayTime", player.TotalPlayTime),
+                ("@totalGames", player.TotalGames),
                 ("@playerId", player.PlayerID));
 
             return rowsAffected > 0;
@@ -126,7 +170,7 @@ public static class PlayerRepository
             string query = @"
                 UPDATE Players SET
                     HighestScore = @newScore,
-                    LastPlayedAt = datetime('now', '+9 hours')
+                    LastPlayedAt = datetime('now')
                 WHERE PlayerID = @playerId AND HighestScore < @newScore
             ";
 
@@ -134,11 +178,44 @@ public static class PlayerRepository
                 ("@newScore", newScore),
                 ("@playerId", playerId));
 
+            if (rowsAffected > 0)
+            {
+                Debug.Log($"플레이어 {playerId}의 최고 점수가 {newScore}로 업데이트되었습니다.");
+            }
+
             return rowsAffected > 0;
         }
         catch (Exception ex)
         {
             Debug.LogError($"최고 점수 업데이트 오류: {ex.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// 플레이어의 게임 통계 업데이트 (게임 횟수 및 플레이 시간 증가)
+    /// </summary>
+    public static bool UpdateGameStats(int playerId, int playTimeSeconds)
+    {
+        try
+        {
+            string query = @"
+                UPDATE Players SET
+                    TotalGames = TotalGames + 1,
+                    TotalPlayTime = TotalPlayTime + @playTimeSeconds,
+                    LastPlayedAt = datetime('now')
+                WHERE PlayerID = @playerId
+            ";
+
+            int rowsAffected = DatabaseManager.ExecuteNonQuery(query,
+                ("@playTimeSeconds", playTimeSeconds),
+                ("@playerId", playerId));
+
+            return rowsAffected > 0;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"게임 통계 업데이트 오류: {ex.Message}");
             return false;
         }
     }
@@ -153,8 +230,7 @@ public static class PlayerRepository
         try
         {
             string query = @"
-                SELECT PlayerID, PlayerName, CurrentLevel, CurrentExp, ExpToNextLevel,
-                       HighestScore, TotalPlayTime, CreatedAt, LastPlayedAt
+                SELECT PlayerID, PlayerName, HighestScore, TotalPlayTime, TotalGames, CreatedAt, LastPlayedAt
                 FROM Players
                 ORDER BY LastPlayedAt DESC
                 LIMIT @limit
@@ -168,13 +244,11 @@ public static class PlayerRepository
                     {
                         PlayerID = (int)(long)reader["PlayerID"],
                         PlayerName = reader["PlayerName"].ToString(),
-                        CurrentLevel = (int)(long)reader["CurrentLevel"],
-                        CurrentExp = (int)(long)reader["CurrentExp"],
-                        ExpToNextLevel = (int)(long)reader["ExpToNextLevel"],
                         HighestScore = (int)(long)reader["HighestScore"],
                         TotalPlayTime = (int)(long)reader["TotalPlayTime"],
-                        CreatedAt = DateTime.Parse(reader["CreatedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal),
-                        LastPlayedAt = DateTime.Parse(reader["LastPlayedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeLocal)
+                        TotalGames = (int)(long)reader["TotalGames"],
+                        CreatedAt = DatabaseManager.ConvertUtcToLocal(DateTime.Parse(reader["CreatedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeUniversal)),
+                        LastPlayedAt = DatabaseManager.ConvertUtcToLocal(DateTime.Parse(reader["LastPlayedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeUniversal))
                     });
                 }
             }

@@ -17,8 +17,9 @@ public class Enemy : Entity
     public void Setup(
         EntityInfo info,
         EntityData data,
-        MemoryPool<Enemy> memoryPool = null,
-        DamagePopupManager damagePopupManager = null, KillLogManager killLogManager = null, ScoreBlockSpawner scoreBlockSpawner = null)
+        MemoryPool<Enemy> memoryPool,
+        DamagePopupManager damagePopupManager, KillLogManager killLogManager,
+        ScoreBlockSpawner scoreBlockSpawner)
     {
         Setup(info, data, damagePopupManager, killLogManager, scoreBlockSpawner);
         this.memoryPool = memoryPool;
@@ -45,7 +46,7 @@ public class Enemy : Entity
     private void Update()
     {
         brain.Execute(input);
-        if (Input.GetKeyDown(KeyCode.E))
+        if(Input.GetKeyDown(KeyCode.E))
         {
             AddScore(1000);
         }

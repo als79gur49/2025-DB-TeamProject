@@ -1,68 +1,85 @@
-using Mono.Data.Sqlite;
 using System;
 using System.Data;
-using System.IO;
 using UnityEngine;
+using Mono.Data.Sqlite;
+using System.IO;
 
 /// <summary>
-/// SQLite 데이터베이스 연결 및 기본 관리를 담당하는 클래스
+/// SQLite 데이터베이스 연결 및 기본 CRUD 작업 관리 (각 엔티티 개별 점수 지원)
+/// UTC 시간으로 통일 처리
 /// </summary>
 public static class DatabaseManager
 {
-    private static IDbConnection connection;
-    private static string dbPath;
-
-    // 현재 데이터베이스 버전
-    private const int CURRENT_DB_VERSION = 2;
+    private static SqliteConnection connection;
+    private static string connectionString;
+    private const int DATABASE_VERSION = 3;
 
     /// <summary>
-    /// 데이터베이스 초기화
+    /// 데이터베이스 초기화 및 연결
     /// </summary>
     public static void Initialize()
     {
-        // StreamingAssets 폴더에 데이터베이스 파일 위치 설정
-        dbPath = Path.Combine(Application.streamingAssetsPath, "GameDB.db");
-
-        bool isNewDatabase = !File.Exists(dbPath);
-        bool needsReset = false;
-
-        // 연결이 없거나 닫혀있으면 새로 연결
-        if (connection == null || connection.State != ConnectionState.Open)
+        try
         {
-            connection = new SqliteConnection("URI=file:" + dbPath);
-            connection.Open();
+            string dbPath = Path.Combine(Application.persistentDataPath, "gamedata.db");
+            connectionString = $"URI=file:{dbPath},version=3";
 
-            if (!isNewDatabase)
+            Debug.Log($"데이터베이스 경로: {dbPath}");
+
+            // 연결 생성 및 테스트
+            GetConnection();
+
+            // 테이블 생성
+            CreateTables();
+
+            // 뷰 생성
+            CreateViews();
+
+            Debug.Log("데이터베이스 초기화 성공");
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"데이터베이스 초기화 실패: {ex.Message}");
+            Debug.LogError($"스택 트레이스: {ex.StackTrace}");
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// 데이터베이스 연결 반환 (자동 재연결)
+    /// </summary>
+    private static SqliteConnection GetConnection()
+    {
+        try
+        {
+            if (connection == null || connection.State != ConnectionState.Open)
             {
-                // 기존 데이터베이스가 있으면 버전 체크
-                int currentVersion = GetDatabaseVersion();
-                if (currentVersion != CURRENT_DB_VERSION)
+                if (connection != null)
                 {
-                    Debug.Log($"데이터베이스 버전이 다릅니다. 현재: {currentVersion}, 필요: {CURRENT_DB_VERSION}");
-                    needsReset = true;
-                }
-            }
-
-            if (isNewDatabase || needsReset)
-            {
-                if (needsReset)
-                {
-                    Debug.Log("데이터베이스를 초기화합니다...");
-                    ResetDatabase();
+                    connection.Close();
+                    connection.Dispose();
                 }
 
-                // 테이블 생성
-                CreateTables();
+                connection = new SqliteConnection(connectionString);
+                connection.Open();
 
-                // 버전 정보 설정
-                SetDatabaseVersion(CURRENT_DB_VERSION);
+                // 외래 키 제약조건 활성화
+                ExecuteNonQuery("PRAGMA foreign_keys = ON");
 
-                Debug.Log($"데이터베이스가 성공적으로 {(isNewDatabase ? "생성" : "초기화")}되었습니다 (버전: {CURRENT_DB_VERSION})");
+                // 성능 최적화 설정 개선
+                ExecuteNonQuery("PRAGMA journal_mode = WAL");
+                ExecuteNonQuery("PRAGMA synchronous = NORMAL");
+                ExecuteNonQuery("PRAGMA cache_size = 10000");  // 메모리 캐시 크기 증가
+                ExecuteNonQuery("PRAGMA temp_store = memory"); // 임시 데이터를 메모리에 저장
+                ExecuteNonQuery("PRAGMA mmap_size = 268435456"); // 메모리 맵 크기 설정 (256MB)
             }
-            else
-            {
-                Debug.Log($"기존 데이터베이스를 사용합니다 (버전: {CURRENT_DB_VERSION})");
-            }
+
+            return connection;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"데이터베이스 연결 실패: {ex.Message}");
+            throw;
         }
     }
 
@@ -71,175 +88,113 @@ public static class DatabaseManager
     /// </summary>
     public static void Close()
     {
-        if (connection != null && connection.State == ConnectionState.Open)
+        try
         {
-            connection.Close();
-            connection = null;
-            Debug.Log("데이터베이스 연결이 종료되었습니다");
+            if (connection != null)
+            {
+                if (connection.State == ConnectionState.Open)
+                {
+                    connection.Close();
+                }
+                connection.Dispose();
+                connection = null;
+                Debug.Log("데이터베이스 연결이 안전하게 종료되었습니다");
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"데이터베이스 종료 오류: {ex.Message}");
         }
     }
 
     /// <summary>
-    /// 데이터베이스 연결 객체 반환
-    /// </summary>
-    public static IDbConnection GetConnection()
-    {
-        if (connection == null || connection.State != ConnectionState.Open)
-        {
-            Initialize();
-        }
-        return connection;
-    }
-
-    /// <summary>
-    /// 필요한 테이블들을 생성
+    /// 각 엔티티 개별 점수 지원 테이블들을 생성
     /// </summary>
     private static void CreateTables()
     {
-        // 플레이어 기본 정보 테이블
+        // 플레이어 기본 정보 테이블 (UTC 시간 사용)
         ExecuteNonQuery(@"
             CREATE TABLE IF NOT EXISTS Players (
                 PlayerID INTEGER PRIMARY KEY AUTOINCREMENT,
                 PlayerName VARCHAR(100) NOT NULL,
-                CurrentLevel INTEGER DEFAULT 1,
-                CurrentExp INTEGER DEFAULT 0,
-                ExpToNextLevel INTEGER DEFAULT 100,
                 HighestScore INTEGER DEFAULT 0,
                 TotalPlayTime INTEGER DEFAULT 0,
-                CreatedAt DATETIME DEFAULT (datetime('now', '+9 hours')),
-                LastPlayedAt DATETIME DEFAULT (datetime('now', '+9 hours'))
+                TotalGames INTEGER DEFAULT 0,
+                CreatedAt DATETIME DEFAULT (datetime('now')),
+                LastPlayedAt DATETIME DEFAULT (datetime('now'))
             )
         ");
 
-        // 게임 세션 기록 테이블
+        // 모든 엔티티 정보 테이블 (Player + AI Enemy)
         ExecuteNonQuery(@"
-            CREATE TABLE IF NOT EXISTS GameSessions (
-                SessionID INTEGER PRIMARY KEY AUTOINCREMENT,
-                PlayerID INTEGER NOT NULL,
-                Score INTEGER NOT NULL DEFAULT 0,
-                Level INTEGER NOT NULL DEFAULT 1,
-                EnemiesKilled INTEGER DEFAULT 0,
-                DeathCount INTEGER DEFAULT 0,
-                StartedAt DATETIME DEFAULT (datetime('now', '+9 hours')),
-                EndedAt DATETIME,
-                PlayTime INTEGER,
+            CREATE TABLE IF NOT EXISTS Entities (
+                EntityID INTEGER PRIMARY KEY AUTOINCREMENT,
+                EntityName VARCHAR(100) NOT NULL,
+                EntityType VARCHAR(20) NOT NULL,
+                PlayerID INTEGER NULL,
+                CreatedAt DATETIME DEFAULT (datetime('now')),
                 FOREIGN KEY (PlayerID) REFERENCES Players(PlayerID) ON DELETE CASCADE
             )
         ");
 
-        // 발사체 정보 테이블
+        // EntityType 체크 제약조건을 별도로 추가 (SQLite 호환성)
+        try
+        {
+            ExecuteNonQuery("CREATE INDEX IF NOT EXISTS idx_entities_type_check ON Entities(EntityType) WHERE EntityType IN ('Player', 'AI')");
+        }
+        catch
+        {
+            Debug.Log("EntityType 인덱스 생성 건너뜀 (구버전 SQLite)");
+        }
+
+        // 게임 세션 기본 정보 테이블 (UTC 시간 사용)
         ExecuteNonQuery(@"
-            CREATE TABLE IF NOT EXISTS Projectiles (
-                ProjectileID INTEGER PRIMARY KEY AUTOINCREMENT,
-                ProjectileName VARCHAR(100) NOT NULL,
-                BaseDamage REAL NOT NULL,
-                BaseSpeed REAL NOT NULL,
-                BaseRange REAL NOT NULL,
-                BaseDuration REAL NOT NULL,
-                BaseAttackRate REAL NOT NULL,
-                BaseSize REAL NOT NULL,
-                ProjectileType VARCHAR(50),
-                EffectDescription TEXT
+            CREATE TABLE IF NOT EXISTS GameSessions (
+                SessionID INTEGER PRIMARY KEY AUTOINCREMENT,
+                TotalEntities INTEGER DEFAULT 0,
+                PlayTimeSeconds INTEGER DEFAULT 0,
+                StartedAt DATETIME DEFAULT (datetime('now')),
+                EndedAt DATETIME NULL,
+                IsCompleted BOOLEAN DEFAULT FALSE
             )
         ");
 
-        // 무기 정보 테이블
+        // 세션 내 모든 엔티티 개별 점수 기록 테이블
         ExecuteNonQuery(@"
-            CREATE TABLE IF NOT EXISTS Weapons (
-                WeaponID INTEGER PRIMARY KEY AUTOINCREMENT,
-                WeaponName VARCHAR(100) NOT NULL,
-                BaseProjectileID INTEGER,
-                DamageMultiplier REAL DEFAULT 1.0,
-                SpeedMultiplier REAL DEFAULT 1.0,
-                RangeMultiplier REAL DEFAULT 1.0,
-                DurationMultiplier REAL DEFAULT 1.0,
-                AttackRateMultiplier REAL DEFAULT 1.0,
-                SizeMultiplier REAL DEFAULT 1.0,
-                UnlockLevel INTEGER DEFAULT 1,
-                WeaponDescription TEXT,
-                FOREIGN KEY (BaseProjectileID) REFERENCES Projectiles(ProjectileID)
-            )
-        ");
-
-        // 스킬 정보 테이블
-        ExecuteNonQuery(@"
-            CREATE TABLE IF NOT EXISTS Skills (
-                SkillID INTEGER PRIMARY KEY AUTOINCREMENT,
-                SkillName VARCHAR(100) NOT NULL,
-                MaxLevel INTEGER DEFAULT 5,
-                SkillDescription TEXT,
-                SkillType VARCHAR(50),
-                UnlockLevel INTEGER DEFAULT 1,
-                UpgradeCost INTEGER DEFAULT 1
-            )
-        ");
-
-        // 스킬 레벨별 효과 테이블
-        ExecuteNonQuery(@"
-            CREATE TABLE IF NOT EXISTS SkillEffects (
-                EffectID INTEGER PRIMARY KEY AUTOINCREMENT,
-                SkillID INTEGER NOT NULL,
-                SkillLevel INTEGER NOT NULL,
-                EffectType VARCHAR(50),
-                EffectValue REAL NOT NULL,
-                EffectDescription TEXT,
-                FOREIGN KEY (SkillID) REFERENCES Skills(SkillID) ON DELETE CASCADE,
-                UNIQUE(SkillID, SkillLevel, EffectType)
-            )
-        ");
-
-        // 게임 세션 중 스킬 선택 기록 테이블
-        ExecuteNonQuery(@"
-            CREATE TABLE IF NOT EXISTS SessionSkillChoices (
-                ChoiceID INTEGER PRIMARY KEY AUTOINCREMENT,
+            CREATE TABLE IF NOT EXISTS SessionEntities (
+                SessionEntityID INTEGER PRIMARY KEY AUTOINCREMENT,
                 SessionID INTEGER NOT NULL,
-                SkillID INTEGER NOT NULL,
-                ChoiceOrder INTEGER NOT NULL,
-                PlayerLevel INTEGER NOT NULL,
-                ChosenAt DATETIME DEFAULT (datetime('now', '+9 hours')),
+                EntityID INTEGER NOT NULL,
+                EntityName VARCHAR(100) NOT NULL,
+                EntityType VARCHAR(20) NOT NULL,
+                Score INTEGER NOT NULL DEFAULT 0,
+                Level INTEGER NOT NULL DEFAULT 1,
+                EnemiesKilled INTEGER DEFAULT 0,
+                IsAlive BOOLEAN DEFAULT TRUE,
+                FinalRank INTEGER NULL,
+                JoinedAt DATETIME DEFAULT (datetime('now')),
+                DiedAt DATETIME NULL,
                 FOREIGN KEY (SessionID) REFERENCES GameSessions(SessionID) ON DELETE CASCADE,
-                FOREIGN KEY (SkillID) REFERENCES Skills(SkillID) ON DELETE CASCADE,
-                UNIQUE(SessionID, ChoiceOrder)
+                FOREIGN KEY (EntityID) REFERENCES Entities(EntityID) ON DELETE CASCADE,
+                UNIQUE(SessionID, EntityID)
             )
         ");
 
-        // 플레이어가 보유한 스킬 테이블
+        // 실시간 랭킹용 뷰 테이블 (진행중인 세션의 엔티티들)
         ExecuteNonQuery(@"
-            CREATE TABLE IF NOT EXISTS PlayerSkills (
-                PlayerID INTEGER NOT NULL,
-                SkillID INTEGER NOT NULL,
-                CurrentLevel INTEGER DEFAULT 1,
-                AcquiredAt DATETIME DEFAULT (datetime('now', '+9 hours')),
-                PRIMARY KEY (PlayerID, SkillID),
-                FOREIGN KEY (PlayerID) REFERENCES Players(PlayerID) ON DELETE CASCADE,
-                FOREIGN KEY (SkillID) REFERENCES Skills(SkillID) ON DELETE CASCADE
-            )
-        ");
-
-        // 플레이어 무기 보유 테이블
-        ExecuteNonQuery(@"
-            CREATE TABLE IF NOT EXISTS PlayerWeapons (
-                PlayerID INTEGER NOT NULL,
-                WeaponID INTEGER NOT NULL,
-                IsEquipped BOOLEAN DEFAULT FALSE,
-                WeaponLevel INTEGER DEFAULT 1,
-                UnlockedAt DATETIME DEFAULT (datetime('now', '+9 hours')),
-                PRIMARY KEY (PlayerID, WeaponID),
-                FOREIGN KEY (PlayerID) REFERENCES Players(PlayerID) ON DELETE CASCADE,
-                FOREIGN KEY (WeaponID) REFERENCES Weapons(WeaponID) ON DELETE CASCADE
-            )
-        ");
-
-        // 플레이어 발사체 보유 테이블
-        ExecuteNonQuery(@"
-            CREATE TABLE IF NOT EXISTS PlayerProjectiles (
-                PlayerID INTEGER NOT NULL,
-                ProjectileID INTEGER NOT NULL,
-                IsActive BOOLEAN DEFAULT FALSE,
-                UnlockedAt DATETIME DEFAULT (datetime('now', '+9 hours')),
-                PRIMARY KEY (PlayerID, ProjectileID),
-                FOREIGN KEY (PlayerID) REFERENCES Players(PlayerID) ON DELETE CASCADE,
-                FOREIGN KEY (ProjectileID) REFERENCES Projectiles(ProjectileID) ON DELETE CASCADE
+            CREATE TABLE IF NOT EXISTS SessionRanking (
+                RankingID INTEGER PRIMARY KEY AUTOINCREMENT,
+                SessionID INTEGER NOT NULL,
+                EntityID INTEGER NOT NULL,
+                EntityName VARCHAR(100) NOT NULL,
+                EntityType VARCHAR(20) NOT NULL,
+                CurrentScore INTEGER NOT NULL DEFAULT 0,
+                CurrentLevel INTEGER NOT NULL DEFAULT 1,
+                IsActive BOOLEAN DEFAULT TRUE,
+                LastUpdated DATETIME DEFAULT (datetime('now')),
+                FOREIGN KEY (SessionID) REFERENCES GameSessions(SessionID) ON DELETE CASCADE,
+                FOREIGN KEY (EntityID) REFERENCES Entities(EntityID) ON DELETE CASCADE,
+                UNIQUE(SessionID, EntityID)
             )
         ");
 
@@ -249,7 +204,7 @@ public static class DatabaseManager
         // 뷰 생성
         CreateViews();
 
-        Debug.Log("모든 데이터베이스 테이블이 성공적으로 생성되었습니다");
+        Debug.Log("각 엔티티 개별 점수 시스템 테이블 생성 완료");
     }
 
     /// <summary>
@@ -257,14 +212,33 @@ public static class DatabaseManager
     /// </summary>
     private static void CreateIndexes()
     {
-        ExecuteNonQuery("CREATE INDEX IF NOT EXISTS idx_players_name ON Players(PlayerName)");
-        ExecuteNonQuery("CREATE INDEX IF NOT EXISTS idx_gamesessions_playerid ON GameSessions(PlayerID)");
-        ExecuteNonQuery("CREATE INDEX IF NOT EXISTS idx_gamesessions_score ON GameSessions(Score DESC)");
-        ExecuteNonQuery("CREATE INDEX IF NOT EXISTS idx_gamesessions_dates ON GameSessions(StartedAt, EndedAt)");
-        ExecuteNonQuery("CREATE INDEX IF NOT EXISTS idx_sessionskillchoices_sessionid ON SessionSkillChoices(SessionID)");
-        ExecuteNonQuery("CREATE INDEX IF NOT EXISTS idx_sessionskillchoices_choiceorder ON SessionSkillChoices(SessionID, ChoiceOrder)");
-        ExecuteNonQuery("CREATE INDEX IF NOT EXISTS idx_playerskills_playerid ON PlayerSkills(PlayerID)");
-        ExecuteNonQuery("CREATE INDEX IF NOT EXISTS idx_playerweapons_playerid ON PlayerWeapons(PlayerID)");
+        // Players 테이블 인덱스
+        ExecuteNonQuery("CREATE INDEX IF NOT EXISTS idx_players_score ON Players(HighestScore DESC)");
+        ExecuteNonQuery("CREATE INDEX IF NOT EXISTS idx_players_lastplayed ON Players(LastPlayedAt DESC)");
+        ExecuteNonQuery("CREATE INDEX IF NOT EXISTS idx_players_name ON Players(PlayerName)"); // 이름으로 검색 최적화
+
+        // Entities 테이블 인덱스
+        ExecuteNonQuery("CREATE INDEX IF NOT EXISTS idx_entities_type ON Entities(EntityType)");
+        ExecuteNonQuery("CREATE INDEX IF NOT EXISTS idx_entities_player ON Entities(PlayerID)");
+        ExecuteNonQuery("CREATE INDEX IF NOT EXISTS idx_entities_name_type ON Entities(EntityName, EntityType)"); // 복합 인덱스
+
+        // GameSessions 테이블 인덱스
+        ExecuteNonQuery("CREATE INDEX IF NOT EXISTS idx_sessions_completed ON GameSessions(IsCompleted)");
+        ExecuteNonQuery("CREATE INDEX IF NOT EXISTS idx_sessions_started ON GameSessions(StartedAt DESC)");
+        ExecuteNonQuery("CREATE INDEX IF NOT EXISTS idx_sessions_entities_time ON GameSessions(TotalEntities, PlayTimeSeconds)"); // 성능 분석용
+
+        // SessionEntities 테이블 인덱스
+        ExecuteNonQuery("CREATE INDEX IF NOT EXISTS idx_sessionentities_session ON SessionEntities(SessionID)");
+        ExecuteNonQuery("CREATE INDEX IF NOT EXISTS idx_sessionentities_entity ON SessionEntities(EntityID)");
+        ExecuteNonQuery("CREATE INDEX IF NOT EXISTS idx_sessionentities_score ON SessionEntities(Score DESC)");
+        ExecuteNonQuery("CREATE INDEX IF NOT EXISTS idx_sessionentities_alive ON SessionEntities(IsAlive)");
+        ExecuteNonQuery("CREATE INDEX IF NOT EXISTS idx_sessionentities_rank ON SessionEntities(SessionID, FinalRank)"); // 순위 조회 최적화
+
+        // SessionRanking 테이블 인덱스
+        ExecuteNonQuery("CREATE INDEX IF NOT EXISTS idx_sessionranking_score ON SessionRanking(CurrentScore DESC)");
+        ExecuteNonQuery("CREATE INDEX IF NOT EXISTS idx_sessionranking_active ON SessionRanking(IsActive, CurrentScore DESC)");
+        ExecuteNonQuery("CREATE INDEX IF NOT EXISTS idx_sessionranking_session ON SessionRanking(SessionID)");
+        ExecuteNonQuery("CREATE INDEX IF NOT EXISTS idx_sessionranking_updated ON SessionRanking(LastUpdated DESC)"); // 최근 업데이트 순 조회
     }
 
     /// <summary>
@@ -272,43 +246,79 @@ public static class DatabaseManager
     /// </summary>
     private static void CreateViews()
     {
-        // 랭킹 뷰
+        // 전체 엔티티 랭킹 뷰 (완료된 게임의 모든 엔티티)
         ExecuteNonQuery(@"
-            CREATE VIEW IF NOT EXISTS RankingView AS
-            SELECT 
-                gs.PlayerID,
-                p.PlayerName,
-                gs.Score,
-                gs.Level,
-                gs.PlayTime,
+            CREATE VIEW IF NOT EXISTS AllTimeRanking AS
+            SELECT
+                se.EntityID,
+                se.EntityName,
+                se.EntityType,
+                se.Score,
+                se.Level,
+                gs.PlayTimeSeconds,
                 gs.StartedAt,
                 gs.EndedAt,
-                ROW_NUMBER() OVER (ORDER BY gs.Score DESC, gs.EndedAt ASC) as Rank
-            FROM GameSessions gs
-            JOIN Players p ON gs.PlayerID = p.PlayerID
-            WHERE gs.EndedAt IS NOT NULL
-            ORDER BY gs.Score DESC
+                ROW_NUMBER() OVER (ORDER BY se.Score DESC, gs.EndedAt ASC) as Rank
+            FROM SessionEntities se
+            JOIN GameSessions gs ON se.SessionID = gs.SessionID
+            WHERE gs.IsCompleted = TRUE
+            ORDER BY se.Score DESC
         ");
 
-        // 세션별 스킬 선택 순서 조회 뷰
+        // 플레이어별 최고 기록 랭킹 뷰
         ExecuteNonQuery(@"
-            CREATE VIEW IF NOT EXISTS SessionSkillChoicesView AS
-            SELECT 
-                ssc.SessionID,
-                ssc.ChoiceOrder,
-                s.SkillName,
-                s.SkillType,
-                ssc.PlayerLevel,
-                ssc.ChosenAt,
-                gs.PlayerID,
-                p.PlayerName
-            FROM SessionSkillChoices ssc
-            JOIN Skills s ON ssc.SkillID = s.SkillID
-            JOIN GameSessions gs ON ssc.SessionID = gs.SessionID
-            JOIN Players p ON gs.PlayerID = p.PlayerID
-            ORDER BY ssc.SessionID, ssc.ChoiceOrder
+            CREATE VIEW IF NOT EXISTS PlayerBestRanking AS
+            SELECT
+                p.PlayerID,
+                p.PlayerName,
+                p.HighestScore,
+                p.TotalGames,
+                p.TotalPlayTime,
+                ROW_NUMBER() OVER (ORDER BY p.HighestScore DESC, p.LastPlayedAt ASC) as Rank
+            FROM Players p
+            WHERE p.HighestScore > 0
+            ORDER BY p.HighestScore DESC
+        ");
+
+        // 실시간 랭킹 뷰 (진행중인 세션의 모든 엔티티)
+        ExecuteNonQuery(@"
+            CREATE VIEW IF NOT EXISTS LiveRanking AS
+            SELECT
+                sr.EntityID,
+                sr.EntityName,
+                sr.EntityType,
+                sr.CurrentScore,
+                sr.CurrentLevel,
+                sr.IsActive,
+                sr.LastUpdated,
+                ROW_NUMBER() OVER (ORDER BY sr.CurrentScore DESC, sr.LastUpdated ASC) as Rank
+            FROM SessionRanking sr
+            WHERE sr.IsActive = TRUE
+            ORDER BY sr.CurrentScore DESC
+        ");
+
+        // 세션별 엔티티 최종 순위 뷰
+        ExecuteNonQuery(@"
+            CREATE VIEW IF NOT EXISTS SessionFinalRanking AS
+            SELECT
+                se.SessionID,
+                se.EntityID,
+                se.EntityName,
+                se.EntityType,
+                se.Score,
+                se.Level,
+                se.EnemiesKilled,
+                se.IsAlive,
+                se.FinalRank,
+                gs.EndedAt,
+                ROW_NUMBER() OVER (PARTITION BY se.SessionID ORDER BY se.Score DESC) as CalculatedRank
+            FROM SessionEntities se
+            JOIN GameSessions gs ON se.SessionID = gs.SessionID
+            WHERE gs.IsCompleted = TRUE
+            ORDER BY se.SessionID DESC, se.Score DESC
         ");
     }
+
 
     /// <summary>
     /// SELECT 쿼리 실행 후 DataReader 반환
@@ -331,7 +341,7 @@ public static class DatabaseManager
     }
 
     /// <summary>
-    /// INSERT, UPDATE, DELETE 등의 쿼리 실행
+    /// INSERT/UPDATE/DELETE 쿼리 실행
     /// </summary>
     public static int ExecuteNonQuery(string query, params (string name, object value)[] parameters)
     {
@@ -353,7 +363,7 @@ public static class DatabaseManager
     }
 
     /// <summary>
-    /// 단일 값 반환하는 쿼리 실행
+    /// 단일 값 반환 쿼리 실행 (COUNT, MAX 등)
     /// </summary>
     public static object ExecuteScalar(string query, params (string name, object value)[] parameters)
     {
@@ -375,113 +385,78 @@ public static class DatabaseManager
     }
 
     /// <summary>
-    /// 데이터베이스 버전 정보를 가져옵니다
+    /// UTC 시간을 로컬 시간으로 변환
     /// </summary>
-    private static int GetDatabaseVersion()
+    public static DateTime ConvertUtcToLocal(DateTime utcTime)
+    {
+        return utcTime.Kind == DateTimeKind.Utc ? utcTime.ToLocalTime() : utcTime;
+    }
+
+    /// <summary>
+    /// 로컬 시간을 UTC 시간으로 변환
+    /// </summary>
+    public static DateTime ConvertLocalToUtc(DateTime localTime)
+    {
+        return localTime.Kind == DateTimeKind.Local ? localTime.ToUniversalTime() : localTime;
+    }
+
+    /// <summary>
+    /// 데이터베이스 버전 조회
+    /// </summary>
+    public static int GetCurrentDatabaseVersion()
+    {
+        return DATABASE_VERSION;
+    }
+
+    /// <summary>
+    /// 트랜잭션 시작
+    /// </summary>
+    public static SqliteTransaction BeginTransaction()
+    {
+        return GetConnection().BeginTransaction();
+    }
+
+    /// <summary>
+    /// 데이터베이스 연결 상태 확인
+    /// </summary>
+    public static bool IsConnected()
+    {
+        return connection != null && connection.State == ConnectionState.Open;
+    }
+
+    /// <summary>
+    /// 데이터베이스 파일 크기 조회 (바이트)
+    /// </summary>
+    public static long GetDatabaseSize()
     {
         try
         {
-            // 버전 테이블이 있는지 확인
-            var result = ExecuteScalar(@"
-                SELECT name FROM sqlite_master 
-                WHERE type='table' AND name='DatabaseVersion'
-            ");
-
-            if (result == null)
+            string dbPath = Path.Combine(Application.persistentDataPath, "gamedata.db");
+            if (File.Exists(dbPath))
             {
-                return 0; // 버전 테이블이 없으면 구버전으로 간주
+                return new FileInfo(dbPath).Length;
             }
-
-            // 버전 조회
-            var version = ExecuteScalar("SELECT Version FROM DatabaseVersion WHERE ID = 1");
-            return version != null ? (int)(long)version : 0;
+            return 0;
         }
-        catch (System.Exception ex)
+        catch
         {
-            Debug.LogError($"데이터베이스 버전 조회 오류: {ex.Message}");
             return 0;
         }
     }
 
     /// <summary>
-    /// 데이터베이스 버전 정보를 설정합니다
+    /// 데이터베이스 최적화 (VACUUM)
     /// </summary>
-    private static void SetDatabaseVersion(int version)
+    public static void OptimizeDatabase()
     {
         try
         {
-            // 버전 테이블 생성
-            ExecuteNonQuery(@"
-                CREATE TABLE IF NOT EXISTS DatabaseVersion (
-                    ID INTEGER PRIMARY KEY DEFAULT 1,
-                    Version INTEGER NOT NULL,
-                    UpdatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    CHECK (ID = 1)
-                )
-            ");
-
-            // 버전 정보 삽입 또는 업데이트
-            ExecuteNonQuery(@"
-                INSERT OR REPLACE INTO DatabaseVersion (ID, Version, UpdatedAt) 
-                VALUES (1, @version, datetime('now', '+9 hours'))
-            ", ("@version", version));
+            ExecuteNonQuery("VACUUM");
+            Debug.Log("데이터베이스 최적화 완료");
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
-            Debug.LogError($"데이터베이스 버전 설정 오류: {ex.Message}");
+            Debug.LogError($"데이터베이스 최적화 실패: {ex.Message}");
         }
-    }
-
-    /// <summary>
-    /// 데이터베이스를 완전히 초기화합니다 (파일 삭제 후 재생성)
-    /// </summary>
-    private static void ResetDatabase()
-    {
-        try
-        {
-            // 1. 기존 연결 종료
-            Close();
-
-            // 2. 데이터베이스 파일과 관련 파일들 삭제
-            if (File.Exists(dbPath))
-            {
-                File.Delete(dbPath);
-                Debug.Log("기존 데이터베이스 파일 삭제됨");
-            }
-
-            // 3. SQLite WAL 및 SHM 파일도 삭제 (있다면)
-            string walPath = dbPath + "-wal";
-            string shmPath = dbPath + "-shm";
-
-            if (File.Exists(walPath))
-            {
-                File.Delete(walPath);
-                Debug.Log("WAL 파일 삭제됨");
-            }
-
-            if (File.Exists(shmPath))
-            {
-                File.Delete(shmPath);
-                Debug.Log("SHM 파일 삭제됨");
-            }
-
-            // 4. 새로운 연결 생성
-            connection = new SqliteConnection("URI=file:" + dbPath);
-            connection.Open();
-
-            Debug.Log("데이터베이스가 완전히 초기화되었습니다");
-        }
-        catch (System.Exception ex)
-        {
-            Debug.LogError($"데이터베이스 초기화 오류: {ex.Message}");
-        }
-    }
-
-    /// <summary>
-    /// 현재 데이터베이스 버전을 반환합니다
-    /// </summary>
-    public static int GetCurrentDatabaseVersion()
-    {
-        return CURRENT_DB_VERSION;
     }
 }

@@ -12,6 +12,9 @@ public class IconData : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI iconDescription;
 
+    [SerializeField]
+    private Button button;
+    public Button SelectButton => button;
     public void Setup(Sprite sprite, string name, string description)
     {
         iconImage.sprite = sprite;

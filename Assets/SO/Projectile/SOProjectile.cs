@@ -5,6 +5,8 @@ public class SOProjectile : ScriptableObject
 {
     public string projectileName;
 
+    public Sprite sprite;
+
     public float damage = 10f;
     public float speed = 50f;
     public float range = 500f;

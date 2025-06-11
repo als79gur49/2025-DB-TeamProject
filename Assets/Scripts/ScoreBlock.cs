@@ -12,18 +12,18 @@ public class ScoreBlock : MonoBehaviour
 {
     private int score = 10;
 
-    private float upHeight = 2.3f;
-    private float upDuration = 0.5f;
+    //private float upHeight = 2.3f;
+    //private float upDuration = 0.5f;
 
     private Transform targetTransform;
 
-    // Èí¼ö 1È¸¸¸ ÀÛµ¿ ÇÃ·¡±×
+    // ï¿½ï¿½ï¿½ï¿½ 1È¸ï¿½ï¿½ ï¿½Ûµï¿½ ï¿½Ã·ï¿½ï¿½ï¿½
     private bool flag = true;
-    private float absorbedTime = 1f;
+    //private float absorbedTime = 1f;
 
     private MemoryPool<ScoreBlock> memoryPool;
 
-    // ±âº» »ı¼ºµÇ´Â °´Ã¼ Àç»ı¼º ¿©ºÎ
+    // ï¿½âº» ï¿½ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     private ScoreBlockSpawner spawner;
     private bool canRespawn;
     private Vector3 originPosition;
@@ -37,14 +37,14 @@ public class ScoreBlock : MonoBehaviour
 
         flag = true;
 
-        // ¸Ş½¬ ÀÎ½ºÅÏ½ºÈ­ ½ÃÄÑ¼­ °¢ÀÚ
+        // ï¿½Ş½ï¿½ ï¿½Î½ï¿½ï¿½Ï½ï¿½È­ ï¿½ï¿½ï¿½Ñ¼ï¿½ ï¿½ï¿½ï¿½ï¿½
         MeshRenderer renderer = GetComponent<MeshRenderer>();
         MaterialPropertyBlock block = new MaterialPropertyBlock();
-        
+
         renderer.GetPropertyBlock(block);
         block.SetColor("_BaseColor", c); 
         renderer.SetPropertyBlock(block);
-        
+
         transform.localScale = Vector3.one * size;
 
         this.memoryPool = memoryPool;
@@ -62,38 +62,65 @@ public class ScoreBlock : MonoBehaviour
         }
     }
 
-    // Entity Á×¿©¼­ ½ñ¾ÆÁ® ³ª¿À´Â ¸ğ¼Ç
+    // Entity ì£½ì—¬ì„œ ìŸì•„ì ¸ ë‚˜ì˜¤ëŠ” ëª¨ì…˜
     public void LaunchUpwards()
     {
+        // í¬ë¬¼ì„  í˜•íƒœ ì´ë™ ì´í›„ ë‘¥ë‘¥ ë– ë‹¤ë‹ˆëŠ” íŠ¸ìœˆ
+        Sequence launchSeq = DOTween.Sequence();
+
+        // x, zì¶• ë¬´ì‘ìœ„ ë°©í–¥ ì´ë™ê°’
+        float xOffset = 3f * Random.Range(-1f, 1f);
+        float zOffset = 3f * Random.Range(-1f, 1f);
+        float upHeight = 2f;
+        float duration = 1.2f;
+
+        Vector3 startPos = transform.position;
+        Vector3 endPos = startPos + new Vector3(xOffset, 0f, zOffset);
+        Vector3 midPos = startPos + new Vector3(xOffset * 0.3f, upHeight, zOffset * 0.3f);
+
+        Vector3[] path = new Vector3[] { startPos, midPos, endPos };
+
+        launchSeq.Append(transform.DOPath(path, duration, PathType.CatmullRom)
+            .SetEase(Ease.OutSine))
+            .AppendCallback(() =>
+            {
+                // ë„ì°© í›„ ë‘¥ë‘¥ ë– ë‹¤ë‹ˆê¸° ì‹œì‘
+                transform.DOMoveY(0.5f, 1f)
+                    .SetRelative(true)
+                    .SetEase(Ease.InOutQuad)
+                    .SetLoops(-1, LoopType.Yoyo);
+            });
+
+        /*
         Sequence launchSeq = DOTween.Sequence();
         Tween yoyoTween = transform.DOMoveY(0.5f, 1f).SetRelative(true).SetEase(Ease.InOutQuad).SetLoops(-1, LoopType.Yoyo).Pause();
 
-        // launchSeq.Append(transform.DOMoveY(upHeight, upDuration) //yÃà ÀÌµ¿
+        // launchSeq.Append(transform.DOMoveY(upHeight, upDuration) //yì¶• ì´ë™
         //             .SetRelative(true)
         //             .SetEase(Ease.OutQuad))
-        //         .Join(transform.DOMoveX(0.5f * Random.Range(-1f, 1), upDuration * 0.8f) // x, zÃà ÀÌµ¿
+        //         .Join(transform.DOMoveX(0.5f * Random.Range(-1f, 1), upDuration * 0.8f) // x, zì¶• ì´ë™
         //             .SetRelative(true)
         //             .SetEase(Ease.OutQuad))
         //         .Join(transform.DOMoveZ(0.5f * Random.Range(-1f, 1), upDuration * 0.8f)
         //             .SetRelative(true)
         //             .SetEase(Ease.OutQuad))
-        //         .Insert(upDuration * 0.7f, yoyoTween); //ÀÌÈÄ µÕµÕ ¶°´Ù´Ï´Â ¾Ö´Ï¸ŞÀÌ¼Ç
+        //         .Insert(upDuration * 0.7f, yoyoTween); //ì´í›„ ë‘¥ë‘¥ ë– ë‹¤ë‹ˆëŠ” ì• ë‹ˆë©”ì´ì…˜
 
-        launchSeq.Append(transform.DOMoveY(upHeight, upDuration) //yÃà ÀÌµ¿
+        launchSeq.Append(transform.DOMoveY(upHeight, upDuration) //yì¶• ì´ë™
                     .SetRelative(true)
                     .SetEase(Ease.OutQuad))
-                .Join(transform.DOMoveX(0.5f * Random.Range(-1f, 1), upDuration * 0.8f) // x, zÃà ÀÌµ¿
+                .Join(transform.DOMoveX(5f * Random.Range(-1f, 1), upDuration * 0.8f) // x, zì¶• ì´ë™
                     .SetRelative(true)
                     .SetEase(Ease.OutQuad))
-                .Join(transform.DOMoveZ(0.5f * Random.Range(-1f, 1), upDuration * 0.8f)
+                .Join(transform.DOMoveZ(5f * Random.Range(-1f, 1), upDuration * 0.8f)
                     .SetRelative(true)
                     .SetEase(Ease.OutQuad))
                 .AppendCallback(() =>
                 {
-                    //yoyoTween.Goto(Random.Range(0, 1f), true); // ÇØ´ç À§Ä¡·Î ¹Ù·Î °¡¼­ ½ÇÇàÇØ¼­, ¼ø°£ÀÌµ¿ÇÏ´Â ¹®Á¦Á¡
+                    //yoyoTween.Goto(Random.Range(0, 1f), true); // í•´ë‹¹ ìœ„ì¹˜ë¡œ ë°”ë¡œ ê°€ì„œ ì‹¤í–‰í•´ì„œ, ìˆœê°„ì´ë™í•˜ëŠ” ë¬¸ì œì 
                     yoyoTween.Play();
                 });
-
+        */
     }
 
     public void YoYoMoving()
@@ -102,21 +129,21 @@ public class ScoreBlock : MonoBehaviour
         yoyoTween.Goto(Random.Range(0, 1f), true);
     }
 
-    // Á¢ÃËµÇ¾î Èí¼öµÉ ¶§
-    public void AbsorbScoreObject(GameObject target, Entity entity)
+    // ì ‘ì´‰ë˜ì–´ í¡ìˆ˜ë  ë•Œ
+    public void AbsorbScoreObject(GameObject target, Player player)
     {
         if (flag == true)
         {
             float t = 1f;
 
-            // ÀÓ½Ã: targetÀÇ ¿¹»ó À§Ä¡ °è»ê
+            // ï¿½Ó½ï¿½: targetï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½
             Vector3 dir = (target.GetComponent<NavMeshAgent>().destination - target.transform.position) * target.GetComponent<NavMeshAgent>().speed * 0.7f;
 
-            // È¸Àü Æ®À©
+            // È¸ï¿½ï¿½ Æ®ï¿½ï¿½
             Tween rotateTween = transform.DORotate(new Vector3(0, 1000, 0), t, RotateMode.FastBeyond360);
-            // ¾à°£ Ä¿Á³´Ù ÀÛ¾ÆÁö´Â Æ®À©
+            // ï¿½à°£ Ä¿ï¿½ï¿½ï¿½ï¿½ ï¿½Û¾ï¿½ï¿½ï¿½ï¿½ï¿½ Æ®ï¿½ï¿½
             Tween scaleTween = transform.DOScale(0, t).SetEase(Ease.InElastic);
-            // ¸ñÇ¥ À§Ä¡ ÀÌµ¿ Æ®À©. 
+            // ï¿½ï¿½Ç¥ ï¿½ï¿½Ä¡ ï¿½Ìµï¿½ Æ®ï¿½ï¿½. 
             Tweener moveTweener = transform.DOMove(target.transform.position + dir * t, t)
                 .SetEase(Ease.InOutBack)
                 .OnComplete(() => AddScoreTo(entity));
@@ -125,7 +152,7 @@ public class ScoreBlock : MonoBehaviour
         }
     }
 
-    private void AddScoreTo(Entity entity)
+    private void AddScoreTo(Player player)
     {
         entity.AddScore(score);
         
@@ -152,20 +179,20 @@ public class ScoreBlock : MonoBehaviour
                 .SetEase(Ease.InOutBack);
             Tween scaleTween = transform.DOScale(0, t).SetEase(Ease.InElastic);
 
-            // º°µµÀÇ ¾÷µ¥ÀÌÆ® ·ÎÁ÷À¸·Î Å¸°Ù À§Ä¡ ÃßÀû
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½
             DOTween.To(() => 0f, x => {
-                // ¸Å ÇÁ·¹ÀÓ¸¶´Ù Å¸°ÙÀÇ ÇöÀç À§Ä¡·Î ¸ñÇ¥Á¡ ¾÷µ¥ÀÌÆ®
+                // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ó¸ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
                 if (targetTransform != null && moveTweener != null)
                 {
                     moveTweener.ChangeEndValue(targetTransform.position, true);
                 }
             }, 1f, t);
 
-            rotateSeq.Append(rotateTween) // Á¦ÀÚ¸® È¸Àü
-                .Join(moveTweener) // Å¸°Ù ¹æÇâÀ¸·Î ÀÌµ¿
-                .Join(scaleTween) // ½ºÄÉÀÏ Á¶Á¤
+            rotateSeq.Append(rotateTween) // ï¿½ï¿½ï¿½Ú¸ï¿½ È¸ï¿½ï¿½
+                .Join(moveTweener) // Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½
+                .Join(scaleTween) // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 .OnUpdate(() => {
-                    // ¸Å ÇÁ·¹ÀÓ¸¶´Ù ÇöÀç Å¸°Ù À§Ä¡·Î ÀÌµ¿
+                    // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ó¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½Ìµï¿½
                     if (tmpT != null)
                     {
                         Debug.Log("upd");
@@ -173,7 +200,7 @@ public class ScoreBlock : MonoBehaviour
                         moveTweener.ChangeEndValue(targetTransform.position, false);
                     }
                 })
-                .AppendCallback(() => AddScoreTo(entity)); // ½ÃÄö½º ³¡³ª¸é Á¡¼ö Ãß°¡
+                .AppendCallback(() => AddScoreTo(entity)); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
 
             flag = false;
         }

@@ -11,7 +11,7 @@ public class Player : Entity
     private Dictionary<KeyCode, Vector3> arrowVector;
     private LayerMask groundLayer = 1 << 8;
 
-    // Á×À½ »óÅÂ ÇÃ·¡±×
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½
     private bool _isDead = false;
 
     private Vector3 inputVector;
@@ -19,6 +19,20 @@ public class Player : Entity
     private Vector3 mouseWorldPosition;
     private float directionX;
     private float directionY;
+    // ì£½ìŒ ìƒíƒœ í”Œëž˜ê·¸
+    private bool _isDead = false;
+
+    public void Setup(
+        EntityInfo info,
+        EntityData data,
+        DamagePopupManager damagePopupManager,
+        KillLogManager killLogManager, ScoreBlockSpawner scoreBlockSpawner,
+        SkillIconManager skillIconManager)
+    {
+        levelupStorage.Setup(skillIconManager, this, firePoint);
+
+        base.Setup(info, data, damagePopupManager, killLogManager, scoreBlockSpawner);
+    }
 
     protected override void Setup()
     {
@@ -35,11 +49,12 @@ public class Player : Entity
         };
 
         levelupStorage.AddLevelupable(Weapon);
+        //StartWeaponì„ levelupStorageì— ì ìš©
     }
 
     private void Update()
     {
-        if (IsDead && !_isDead) // Ã³À½ Á×¾úÀ» ¶§¸¸
+        if (IsDead && !_isDead) // ì²˜ìŒ ì£½ì—ˆì„ ë•Œë§Œ
         {
             _isDead = true;
             animation.Death();
@@ -48,7 +63,7 @@ public class Player : Entity
             return;
         }
 
-        if (_isDead) // ÀÌ¹Ì Á×¾ú´Ù¸é ¾Æ¹«°Íµµ ÇÏÁö ¾ÊÀ½
+        if (_isDead) // ì´ë¯¸ ì£½ì—ˆë‹¤ë©´ ì•„ë¬´ê²ƒë„ í•˜ì§€ ì•ŠìŒ
         {
             return;
         }
@@ -85,7 +100,7 @@ public class Player : Entity
         }
         else
         {
-            // ·¹ÀÌÄ³½ºÆ®°¡ ½ÇÆÐÇÏ¸é Æò¸é¿¡ Åõ¿µ
+            // ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½é¿¡ ï¿½ï¿½ï¿½ï¿½
             Plane groundPlane = new Plane(Vector3.up, transform.position);
             if (groundPlane.Raycast(ray, out float distance))
             {
@@ -118,7 +133,7 @@ public class Player : Entity
     {
         float signedAngle = Vector3.SignedAngle(from, to, Vector3.up);
 
-        // 0~ 360 ¹üÀ§·Î º¯È¯
+        // 0~ 360 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
         if (signedAngle < 0)
         {
             signedAngle += 360f;
@@ -158,7 +173,7 @@ public class Player : Entity
 
     private void Animation()
     {
-        // ¾Ö´Ï¸ÞÀÌ¼Ç ¹æÇâ ¼³Á¤
+        // ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         animation.SetDirection(directionX, directionY);
 
         if (inputVector == Vector3.zero) // idle
@@ -177,10 +192,11 @@ public class Player : Entity
 
     protected override void levelup()
     {
-        // hpÈ¸º¹
+        // hpíšŒë³µ
         data.AddHp(30);
-        // ½ºÅ³ Ã¢ ¶ç¿ì±â
-        levelupStorage.Levelupable[0].LevelUp();
+        // ìŠ¤í‚¬ ì°½ ë„ìš°ê¸°
+        //levelupStorage.Levelupable[0].LevelUp();
+        levelupStorage.Levelup();
     }
 
     private void OnDrawGizmos()
@@ -189,11 +205,11 @@ public class Player : Entity
         {
             Vector3 origin = transform.position;
 
-            // ¸¶¿ì½º ¹æÇâ Ç¥½Ã (»¡°£»ö)
+            // ï¿½ï¿½ï¿½ì½º ï¿½ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
             Gizmos.color = Color.red;
             Gizmos.DrawRay(origin, mouseDirection * 2f);
 
-            // ÀÔ·Â ¹æÇâ Ç¥½Ã (ÆÄ¶õ»ö)
+            // ï¿½Ô·ï¿½ ï¿½ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½ (ï¿½Ä¶ï¿½ï¿½ï¿½)
             Gizmos.color = Color.blue;
             Gizmos.DrawRay(origin, inputVector * 2f);
         }
