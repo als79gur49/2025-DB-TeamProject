@@ -510,6 +510,22 @@ public static class RankingManager
             return false;
         }
     }
+    public static bool ClearAllSessionRanking()
+    {
+        try
+        {
+            string query = "DELETE FROM SessionRanking";
+
+            int rowsAffected = DatabaseManager.ExecuteNonQuery(query);
+
+            return rowsAffected > 0;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"세션 랭킹 정리 오류: {ex.Message}");
+            return false;
+        }
+    }
 }
 
 /// <summary>

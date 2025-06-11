@@ -32,7 +32,6 @@ public class PlayerSpawner : EntitySpawner
                 virtualCamera.Follow = clone.transform;
             }
 
-
             // 사용자가 이름을 입력하고 게임 시작 버튼 클릭 시
             var playerName = clone.Info.EntityName;
             var currentSession = EntityGameManager.StartNewGame(playerName);
