@@ -64,8 +64,13 @@ public class GameOverUI : MonoBehaviour
     // 플레이어 랭킹
     private void ShowPlayerInfo()
     {
+        // 가장 최근 플레이어 정보 조회
         PlayerModel playerData = PlayerRepository.GetPlayerByName(playerName);
-       
-        player.Setup(-1, playerData.PlayerName, playerData.HighestScore);
+
+        // 가장 최근 세션과 가장 최근 플레이어ID로 해당 세션에서의 엔티티 정보 조회
+        //var sessionEntity = SessionEntityRepository.GetSessionEntity(sessionId, playerData.PlayerID);
+        var sessionEntity = SessionEntityRepository.GetSessionEntity(sessionId, playerData.PlayerName);
+        
+        player.Setup(sessionEntity.FinalRank ?? -1, sessionEntity.EntityName, sessionEntity.Score);
     }
 }

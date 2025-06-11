@@ -22,8 +22,8 @@ public class PlayerSpawner : EntitySpawner
             //Entity clone = GameObject.Instantiate(enemy[Random.Range(0, enemy.Length)]);
             Player clone = Instantiate(player, Vector3.zero, Quaternion.identity);
         
-            string name = PlayerDataManager.Instance.PlayerName;
-            if(name == "")
+            string name = PlayerDataManager.Instance?.PlayerName;
+            if(name == "" || name == null)
             {
                 name = "Test_Player_" + Random.Range(0, 10000);
             }

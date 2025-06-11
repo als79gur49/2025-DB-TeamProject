@@ -29,10 +29,11 @@ public class EnemySpawner : EntitySpawner
             //Entity clone = GameObject.Instantiate(enemy[Random.Range(0, enemy.Length)]);
             Enemy clone = memoryPool.ActivatePoolItem();
 
-            string name = "Test_Enemy_" + Random.Range(0, 10000);
+            string name = "Test_Enemy_01_" + Random.Range(0, 10000);
 
 
             clone.Setup(new EntityInfo(name, "Test_Image"), new EntityData(1, 100, 10, 1), memoryPool, damagePopupManager, killLogManager, scoreBlockSpawner);
+            clone.AddScore(2345 + Random.Range(0, 2345));
             clone.ChangeState(EntityStates.IdleState);
 
             if (skinnedMesh != null || material != null)

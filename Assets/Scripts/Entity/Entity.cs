@@ -114,23 +114,8 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
 
             Debug.Log($"Material 변경 완료: {material.name}");
         }
-
-        // 한 프레임 후 다시 확인
-        StartCoroutine(VerifyChanges(mesh, material));
     }
 
-    private IEnumerator VerifyChanges(Mesh expectedMesh, Material expectedMaterial)
-    {
-        yield return null;
-
-        Debug.Log($"검증 - 현재 Mesh: {skinnedMeshRenderer.sharedMesh?.name}, 예상: {expectedMesh?.name}");
-        Debug.Log($"검증 - 현재 Material: {skinnedMeshRenderer.material?.name}, 예상: {expectedMaterial?.name}");
-
-        if (skinnedMeshRenderer.sharedMesh != expectedMesh)
-        {
-            Debug.LogError("Mesh가 다른 시스템에 의해 덮어쓰여졌습니다!");
-        }
-    }
 
     protected virtual void Start()
     {
