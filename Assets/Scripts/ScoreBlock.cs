@@ -150,7 +150,7 @@ public class ScoreBlock : MonoBehaviour
     {
         player.AddScore(score);
         Destroy(gameObject);
-        EntityGameManager.OnPlayerScoreAdd(score);
+        //EntityGameManager.OnPlayerScoreAdd(score);
     }
 }
 

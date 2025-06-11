@@ -145,7 +145,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
             lastDamagedInfo.Key.AddScore(100);
 
             // DB에 점수 추가
-            EntityGameManager.OnEntityScoreAddbyName(lastDamagedInfo.Key.info.EntityName, 100);
+            //EntityGameManager.OnEntityScoreAddbyName(lastDamagedInfo.Key.info.EntityName, 100);
         }
     }
     public void AddScore(int amount)
@@ -157,6 +157,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
         remainExp = (remainExp + amount) % levelupAmount;
         onAddExperience?.Invoke(remainExp, levelupAmount);
         //RankingManager.UpdateLiveRanking
+        EntityGameManager.OnEntityScoreAddbyName(info.EntityName, data.Score);
 
         for (int i = 0; i < levelupNum; ++i)
         {

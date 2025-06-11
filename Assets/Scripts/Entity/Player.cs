@@ -51,6 +51,7 @@ public class Player : Entity
 
     private void Update()
     {
+        Debug.Log($"Player Score{data.Score}");
         if (IsDead && !_isDead) // 처음 죽었을 때만
         {
             _isDead = true;

@@ -134,7 +134,8 @@ public static class GameSessionManager
         try
         {
             // 세션 엔티티 점수 추가
-            bool entityUpdated = SessionEntityRepository.AddEntityScore(currentSessionId, entityId, newScore, newLevel);
+            bool entityUpdated = SessionEntityRepository.UpdateEntityScore(currentSessionId, entityId, newScore, newLevel);
+                //SessionEntityRepository.AddEntityScore(currentSessionId, entityId, newScore, newLevel);
 
             // 실시간 랭킹 업데이트
             bool rankingUpdated = RankingManager.UpdateLiveRanking(currentSessionId, entityId, newScore, newLevel > 0 ? newLevel : -1);
