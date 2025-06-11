@@ -23,9 +23,11 @@ public class GameOverUI : MonoBehaviour
     private float duration = 1.5f;
 
     private int playerId;
-    public void Setup(int playerId)
+    private int sessionId;
+    public void Setup(int playerId, int sessionId)
     {
         this.playerId = playerId;
+        this.sessionId = sessionId;
     }
 
     public void ShowGameOver()
@@ -46,7 +48,8 @@ public class GameOverUI : MonoBehaviour
     private void ShowEntityInfo()
     {
         //List<RankingData> list = RankingRepository.GetTopRankings(showInfoNum);
-        List<RankingData> list = RankingManager.GetLiveRanking(showInfoNum);
+        //List<RankingData> list = RankingManager.GetLiveRanking(showInfoNum);
+        List<RankingData> list = RankingManager.GetSessionEndRanking(sessionId, showInfoNum);
 
         foreach (RankingData rankingData in list)
         {
@@ -61,12 +64,8 @@ public class GameOverUI : MonoBehaviour
     // 플레이어 랭킹
     private void ShowPlayerInfo()
     {
-        RankingData playerData = RankingManager.GetEntityBestRecord(playerId);
-        //PlayerModel p = PlayerRepository.GetPlayerById(playerId);
-        player.Setup(playerData.Rank, playerData.EntityName, playerData.Score);
-        
-        //RankingData data = RankingRepository.GetTopRankings;
-        //
-        //player.Setup(data.Rank, data.PlayerName, data.Score);
+       // RankingData playerData = RankingManager.GetEntityBestRecord(playerId);
+       //
+       // player.Setup(playerData.Rank, playerData.EntityName, playerData.Score);
     }
 }

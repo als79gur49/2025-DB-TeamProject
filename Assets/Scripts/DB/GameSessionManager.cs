@@ -28,7 +28,7 @@ public static class GameSessionManager
 
             // 2. 플레이어 엔티티 생성
             var playerEntity = EntityRepository.CreatePlayerEntity(player.PlayerID, playerName);
-            Debug.Log($"Player ID: {player.PlayerID} | EntityID: {playerEntity.EntityID} |{playerEntity.PlayerID}");
+
             if (playerEntity == null)
             {
                 Debug.LogError("플레이어 엔티티 생성에 실패했습니다.");

@@ -16,13 +16,14 @@ public class UIController : MonoBehaviour
 
     private Entity player;
     private int playerId;
-
-    public void Setup(Entity player, int playerId)
+    private int currentSessionId;
+    public void Setup(Entity player, int playerId, int currentSessionId)
     {
         this.player = player;
         this.playerId = playerId;
+        this.currentSessionId = currentSessionId;
 
-        gameOverPanel?.Setup(playerId);
+        gameOverPanel?.Setup(playerId, currentSessionId);
         liveRankingPanel?.Setup(playerId);
 
         player.onDeath.AddListener(ShowGameOverPanel);

@@ -35,7 +35,7 @@ public class PlayerSpawner : EntitySpawner
             // 사용자가 이름을 입력하고 게임 시작 버튼 클릭 시
             var playerName = clone.Info.EntityName;
             var currentSession = EntityGameManager.StartNewGame(playerName);
-
+            
             if (currentSession != null)
             {
                 Debug.Log($"게임 시작! 세션 ID: {currentSession.SessionID}");
@@ -44,7 +44,7 @@ public class PlayerSpawner : EntitySpawner
                 int playerInstanceId = GetInstanceID(); // 실제 GameObject
                 EntityGameManager.RegisterPlayerEntity(playerInstanceId);
 
-                uiController.Setup(clone, playerInstanceId);
+                uiController.Setup(clone, playerInstanceId, currentSession.SessionID);
             }
         }
     }

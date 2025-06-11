@@ -156,6 +156,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
 
         remainExp = (remainExp + amount) % levelupAmount;
         onAddExperience?.Invoke(remainExp, levelupAmount);
+        //RankingManager.UpdateLiveRanking
 
         for (int i = 0; i < levelupNum; ++i)
         {

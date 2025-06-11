@@ -189,6 +189,51 @@ public static class RankingManager
     }
 
     /// <summary>
+    /// 특정 세션의 종료된 랭킹 조회
+    /// </summary>
+    public static List<RankingData> GetSessionEndRanking(int sessionId, int limit = 10)
+    {
+        var rankings = new List<RankingData>();
+
+        try
+        {
+            string query = @"
+                SELECT EntityID, EntityName, EntityType, CurrentScore, CurrentLevel
+                FROM SessionRanking
+                WHERE SessionID = @sessionId AND IsActive = FALSE
+                ORDER BY CurrentScore DESC, LastUpdated ASC
+                LIMIT @limit
+            ";
+
+            using (var reader = DatabaseManager.ExecuteReader(query,
+                ("@sessionId", sessionId),
+                ("@limit", limit)))
+            {
+                int rank = 1;
+                while (reader.Read())
+                {
+                    string entityType = reader["EntityType"].ToString();
+
+                    rankings.Add(new RankingData
+                    {
+                        EntityID = (int)(long)reader["EntityID"],
+                        EntityName = reader["EntityName"].ToString(),
+                        EntityType = entityType,
+                        Score = (int)(long)reader["CurrentScore"],
+                        Level = (int)(long)reader["CurrentLevel"],
+                        Rank = rank++
+                    });
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"세션 실시간 랭킹 조회 오류: {ex.Message}");
+        }
+
+        return rankings;
+    }
+    /// <summary>
     /// 전체 최고 기록 랭킹 조회 (완료된 게임의 모든 엔티티)
     /// </summary>
     public static List<RankingData> GetAllTimeRanking(int limit = 10)

@@ -46,10 +46,6 @@ public class Enemy : Entity
     private void Update()
     {
         brain.Execute(input);
-        if(Input.GetKeyDown(KeyCode.E))
-        {
-            AddScore(1000);
-        }
     }
 
     public void ChangeState(EntityStates nextState)
