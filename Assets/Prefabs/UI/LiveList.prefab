@@ -472,6 +472,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: d0dbfb4f71d044686a03cd9cc5a74f70, type: 3}
   - {fileID: 21300000, guid: f6233619df806490ca27d88377ad2542, type: 3}
   - {fileID: 21300000, guid: 2db075c1e01624aeba6ad97d79376714, type: 3}
+  - {fileID: 21300000, guid: e1c95be061ce3483ebba1669954509bb, type: 3}
   medal: {fileID: 5717072648733365907}
   background: {fileID: 4499300556626955586}
   userRanking: {fileID: 6297535352565635106}

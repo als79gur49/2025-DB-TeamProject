@@ -130,38 +130,27 @@ public class ScoreBlock : MonoBehaviour
     }
 
     // 접촉되어 흡수될 때
-    public void AbsorbScoreObject(GameObject target, Entity entity)
+    public void AbsorbScoreObject(GameObject target, Player player)
     {
         if (flag == true)
         {
             float t = 1f;
 
-            // �ӽ�: target�� ���� ��ġ ���
-            Vector3 dir = (target.GetComponent<NavMeshAgent>().destination - target.transform.position) * target.GetComponent<NavMeshAgent>().speed * 0.7f;
-
-            // ȸ�� Ʈ��
-            Tween rotateTween = transform.DORotate(new Vector3(0, 1000, 0), t, RotateMode.FastBeyond360);
-            // �ణ Ŀ���� �۾����� Ʈ��
-            Tween scaleTween = transform.DOScale(0, t).SetEase(Ease.InElastic);
-            // ��ǥ ��ġ �̵� Ʈ��. 
-            Tweener moveTweener = transform.DOMove(target.transform.position + dir * t, t)
-                .SetEase(Ease.InOutBack)
-                .OnComplete(() => AddScoreTo(entity));
+            Sequence rotateSeq = DOTween.Sequence();
+            rotateSeq.Append(transform.DORotate(new Vector3(0, 1000, 0), t, RotateMode.FastBeyond360)) //제자리 회전
+                .Join(transform.DOMove(target.transform.position, t).SetEase(Ease.InOutBack)) // 타겟 방향으로 이동
+                .Join(transform.DOScale(0, t).SetEase(Ease.InElastic)) // 스케일 조정
+                .AppendCallback(() => AddScoreTo(player));
 
             flag = false;
         }
     }
 
-    private void AddScoreTo(Entity entity)
+    private void AddScoreTo(Player player)
     {
-        entity.AddScore(score);
-        
-        memoryPool.DeactivatePoolItem(this);
-
-        if(canRespawn)
-        {
-            spawner.EnQueuePosition(originPosition);
-        }
+        player.AddScore(score);
+        Destroy(gameObject);
+        EntityGameManager.OnPlayerScoreAdd(score);
     }
 }
 

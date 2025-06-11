@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class LiveRankingUI : MonoBehaviour
@@ -8,11 +9,11 @@ public class LiveRankingUI : MonoBehaviour
     [SerializeField]
     private InfoList player;
 
-    private int playerId;
+    private string playerName = "";
 
-    public void Setup(int playerId)
+    public void Setup(string playerName)
     {
-        this.playerId = playerId;
+        this.playerName = playerName;
     }
 
     public void UpdateEntitiesRanking(List<RankingData> data)
@@ -36,23 +37,31 @@ public class LiveRankingUI : MonoBehaviour
             }
         }
     }
-    public void UpdatePlayerRanking(RankingData data)
+    public void UpdatePlayerRanking(List<RankingData> datas)
     {
-        if(player == null)
+        if(player == null || datas == null || datas.Count <= 0)
         {
+            player.SetupNULL();
+
             return;
         }
 
-        player.Setup(data.Rank, data.EntityName, data.Score);
+        RankingData rank = datas.FirstOrDefault();
+
+        player.Setup(rank.Rank, rank.EntityName, rank.Score, true);
+    }
+    public void UpdatePlayerRanking(PlayerModel data)
+    {
+        if (player == null)
+        {
+            return;
+        }
+        int rank = RankingManager.GetRankByScore(data.HighestScore);
+        player.Setup(rank, data.PlayerName, data.HighestScore, true);
     }
     private void Update()
     {
-        //RankingManager.GetLiveRanking(10);
-
         UpdateEntitiesRanking(RankingManager.GetLiveRanking(10));
-        if(playerId != 0)
-        {
-            UpdatePlayerRanking(RankingManager.GetEntityBestRecord(playerId));
-        }    
+        UpdatePlayerRanking(RankingManager.GetPlayerLiveRanking(playerName, 1));
     }
 }

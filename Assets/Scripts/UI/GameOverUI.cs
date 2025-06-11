@@ -22,11 +22,11 @@ public class GameOverUI : MonoBehaviour
     private RectTransform rect;
     private float duration = 1.5f;
 
-    private int playerId;
+    private string playerName;
     private int sessionId;
-    public void Setup(int playerId, int sessionId)
+    public void Setup(string playerName, int sessionId)
     {
-        this.playerId = playerId;
+        this.playerName = playerName;
         this.sessionId = sessionId;
     }
 
@@ -64,8 +64,8 @@ public class GameOverUI : MonoBehaviour
     // 플레이어 랭킹
     private void ShowPlayerInfo()
     {
-       // RankingData playerData = RankingManager.GetEntityBestRecord(playerId);
-       //
-       // player.Setup(playerData.Rank, playerData.EntityName, playerData.Score);
+        PlayerModel playerData = PlayerRepository.GetPlayerByName(playerName);
+       
+        player.Setup(-1, playerData.PlayerName, playerData.HighestScore);
     }
 }

@@ -29,7 +29,7 @@ public class InfoList : MonoBehaviour
         userScore.text = string.Empty;
     }
 
-    public void Setup(int ranking, string name, int score)
+    public void Setup(int ranking, string name, int score, bool isPlayer = false)
     {
         userRanking.text = ranking.ToString();
         userName.text = name;
@@ -59,6 +59,11 @@ public class InfoList : MonoBehaviour
             medal.color = new Color(0, 0, 0, 0);
             
             background.sprite = backgroundSprites[3];
+        }
+
+        if(isPlayer)
+        {
+            background.sprite = backgroundSprites[4];
         }
     }
 

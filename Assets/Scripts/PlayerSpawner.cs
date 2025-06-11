@@ -44,7 +44,7 @@ public class PlayerSpawner : EntitySpawner
                 int playerInstanceId = GetInstanceID(); // 실제 GameObject
                 EntityGameManager.RegisterPlayerEntity(playerInstanceId);
 
-                uiController.Setup(clone, playerInstanceId, currentSession.SessionID);
+                uiController.Setup(clone, playerName, currentSession.SessionID);
             }
         }
     }

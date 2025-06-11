@@ -141,7 +141,49 @@ public static class RankingManager
 
         return rankings;
     }
+    /// <summary>
+    /// 현재 진행중인 실시간 랭킹 조회 (모든 활성 세션 통합)
+    /// </summary>
+    public static List<RankingData> GetPlayerLiveRanking(string playerName, int limit = 10)
+    {
+        var rankings = new List<RankingData>();
 
+        try
+        {
+            string query = @"
+                SELECT EntityID, EntityName, EntityType, CurrentScore, CurrentLevel
+                FROM SessionRanking
+                WHERE IsActive = TRUE AND EntityName = @playerName
+                ORDER BY CurrentScore DESC, LastUpdated ASC
+                LIMIT @limit
+            ";
+
+            using (var reader = DatabaseManager.ExecuteReader(query, ("@playerName", playerName),("@limit", limit)))
+            {
+                int rank = 1;
+                while (reader.Read())
+                {
+                    string entityType = reader["EntityType"].ToString();
+
+                    rankings.Add(new RankingData
+                    {
+                        EntityID = (int)(long)reader["EntityID"],
+                        EntityName = reader["EntityName"].ToString(),
+                        EntityType = entityType,
+                        Score = (int)(long)reader["CurrentScore"],
+                        Level = (int)(long)reader["CurrentLevel"],
+                        Rank = rank++
+                    });
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"실시간 랭킹 조회 오류: {ex.Message}");
+        }
+
+        return rankings;
+    }
     /// <summary>
     /// 특정 세션의 실시간 랭킹 조회
     /// </summary>
