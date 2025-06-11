@@ -14,6 +14,7 @@ public class PlayerSpawner : EntitySpawner
     private CinemachineVirtualCamera virtualCamera;
     [SerializeField]
     private SkillIconManager skillIconManager;
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.W))
@@ -24,7 +25,13 @@ public class PlayerSpawner : EntitySpawner
             string name = "Test_Player_" + Random.Range(0, 10000);
             Debug.Log($"Player Name: {name}");
             clone.Setup(new EntityInfo(name, "Test_Image"), new EntityData(1, 100, 10, 1), damagePopupManager, killLogManager, scoreBlockSpawner);
-            
+
+            if(skinnedMesh != null || material != null) 
+            {
+                clone.SetSkin(skinnedMesh[Random.Range(0, skinnedMesh.Length)],
+                                         material[Random.Range(0, material.Length)]);
+            }
+
             clone.onDeath.AddListener(SampleOnDeath);
 
             if (virtualCamera != null)

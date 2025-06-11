@@ -1848,6 +1848,12 @@ MonoBehaviour:
   onDeath:
     m_PersistentCalls:
       m_Calls: []
+  onLevelup:
+    m_PersistentCalls:
+      m_Calls: []
+  onAddExperience:
+    m_PersistentCalls:
+      m_Calls: []
   storages:
   - {fileID: 8749976692891476331, guid: 663f623c25f897b46a27928160ba6243, type: 3}
   - {fileID: 594696428794325604, guid: d88880830026d2e48b56af0d6ee104e0, type: 3}
@@ -1855,6 +1861,8 @@ MonoBehaviour:
   firePoint: {fileID: 8817817361546178684}
   levelupPrefab: {fileID: 1624714524768532, guid: c9eb15264aa6c4348b00d5b9b3daab2a,
     type: 3}
+  skinnedMeshRenderer: {fileID: 13734226}
+  material: {fileID: 0}
 --- !u!114 &9017735697518951089
 MonoBehaviour:
   m_ObjectHideFlags: 0

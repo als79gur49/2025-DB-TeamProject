@@ -8,10 +8,14 @@ using UnityEngine.Events;
 public abstract class Entity : MonoBehaviour, IAttack, IDamageable
 {
     // event
+    [HideInInspector]
     public UnityEvent<float, float> onTakeDamage;
+    [HideInInspector]
     public UnityEvent onDeath;
 
+    [HideInInspector]
     public UnityEvent<int> onLevelup;
+    [HideInInspector]
     public UnityEvent<int, int> onAddExperience;
     // Animation ����
 
@@ -37,13 +41,19 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     public EntityData Data => data;
     public EntityInfo Info => info;
 
+    [Header("발사 및 데미지 위치")]
     [SerializeField]
     private Transform damageTextPoint;
     [SerializeField]
     protected Transform firePoint;
 
+    [Header("레벨업 VFX")]
     [SerializeField]
     private GameObject levelupPrefab;
+
+    [Header("자식 스킨 오브젝트")]
+    [SerializeField]
+    private SkinnedMeshRenderer skinnedMeshRenderer;
 
     public bool IsDead { get => data.HP <= 0; }
 
@@ -82,6 +92,46 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
         projectileStorage = GetComponent<ProjectileStorage>();
         projectileStorage.Setup(storages);
     }
+
+    public void SetSkin(Mesh mesh, Material material)
+    {
+        if (mesh != null)
+        {
+            skinnedMeshRenderer.sharedMesh = mesh;
+
+            // 강제 새로고침 시도
+            skinnedMeshRenderer.enabled = false;
+            skinnedMeshRenderer.enabled = true;
+
+            Debug.Log($"Mesh 변경 완료: {mesh.name}");
+        }
+
+        if (material != null)
+        {
+            Material[] materials = skinnedMeshRenderer.materials;
+            materials[0] = material;
+            skinnedMeshRenderer.materials = materials;
+
+            Debug.Log($"Material 변경 완료: {material.name}");
+        }
+
+        // 한 프레임 후 다시 확인
+        StartCoroutine(VerifyChanges(mesh, material));
+    }
+
+    private IEnumerator VerifyChanges(Mesh expectedMesh, Material expectedMaterial)
+    {
+        yield return null;
+
+        Debug.Log($"검증 - 현재 Mesh: {skinnedMeshRenderer.sharedMesh?.name}, 예상: {expectedMesh?.name}");
+        Debug.Log($"검증 - 현재 Material: {skinnedMeshRenderer.material?.name}, 예상: {expectedMaterial?.name}");
+
+        if (skinnedMeshRenderer.sharedMesh != expectedMesh)
+        {
+            Debug.LogError("Mesh가 다른 시스템에 의해 덮어쓰여졌습니다!");
+        }
+    }
+
     protected virtual void Start()
     {
         // AI 엔티티인 경우 DB에 자동 등록

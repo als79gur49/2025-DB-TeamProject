@@ -10636,6 +10636,56 @@ MonoBehaviour:
   damagePopupManager: {fileID: 2032871079}
   killLogManager: {fileID: 246434758}
   scoreBlockSpawner: {fileID: 622744849}
+  skinnedMesh:
+  - {fileID: 4300038, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
+  - {fileID: 4300028, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
+  - {fileID: 4300042, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
+  - {fileID: 4300030, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
+  - {fileID: 4300036, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
+  - {fileID: 4300044, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
+  - {fileID: 4300032, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
+  - {fileID: 4300046, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
+  - {fileID: 4300034, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
+  - {fileID: 4300040, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
+  - {fileID: 4300026, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
+  - {fileID: 4300024, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
+  material:
+  - {fileID: 2100000, guid: a40e1f49699c0da4b878646e3acdfad8, type: 2}
+  - {fileID: 2100000, guid: d10bea1b655d71c42bd696b1414fe8f5, type: 2}
+  - {fileID: 2100000, guid: e68783d64ae1cde418debc0de555bb1e, type: 2}
+  - {fileID: 2100000, guid: a9fcf57a3bf619d44b374bce671e6849, type: 2}
+  - {fileID: 2100000, guid: e48c28bc12271bf4d894c7f5f2759995, type: 2}
+  - {fileID: 2100000, guid: 6e2127f478c1d494282ed24975a23c4f, type: 2}
+  - {fileID: 2100000, guid: 8f8bb6ca038884845a72101b5ef80a69, type: 2}
+  - {fileID: 2100000, guid: 1018eb9028591c640bd52e3192c7a97b, type: 2}
+  - {fileID: 2100000, guid: 68e685a36a1a3e5428f20a7719da8d29, type: 2}
+  - {fileID: 2100000, guid: 755469508ad7c9242a861b6e0c4d04fa, type: 2}
+  - {fileID: 2100000, guid: d86eb44628c59364c8120d8e739c25f0, type: 2}
+  - {fileID: 2100000, guid: 32f960f3cc63f724bba3c40fe9e74255, type: 2}
+  - {fileID: 2100000, guid: db520fea557bc5b4194281489ff5494a, type: 2}
+  - {fileID: 2100000, guid: 46868894aaa342648974659b1cf22c7d, type: 2}
+  - {fileID: 2100000, guid: 0e3ba40e5ffa3a74d87210c935b09fc7, type: 2}
+  - {fileID: 2100000, guid: 4911eef849e1f684d82da5e2221603f2, type: 2}
+  - {fileID: 2100000, guid: d9c44c86032fd214283412598198e9a5, type: 2}
+  - {fileID: 2100000, guid: da9f51fad391e6c4882f2a9601ea5a57, type: 2}
+  - {fileID: 2100000, guid: 65b74daec81b255448bf3f4a18d37871, type: 2}
+  - {fileID: 2100000, guid: 1e897dd6a4d034449983383ef9f12b43, type: 2}
+  - {fileID: 2100000, guid: 9c6f6189aa933464ba241d38a5652564, type: 2}
+  - {fileID: 2100000, guid: 74a4bb5d991e7a14cab04954fb38db76, type: 2}
+  - {fileID: 2100000, guid: 8a2052070fa31b847b3e61a052bd4f87, type: 2}
+  - {fileID: 2100000, guid: f5ebd80c8fac31446a80a8e69291077f, type: 2}
+  - {fileID: 2100000, guid: 18d61bc7dea3e6241b26b6659cbf4865, type: 2}
+  - {fileID: 2100000, guid: d01e854035bc79941ab9cafc6d1545a0, type: 2}
+  - {fileID: 2100000, guid: 2064bb48ca7327042a08693de2426d55, type: 2}
+  - {fileID: 2100000, guid: e08120bd819860b4eb0f420c82ba7000, type: 2}
+  - {fileID: 2100000, guid: 35705ca65f8a8ea44886743cf486e6c5, type: 2}
+  - {fileID: 2100000, guid: 22c97bbd32b7ef843bec54b3f2bd79d3, type: 2}
+  - {fileID: 2100000, guid: 3a6d07b346bc81c46ba9c49ad230a3ec, type: 2}
+  - {fileID: 2100000, guid: f08a321a1dbfe7e4a8001a3a9f154442, type: 2}
+  - {fileID: 2100000, guid: 7aa720f41cd100b4a93e5fb74508524c, type: 2}
+  - {fileID: 2100000, guid: 07ef886f44c0a0b47b9e44a59b47b5c6, type: 2}
+  - {fileID: 2100000, guid: d5f231380c68a994e819077c1ea4e154, type: 2}
+  - {fileID: 2100000, guid: 23cd651be4adf8241bfcbae23439d4ae, type: 2}
   player: {fileID: -5987256920896985292, guid: eb61ee9a4308e0546a7dfdb0e2d700c9, type: 3}
   uiController: {fileID: 1297841582}
   virtualCamera: {fileID: 395255}
@@ -12933,6 +12983,56 @@ MonoBehaviour:
   damagePopupManager: {fileID: 2032871079}
   killLogManager: {fileID: 246434758}
   scoreBlockSpawner: {fileID: 622744849}
+  skinnedMesh:
+  - {fileID: 4300038, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
+  - {fileID: 4300028, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
+  - {fileID: 4300042, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
+  - {fileID: 4300030, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
+  - {fileID: 4300036, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
+  - {fileID: 4300044, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
+  - {fileID: 4300032, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
+  - {fileID: 4300046, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
+  - {fileID: 4300034, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
+  - {fileID: 4300040, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
+  - {fileID: 4300026, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
+  - {fileID: 4300024, guid: 47fbfbd2863d12246995504e9cffb8db, type: 3}
+  material:
+  - {fileID: 2100000, guid: a40e1f49699c0da4b878646e3acdfad8, type: 2}
+  - {fileID: 2100000, guid: d10bea1b655d71c42bd696b1414fe8f5, type: 2}
+  - {fileID: 2100000, guid: e68783d64ae1cde418debc0de555bb1e, type: 2}
+  - {fileID: 2100000, guid: a9fcf57a3bf619d44b374bce671e6849, type: 2}
+  - {fileID: 2100000, guid: e48c28bc12271bf4d894c7f5f2759995, type: 2}
+  - {fileID: 2100000, guid: 6e2127f478c1d494282ed24975a23c4f, type: 2}
+  - {fileID: 2100000, guid: 8f8bb6ca038884845a72101b5ef80a69, type: 2}
+  - {fileID: 2100000, guid: 1018eb9028591c640bd52e3192c7a97b, type: 2}
+  - {fileID: 2100000, guid: 68e685a36a1a3e5428f20a7719da8d29, type: 2}
+  - {fileID: 2100000, guid: 755469508ad7c9242a861b6e0c4d04fa, type: 2}
+  - {fileID: 2100000, guid: d86eb44628c59364c8120d8e739c25f0, type: 2}
+  - {fileID: 2100000, guid: 32f960f3cc63f724bba3c40fe9e74255, type: 2}
+  - {fileID: 2100000, guid: db520fea557bc5b4194281489ff5494a, type: 2}
+  - {fileID: 2100000, guid: 46868894aaa342648974659b1cf22c7d, type: 2}
+  - {fileID: 2100000, guid: 0e3ba40e5ffa3a74d87210c935b09fc7, type: 2}
+  - {fileID: 2100000, guid: 4911eef849e1f684d82da5e2221603f2, type: 2}
+  - {fileID: 2100000, guid: d9c44c86032fd214283412598198e9a5, type: 2}
+  - {fileID: 2100000, guid: da9f51fad391e6c4882f2a9601ea5a57, type: 2}
+  - {fileID: 2100000, guid: 65b74daec81b255448bf3f4a18d37871, type: 2}
+  - {fileID: 2100000, guid: 1e897dd6a4d034449983383ef9f12b43, type: 2}
+  - {fileID: 2100000, guid: 9c6f6189aa933464ba241d38a5652564, type: 2}
+  - {fileID: 2100000, guid: 74a4bb5d991e7a14cab04954fb38db76, type: 2}
+  - {fileID: 2100000, guid: 8a2052070fa31b847b3e61a052bd4f87, type: 2}
+  - {fileID: 2100000, guid: f5ebd80c8fac31446a80a8e69291077f, type: 2}
+  - {fileID: 2100000, guid: 18d61bc7dea3e6241b26b6659cbf4865, type: 2}
+  - {fileID: 2100000, guid: d01e854035bc79941ab9cafc6d1545a0, type: 2}
+  - {fileID: 2100000, guid: 2064bb48ca7327042a08693de2426d55, type: 2}
+  - {fileID: 2100000, guid: e08120bd819860b4eb0f420c82ba7000, type: 2}
+  - {fileID: 2100000, guid: 35705ca65f8a8ea44886743cf486e6c5, type: 2}
+  - {fileID: 2100000, guid: 22c97bbd32b7ef843bec54b3f2bd79d3, type: 2}
+  - {fileID: 2100000, guid: 3a6d07b346bc81c46ba9c49ad230a3ec, type: 2}
+  - {fileID: 2100000, guid: f08a321a1dbfe7e4a8001a3a9f154442, type: 2}
+  - {fileID: 2100000, guid: 7aa720f41cd100b4a93e5fb74508524c, type: 2}
+  - {fileID: 2100000, guid: 07ef886f44c0a0b47b9e44a59b47b5c6, type: 2}
+  - {fileID: 2100000, guid: d5f231380c68a994e819077c1ea4e154, type: 2}
+  - {fileID: 2100000, guid: 23cd651be4adf8241bfcbae23439d4ae, type: 2}
   enemy:
   - {fileID: 6036340914966094974, guid: 68dd9aad3dedc114ab3dd2d4777bf242, type: 3}
   enemyMeshes:

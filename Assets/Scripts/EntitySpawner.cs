@@ -11,6 +11,12 @@ public class EntitySpawner : MonoBehaviour
     [SerializeField]
     public ScoreBlockSpawner scoreBlockSpawner;
 
+    [Header("스킨 오브젝트")]
+    [SerializeField]
+    protected Mesh[] skinnedMesh;
+    [SerializeField]
+    protected Material[] material;
+
     public void Setup(DamagePopupManager damagePopupManager, KillLogManager killLogManager, ScoreBlockSpawner scoreBlockSpawner)
     {
         this.damagePopupManager = damagePopupManager;

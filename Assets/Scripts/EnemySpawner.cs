@@ -6,8 +6,6 @@ public class EnemySpawner : EntitySpawner
 {
     [SerializeField]
     private Enemy[] enemy;
-    [SerializeField]
-    private Mesh[] enemyMeshes;
 
     private MemoryPool<Enemy> memoryPool;
 
@@ -36,6 +34,12 @@ public class EnemySpawner : EntitySpawner
 
             clone.Setup(new EntityInfo(name, "Test_Image"), new EntityData(1, 100, 10, 1), memoryPool, damagePopupManager, killLogManager, scoreBlockSpawner);
             clone.ChangeState(EntityStates.IdleState);
+
+            if (skinnedMesh != null || material != null)
+            {
+                clone.SetSkin(skinnedMesh[Random.Range(0, skinnedMesh.Length)],
+                                         material[Random.Range(0, material.Length)]);
+            }
         }
     }
 }
