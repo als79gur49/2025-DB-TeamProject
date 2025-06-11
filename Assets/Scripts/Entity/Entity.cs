@@ -109,7 +109,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
         // 마지막 공격한 상대의 정보
         lastDamagedInfo = new KeyValuePair<Entity, string>(enemy, weaponName);
 
-        damagePopupManager.PrintDamage(Color.black, amount, damageTextPoint.position, 3);
+        damagePopupManager.PrintDamage(Color.red, amount, damageTextPoint.position, 3);
 
         // hpUI 수정
         onTakeDamage?.Invoke(data.HP, data.MaxHp);
