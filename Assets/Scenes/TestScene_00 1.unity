@@ -535,7 +535,7 @@ PrefabInstance:
     - target: {fileID: 7914586737803469009, guid: e058fab1e31d4054bbe2060657882ff4,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -619.17
+      value: -617.4046
       objectReference: {fileID: 0}
     - target: {fileID: 8377638549614596179, guid: e058fab1e31d4054bbe2060657882ff4,
         type: 3}
@@ -575,7 +575,7 @@ PrefabInstance:
     - target: {fileID: 8938068611247625937, guid: e058fab1e31d4054bbe2060657882ff4,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -509.585
+      value: -506.05417
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -611,7 +611,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c63bdd9e3f5fc244b955a45dd50ae485, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: {fileID: 1388591859}
+  killLogPrefab: {fileID: 0}
+  killLogParent: {fileID: 0}
+  weaponSprites: []
+  removeLogTime: 5
+  maxLogCount: 5
+  animationDuration: 0.5
+  addEase: 27
+  removeEase: 26
+  useSlideAnimation: 1
+  slideOffset: {x: 300, y: 0}
 --- !u!4 &246434759
 Transform:
   m_ObjectHideFlags: 0
@@ -988,7 +997,7 @@ PrefabInstance:
     - target: {fileID: 7914586737803469009, guid: e058fab1e31d4054bbe2060657882ff4,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -619.17
+      value: -617.4046
       objectReference: {fileID: 0}
     - target: {fileID: 8377638549614596179, guid: e058fab1e31d4054bbe2060657882ff4,
         type: 3}
@@ -1028,7 +1037,7 @@ PrefabInstance:
     - target: {fileID: 8938068611247625937, guid: e058fab1e31d4054bbe2060657882ff4,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -509.585
+      value: -506.05417
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1594,7 +1603,7 @@ PrefabInstance:
     - target: {fileID: 7914586737803469009, guid: e058fab1e31d4054bbe2060657882ff4,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -619.17
+      value: -617.4046
       objectReference: {fileID: 0}
     - target: {fileID: 8377638549614596179, guid: e058fab1e31d4054bbe2060657882ff4,
         type: 3}
@@ -1634,7 +1643,7 @@ PrefabInstance:
     - target: {fileID: 8938068611247625937, guid: e058fab1e31d4054bbe2060657882ff4,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -509.585
+      value: -506.05417
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2393,6 +2402,7 @@ MonoBehaviour:
   killLogManager: {fileID: 246434758}
   scoreBlockSpawner: {fileID: 622744849}
   player: {fileID: -5987256920896985292, guid: eb61ee9a4308e0546a7dfdb0e2d700c9, type: 3}
+  uiController: {fileID: 0}
   virtualCamera: {fileID: 395255}
   skillIconManager: {fileID: 1316908587}
 --- !u!4 &1707099813
@@ -2556,7 +2566,7 @@ PrefabInstance:
     - target: {fileID: 7914586737803469009, guid: e058fab1e31d4054bbe2060657882ff4,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -619.17
+      value: -617.4046
       objectReference: {fileID: 0}
     - target: {fileID: 8377638549614596179, guid: e058fab1e31d4054bbe2060657882ff4,
         type: 3}
@@ -2596,7 +2606,7 @@ PrefabInstance:
     - target: {fileID: 8938068611247625937, guid: e058fab1e31d4054bbe2060657882ff4,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -509.585
+      value: -506.05417
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3608,7 +3618,7 @@ PrefabInstance:
     - target: {fileID: 7914586737803469009, guid: e058fab1e31d4054bbe2060657882ff4,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -619.17
+      value: -617.4046
       objectReference: {fileID: 0}
     - target: {fileID: 8377638549614596179, guid: e058fab1e31d4054bbe2060657882ff4,
         type: 3}
@@ -3648,7 +3658,7 @@ PrefabInstance:
     - target: {fileID: 8938068611247625937, guid: e058fab1e31d4054bbe2060657882ff4,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -509.585
+      value: -506.05417
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

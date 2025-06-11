@@ -22,6 +22,13 @@ public class InfoList : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI userScore;
 
+    public void SetupNULL()
+    {
+        userRanking.text = string.Empty;
+        userName.text = string.Empty;
+        userScore.text = string.Empty;
+    }
+
     public void Setup(int ranking, string name, int score)
     {
         userRanking.text = ranking.ToString();

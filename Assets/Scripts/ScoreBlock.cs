@@ -130,7 +130,7 @@ public class ScoreBlock : MonoBehaviour
     }
 
     // 접촉되어 흡수될 때
-    public void AbsorbScoreObject(GameObject target, Player player)
+    public void AbsorbScoreObject(GameObject target, Entity entity)
     {
         if (flag == true)
         {
@@ -152,7 +152,7 @@ public class ScoreBlock : MonoBehaviour
         }
     }
 
-    private void AddScoreTo(Player player)
+    private void AddScoreTo(Entity entity)
     {
         entity.AddScore(score);
         

@@ -77,6 +77,11 @@ public class LevelupStorage : MonoBehaviour
         // levelupable.Any(x => x.GetType() == item.GetType())
 
         // 참조 비교가 아닌 클래스 타입으로 비교
+        if (levelupable == null || levelupable.Count <= 0)
+        {
+            return;
+        }
+
         ILevelup sameTypeClassItem = levelupable.FirstOrDefault(x => x.GetType() == item.GetType());
         if(sameTypeClassItem != null)
         {

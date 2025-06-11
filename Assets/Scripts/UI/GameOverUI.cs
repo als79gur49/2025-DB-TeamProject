@@ -45,14 +45,15 @@ public class GameOverUI : MonoBehaviour
     // ÀüÃ¼ ·©Å· 
     private void ShowEntityInfo()
     {
-        List<RankingData> list = RankingRepository.GetTopRankings(showInfoNum);
+        //List<RankingData> list = RankingRepository.GetTopRankings(showInfoNum);
+        List<RankingData> list = RankingManager.GetLiveRanking(showInfoNum);
 
-        foreach(RankingData rankingData in list)
+        foreach (RankingData rankingData in list)
         {
             InfoList clone = Instantiate(infoPrefab);
             clone.transform.SetParent(ListParent, false);
 
-            clone.Setup(rankingData.Rank, rankingData.PlayerName, rankingData.Score);
+            clone.Setup(rankingData.Rank, rankingData.EntityName, rankingData.Score);
         }
 
     }
@@ -60,8 +61,10 @@ public class GameOverUI : MonoBehaviour
     // ÇÃ·¹ÀÌ¾î ·©Å·
     private void ShowPlayerInfo()
     {
-        PlayerModel p = PlayerRepository.GetPlayerById(playerId);
-        player.Setup(111, p.PlayerName, p.HighestScore);
+        RankingData playerData = RankingManager.GetEntityBestRecord(playerId);
+        //PlayerModel p = PlayerRepository.GetPlayerById(playerId);
+        player.Setup(playerData.Rank, playerData.EntityName, playerData.Score);
+        
         //RankingData data = RankingRepository.GetTopRankings;
         //
         //player.Setup(data.Rank, data.PlayerName, data.Score);

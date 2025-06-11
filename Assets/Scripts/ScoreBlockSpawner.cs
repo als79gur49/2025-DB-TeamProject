@@ -97,8 +97,6 @@ public class ScoreBlockSpawner : MonoBehaviour
         clone.transform.position = spawnPoint;
         clone.transform.rotation = Quaternion.identity;
 
-        Debug.Log($"{clone} {clone.transform.position}");
-
         float randomValue = Random.Range(0, 1f);
         if(randomValue > 0.8f)
         {

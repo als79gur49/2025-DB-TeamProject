@@ -11,9 +11,6 @@ public class Player : Entity
     private Dictionary<KeyCode, Vector3> arrowVector;
     private LayerMask groundLayer = 1 << 8;
 
-    // ���� ���� �÷���
-    private bool _isDead = false;
-
     private Vector3 inputVector;
     private Vector3 mouseDirection;
     private Vector3 mouseWorldPosition;

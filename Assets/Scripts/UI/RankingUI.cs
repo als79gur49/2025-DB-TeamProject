@@ -11,14 +11,15 @@ public class RankingUI : MonoBehaviour
 
     public void UpdateRankingUI()
     {
-        List<RankingData> rankings = RankingRepository.GetTopRankings(40);
+        //List<RankingData> rankings = RankingRepository.GetTopRankings(40);
+        List<RankingData> rankings = RankingManager.GetLiveRanking(40);
 
         Debug.Log($"{rankings.Count}총 개수 | {text.text}");
         text.text = "";
         foreach(RankingData ranking in rankings)
         {
-            Debug.Log($"{ranking.Rank}등 | {ranking.PlayerName}: {ranking.Score}\n");
-            string rankingText = $"{ranking.Rank}등 | {ranking.PlayerName}: {ranking.Score}\n";
+            Debug.Log($"{ranking.Rank}등 | {ranking.EntityName}: {ranking.Score}\n");
+            string rankingText = $"{ranking.Rank}등 | {ranking.EntityName}: {ranking.Score}\n";
             text.text += rankingText;
         }
 

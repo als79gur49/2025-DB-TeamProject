@@ -11,6 +11,9 @@ public class UIController : MonoBehaviour
     [SerializeField]
     private GameOverUI gameOverPanel;
 
+    [SerializeField]
+    private LiveRankingUI liveRankingPanel;
+
     private Entity player;
     private int playerId;
 
@@ -20,6 +23,7 @@ public class UIController : MonoBehaviour
         this.playerId = playerId;
 
         gameOverPanel?.Setup(playerId);
+        liveRankingPanel?.Setup(playerId);
 
         player.onDeath.AddListener(ShowGameOverPanel);
         player.onLevelup.AddListener(UpdateLevelHUD);
