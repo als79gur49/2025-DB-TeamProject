@@ -19,7 +19,6 @@ public class EntityUI : MonoBehaviour
 
     public void UpdateHPHUD(float current, float max)
     {
-        Debug.Log($"{current} / {max}hp");
         if(current <= 0)
         {
             hpSlider.value = 0;

@@ -32,7 +32,7 @@ public class ChaseState : IState
     {
         agent.SetDestination(target.transform.position);
 
-        Debug.Log("Chase Execute");
+        //Debug.Log("Chase Execute");
     }
 
     public void Exit(AIInput input)

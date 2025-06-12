@@ -103,7 +103,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
             skinnedMeshRenderer.enabled = false;
             skinnedMeshRenderer.enabled = true;
 
-            Debug.Log($"Mesh 변경 완료: {mesh.name}");
+            //Debug.Log($"Mesh 변경 완료: {mesh.name}");
         }
 
         if (material != null)
@@ -112,7 +112,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
             materials[0] = material;
             skinnedMeshRenderer.materials = materials;
 
-            Debug.Log($"Material 변경 완료: {material.name}");
+            //Debug.Log($"Material 변경 완료: {material.name}");
         }
     }
 

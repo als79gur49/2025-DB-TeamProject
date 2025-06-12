@@ -46,7 +46,7 @@ public class MemoryPool<T> where T : Component
 
             poolItem.isActive = false;
             poolItem.item = GameObject.Instantiate(poolObjectPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-            Debug.Log("MemoryPool folder = " + folder?.name);
+            //Debug.Log("MemoryPool folder = " + folder?.name);
             if (folder != null)
             {
                 poolItem.item.transform.SetParent(folder.transform, true);

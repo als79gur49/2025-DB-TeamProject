@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 /// <summary>
 /// 게임 세션 통합 관리 클래스
@@ -437,6 +438,19 @@ public static class GameSessionManager
     {
         if (currentSessionId == -1) return new List<SessionEntityModel>();
         return SessionEntityRepository.GetSessionEntities(currentSessionId, aliveOnly);
+    }
+
+    /// <summary>
+    /// 특정 세션의 특정 엔티티 조회
+    /// </summary>
+    public static SessionEntityModel GetCurrentSessionEntities(int targetSessionId, int entityId, bool aliveOnly = false)
+    {
+        foreach(var sessionEntity in SessionEntityRepository.GetSessionEntities(targetSessionId, aliveOnly))
+        {
+            if (sessionEntity.EntityID == entityId) return sessionEntity;
+        }
+
+        return new SessionEntityModel();
     }
 
     /// <summary>

@@ -58,6 +58,8 @@ public class LiveRankingUI : MonoBehaviour
         }
         int rank = RankingManager.GetRankByScore(data.HighestScore);
         player.Setup(rank, data.PlayerName, data.HighestScore, true);
+
+        
     }
     private void Update()
     {

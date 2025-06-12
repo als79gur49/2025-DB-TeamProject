@@ -50,7 +50,7 @@ public class PatrolState : IState
 
             timer = 0;
         }
-        Debug.Log("Patrol Execute");
+        //Debug.Log("Patrol Execute");
     }
 
     public void Exit(AIInput input)

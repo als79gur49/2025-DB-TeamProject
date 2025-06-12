@@ -110,26 +110,24 @@ public class KillLogManager : MonoBehaviour
 
         if (useSlideAnimation)
         {
-            // 방법 1: 레이아웃 업데이트 후 정확한 위치 가져오기
 
-            // 1단계: 먼저 레이아웃 업데이트하여 정확한 위치 계산
+            // 먼저 레이아웃 업데이트하여 정확한 위치 계산
             Canvas.ForceUpdateCanvases();
             LayoutRebuilder.ForceRebuildLayoutImmediate(parentRect);
 
-            // 2단계: Layout이 적용된 후의 정확한 위치 저장
+            // Layout이 적용된 후의 정확한 위치 저장
             Vector2 layoutPosition = logRect.anchoredPosition;
 
-            // 3단계: 시작 위치를 오프셋만큼 이동
+            // 시작 위치를 오프셋만큼 이동
             Vector2 startPosition = layoutPosition + slideOffset;
             logRect.anchoredPosition = startPosition;
             canvasGroup.alpha = 0f;
 
-            // 4단계: 정확한 Layout 위치로 애니메이션
+            // 정확한 Layout 위치로 애니메이션
             Sequence addSequence = DOTween.Sequence();
             addSequence.Append(logRect.DOAnchorPos(layoutPosition, animationDuration).SetEase(addEase))
                       .Join(canvasGroup.DOFade(1f, animationDuration * 0.7f))
                       .OnComplete(() => {
-                          Debug.Log($"킬 로그 추가 완료: {logPanel.name} at {logRect.anchoredPosition}");
                       });
         }
         else

@@ -41,7 +41,7 @@ public class FleeState : IState
 
         agent.SetDestination(targetDirection + input.self.transform.position);
 
-        Debug.Log("Flee Execute");
+        //Debug.Log("Flee Execute");
     }
 
     public void Exit(AIInput input)
