@@ -1,3 +1,68 @@
+using Cinemachine;
+using UnityEngine;
+using UnityEngine.Events;
+
+public class PlayerSpawner : EntitySpawner
+{
+    [SerializeField]
+    private Player playerPrefab;
+
+    // 플레이어 전용 의존성
+    private UIController uiController;
+    private CinemachineVirtualCamera virtualCamera;
+    private SkillIconManager skillIconManager;
+
+    // 이벤트
+    public System.Action<Player> OnPlayerSpawned;
+    public System.Action<Player> OnPlayerDeath;
+    public UnityEvent<Player> onPlayerSpawned;
+    public UnityEvent<Player> onPlayerDeath;
+    private Player currentPlayer;
+    private string playerName;
+
+    public void SetupPlayer(UIController uiController, CinemachineVirtualCamera virtualCamera, SkillIconManager skillIconManager, string name)
+    {
+        this.uiController = uiController;
+        this.virtualCamera = virtualCamera;
+        this.skillIconManager = skillIconManager;
+
+        playerName = name;
+    }
+
+    public Player SpawnPlayer()
+    {
+        ValidateSetup();
+
+        if (currentPlayer != null)
+        {
+            Debug.LogWarning("이미 플레이어가 존재합니다.");
+            return currentPlayer;
+        }
+
+        Player clone = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
+        clone.Setup(new EntityInfo(playerName, "Test_Image"), new EntityData(1, 100, 10, 1),
+                   damagePopupManager, killLogManager, scoreBlockSpawner);
+
+        // 스킨 적용
+        ApplyRandomSkin(clone);
+
+        // 사망 이벤트 구독
+        clone.onDeath.AddListener(() => HandlePlayerDeath(clone));
+
+        currentPlayer = clone;
+        onPlayerSpawned?.Invoke(clone);
+
+        return clone;
+    }
+
+    private void HandlePlayerDeath(Player player)
+    {
+        onPlayerDeath?.Invoke(player);
+        currentPlayer = null;
+    }
+}
+
+/*
 using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,8 +71,10 @@ using Cinemachine;
 
 public class PlayerSpawner : EntitySpawner
 {
+    // 플레이어 프리팹
     [SerializeField]
     private Player player;
+    // mainScene의 중요UI들 의존 필요한 것들
     [SerializeField]
     private UIController uiController;
     [SerializeField]
@@ -71,3 +138,4 @@ public class PlayerSpawner : EntitySpawner
         GameSessionManager.OnPlayerDeath();
     }
 }
+ */
