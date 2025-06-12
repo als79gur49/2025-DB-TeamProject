@@ -33,7 +33,7 @@ public class EnemySpawner : EntitySpawner
 
 
             clone.Setup(new EntityInfo(name, "Test_Image"), new EntityData(1, 100, 10, 1), memoryPool, damagePopupManager, killLogManager, scoreBlockSpawner);
-            clone.AddScore(2345 + Random.Range(0, 2345));
+            clone.AddScore(5678 + Random.Range(0, 6789));
             clone.ChangeState(EntityStates.IdleState);
 
             if (skinnedMesh != null || material != null)

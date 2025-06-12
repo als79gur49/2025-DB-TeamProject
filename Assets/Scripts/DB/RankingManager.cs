@@ -343,32 +343,40 @@ public static class RankingManager
         try
         {
             string query = @"
-                SELECT 
-                    p.PlayerID,
-                    p.PlayerName,
-                    p.HighestScore,
-                    p.TotalGames,
-                    p.TotalPlayTime,
-                    p.LastPlayedAt,
-                    ROW_NUMBER() OVER (ORDER BY p.HighestScore DESC, p.LastPlayedAt ASC) as Rank
-                FROM Players p
-                WHERE p.HighestScore > 0
-                ORDER BY p.HighestScore DESC, p.LastPlayedAt ASC
-                LIMIT @limit
-            ";
+            SELECT 
+                se.EntityID,
+                e.EntityName,
+                e.EntityType,
+                se.Score,
+                se.Level,
+                gs.PlayTimeSeconds,
+                gs.StartedAt,
+                gs.EndedAt,
+                ROW_NUMBER() OVER (ORDER BY se.Score DESC, gs.EndedAt ASC) as Rank
+            FROM SessionEntities se
+            JOIN Entities e ON se.EntityID = e.EntityID
+            JOIN GameSessions gs ON se.SessionID = gs.SessionID
+            WHERE gs.IsCompleted = TRUE AND e.EntityType = 'Player'
+            ORDER BY se.Score DESC, gs.EndedAt ASC
+            LIMIT @limit
+        ";
 
             using (var reader = DatabaseManager.ExecuteReader(query, ("@limit", limit)))
             {
                 while (reader.Read())
                 {
+                    string entityType = reader["EntityType"].ToString();
+
                     rankings.Add(new RankingData
                     {
-                        EntityID = (int)(long)reader["PlayerID"],
-                        EntityName = reader["PlayerName"].ToString(),
-                        EntityType = "Player", // 플레이어만 조회하므로 고정값
-                        Score = (int)(long)reader["HighestScore"],
-                        PlayTime = (int)(long)reader["TotalPlayTime"],
-                        StartedAt = DatabaseManager.ConvertUtcToLocal(DateTime.Parse(reader["LastPlayedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeUniversal)),
+                        EntityID = (int)(long)reader["EntityID"],
+                        EntityName = reader["EntityName"].ToString(),
+                        EntityType = entityType,
+                        Score = (int)(long)reader["Score"],
+                        Level = (int)(long)reader["Level"],
+                        PlayTime = reader["PlayTimeSeconds"] != DBNull.Value ? (int)(long)reader["PlayTimeSeconds"] : 0,
+                        StartedAt = DatabaseManager.ConvertUtcToLocal(DateTime.Parse(reader["StartedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeUniversal)),
+                        EndedAt = DatabaseManager.ConvertUtcToLocal(DateTime.Parse(reader["EndedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeUniversal)),
                         Rank = (int)(long)reader["Rank"]
                     });
                 }
