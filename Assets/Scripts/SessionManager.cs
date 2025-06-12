@@ -104,7 +104,7 @@ public class SessionManager : MonoBehaviour
             Debug.LogWarning("이미 게임이 진행 중입니다.");
             return;
         }
-
+        RankingManager.ClearAllSessionRanking();
         string playerName = GetPlayerName();
         currentSession = EntityGameManager.StartNewGame(playerName);
 

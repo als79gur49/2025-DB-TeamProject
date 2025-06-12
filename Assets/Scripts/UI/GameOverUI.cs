@@ -55,7 +55,9 @@ public class GameOverUI : MonoBehaviour
     {
         //List<RankingData> list = RankingRepository.GetTopRankings(showInfoNum);
         //List<RankingData> list = RankingManager.GetLiveRanking(showInfoNum);
-        List<RankingData> list = RankingManager.GetSessionEndRanking(sessionId, showInfoNum);
+        
+        //List<RankingData> list = RankingManager.GetSessionEndRanking(sessionId, showInfoNum);
+        List<RankingData> list = RankingManager.GetSessionEndRanking(sessionId, GameSessionManager.GetSession(sessionId2).TotalEntities);
 
         foreach (RankingData rankingData in list)
         {
@@ -63,6 +65,12 @@ public class GameOverUI : MonoBehaviour
             clone.transform.SetParent(ListParent, false);
 
             clone.Setup(rankingData.Rank, rankingData.EntityName, rankingData.Score);
+
+            // 위치 변경, 따로 플레이어 랭킹만 찾을려고 여러 DB에서 가져와서 사용해봤지만, 랭킹이 제대로 표시X
+            if(rankingData.IsPlayer)
+            {
+                player.Setup(rankingData.Rank, rankingData.EntityName, rankingData.Score);
+            }
         }
 
     }
@@ -70,6 +78,8 @@ public class GameOverUI : MonoBehaviour
     // 플레이어 랭킹
     private void ShowPlayerInfo()
     {
+        return;
+
      //   // 가장 최근 플레이어 정보 조회
      //   PlayerModel playerData = PlayerRepository.GetPlayerByName(playerName);
      //
@@ -80,13 +90,6 @@ public class GameOverUI : MonoBehaviour
      //   {
      //       player.Setup(sessionEntity.FinalRank ?? -1, sessionEntity.EntityName, sessionEntity.Score);
      //   }
-
-        SessionEntityModel sessionEntity2 = GameSessionManager.GetCurrentSessionEntities(sessionId2, playerId2);
-        if(sessionEntity2 != null)
-        {
-            Debug.Log($"{sessionEntity2.FinalRank}");
-            player.Setup(sessionEntity2.FinalRank ?? -1, sessionEntity2.EntityName, sessionEntity2.Score);
-        }
 
         List<RankingData> list = RankingManager.GetSessionEndRanking(sessionId, showInfoNum);
         foreach(RankingData rankingData in list)

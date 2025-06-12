@@ -432,6 +432,14 @@ public static class GameSessionManager
     }
 
     /// <summary>
+    /// 특정 세션 정보 반환
+    /// </summary>
+    public static GameSessionModel GetSession(int sessionId)
+    {
+        return GameSessionRepository.GetSessionById(sessionId);
+    }
+
+    /// <summary>
     /// 현재 세션의 모든 엔티티 조회
     /// </summary>
     public static List<SessionEntityModel> GetCurrentSessionEntities(bool aliveOnly = false)
@@ -440,18 +448,6 @@ public static class GameSessionManager
         return SessionEntityRepository.GetSessionEntities(currentSessionId, aliveOnly);
     }
 
-    /// <summary>
-    /// 특정 세션의 특정 엔티티 조회
-    /// </summary>
-    public static SessionEntityModel GetCurrentSessionEntities(int targetSessionId, int entityId, bool aliveOnly = false)
-    {
-        foreach(var sessionEntity in SessionEntityRepository.GetSessionEntities(targetSessionId, aliveOnly))
-        {
-            if (sessionEntity.EntityID == entityId) return sessionEntity;
-        }
-
-        return new SessionEntityModel();
-    }
 
     /// <summary>
     /// 현재 세션 ID 반환

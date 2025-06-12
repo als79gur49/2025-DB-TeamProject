@@ -50,6 +50,18 @@ public class LiveRankingUI : MonoBehaviour
 
         player.Setup(rank.Rank, rank.EntityName, rank.Score, true);
     }
+    public void UpdatePlayerRankingTMP(List<RankingData> datas)
+    {
+        foreach(var t in datas)
+        {
+            if(t.IsPlayer)
+            {
+                player.Setup(t.Rank, t.EntityName, t.Score, true);
+                break;
+            }
+        }
+    }
+
     public void UpdatePlayerRanking(PlayerModel data)
     {
         if (player == null)
@@ -64,6 +76,7 @@ public class LiveRankingUI : MonoBehaviour
     private void Update()
     {
         UpdateEntitiesRanking(RankingManager.GetLiveRanking(10));
-        UpdatePlayerRanking(RankingManager.GetPlayerLiveRanking(playerName, 1));
+        UpdatePlayerRankingTMP(RankingManager.GetLiveRanking(RankingManager.GetActiveEntityCount()));
+        //UpdatePlayerRanking(RankingManager.GetPlayerLiveRanking(playerName, 1));
     }
 }

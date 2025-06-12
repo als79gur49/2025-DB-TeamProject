@@ -13016,7 +13016,7 @@ MonoBehaviour:
   onEnemyDeath:
     m_PersistentCalls:
       m_Calls: []
-  spawnMultiplier: 1
+  spawnMultiplier: 0.1
 --- !u!4 &2039136163
 Transform:
   m_ObjectHideFlags: 0
