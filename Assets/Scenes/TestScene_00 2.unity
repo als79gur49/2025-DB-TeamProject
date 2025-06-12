@@ -4570,6 +4570,7 @@ GameObject:
   - component: {fileID: 885140897}
   - component: {fileID: 885140896}
   - component: {fileID: 885140895}
+  - component: {fileID: 885140899}
   m_Layer: 0
   m_Name: RetryButton
   m_TagString: Untagged
@@ -4695,6 +4696,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 885140893}
   m_CullTransparentMesh: 0
+--- !u!114 &885140899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 885140893}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f44bb5e1093bdc49ae685fe5df15ae7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  loadScenebutton: {fileID: 885140895}
+  sceneName: TestScene_00 2
+  delayTime: 0.1
 --- !u!1001 &900828252
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13851,6 +13867,7 @@ GameObject:
   - component: {fileID: 2093957887}
   - component: {fileID: 2093957886}
   - component: {fileID: 2093957885}
+  - component: {fileID: 2093957889}
   m_Layer: 0
   m_Name: HomeButton
   m_TagString: Untagged
@@ -13976,6 +13993,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2093957883}
   m_CullTransparentMesh: 0
+--- !u!114 &2093957889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2093957883}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f44bb5e1093bdc49ae685fe5df15ae7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  loadScenebutton: {fileID: 2093957885}
+  sceneName: Title
+  delayTime: 0.1
 --- !u!1001 &2095269552
 PrefabInstance:
   m_ObjectHideFlags: 0

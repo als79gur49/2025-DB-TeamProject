@@ -5,17 +5,24 @@ using DG.Tweening;
 public class ButtonController : MonoBehaviour
 {
     [Header("패널 연결")]
-    [SerializeField] private GameObject settingsPanel;
-    [SerializeField] private CanvasGroup settingsCanvasGroup; // 페이드 효과용
+    [SerializeField] 
+    private GameObject settingsPanel;
+    [SerializeField] 
+    private CanvasGroup settingsCanvasGroup; // 페이드 효과용
 
     [Header("버튼 연결")]
-    [SerializeField] private Button openSettingsButton;
-    [SerializeField] private Button closeSettingsButton;
+    [SerializeField] 
+    private Button openSettingsButton;
+    [SerializeField] 
+    private Button closeSettingsButton;
 
     [Header("애니메이션 설정")]
-    [SerializeField] private float animationDuration = 0.3f;
-    [SerializeField] private Ease easeType = Ease.OutBack;
-    [SerializeField] private AnimationType animationType = AnimationType.ScaleAndFade;
+    [SerializeField] 
+    private float animationDuration = 0.3f;
+    [SerializeField] 
+    private Ease easeType = Ease.OutBack;
+    [SerializeField] 
+    private AnimationType animationType = AnimationType.ScaleAndFade;
 
     private RectTransform panelRectTransform;
     private Vector3 originalScale;
