@@ -49,12 +49,13 @@ public class EnemySpawner : EntitySpawner
         }
 
         Enemy clone = memoryPool.ActivatePoolItem();
-        string name = "Test_Enemy_01_" + Random.Range(0, 10000);
+        // Enemy MemoryPool이기에, GetInstanceID() 같은 값 나옴. 
+        string name = $"Enemy_{clone.GetInstanceID()}_{Random.Range(0, 100)}";
 
         clone.Setup(new EntityInfo(name, "Test_Image"), new EntityData(1, 100, 10, 1),
                    memoryPool, damagePopupManager, killLogManager, scoreBlockSpawner);
 
-        clone.AddScore(5678 + Random.Range(0, 6789));
+        clone.AddScore(12345 + Random.Range(0, 23456));
         //FSM 기본 상태 지정
         clone.ChangeState(EntityStates.IdleState);
 

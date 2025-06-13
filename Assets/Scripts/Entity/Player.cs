@@ -193,7 +193,7 @@ public class Player : Entity
         data.AddHp(30);
         onTakeDamage?.Invoke(data.HP, data.MaxHp);
         // 스킬 창 띄우기
-        //levelupStorage.Levelupable[0].LevelUp();
+        //levelupStorage.Levelupable[0].LevelUp();  
         levelupStorage.Levelup();
     }
 
