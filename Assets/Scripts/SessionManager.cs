@@ -2,34 +2,44 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
-
+[System.Serializable]
+public class EntityBasicData
+{
+    public int level = 1;
+    public int hp = 100;
+    public int damage = 10;
+    public int defense = 1;
+}
 public class SessionManager : MonoBehaviour
 {
     // Spawner와 UnityEvent로 연결
 
     [Header("핵심 매니저들")]
-    [SerializeField] 
+    [SerializeField]
     private DamagePopupManager damagePopupManager; // 공격받을 경우 데미지 출력
-    [SerializeField] 
+    [SerializeField]
     private KillLogManager killLogManager; // 죽을 경우 킬로그 출력
-    [SerializeField] 
+    [SerializeField]
     private ScoreBlockSpawner scoreBlockSpawner; // 죽을 경우 점수블럭 스폰
-    [SerializeField] 
+    [SerializeField]
     private UIController uiController; // 플레이어 UI, 랭킹관련 UI
-    [SerializeField] 
+    [SerializeField]
     private CinemachineVirtualCamera virtualCamera; // 플레이어에 연결될 카메라
-    [SerializeField] 
+    [SerializeField]
     private SkillIconManager skillIconManager; // 스킬 저장소 // 작동X
 
     [Header("Spawners")]
-    [SerializeField] 
+    [SerializeField]
     private PlayerSpawner playerSpawner;
-    [SerializeField] 
+    [SerializeField]
     private EnemySpawner enemySpawner;
 
     [Header("Game Session")]
     private GameSessionModel currentSession;
     private bool isGameActive = false;
+
+    [Header("Entity 기본 수치")]
+    public EntityBasicData entityBasicData;
 
     public GameSessionModel CurrentSession => currentSession;
     public bool IsGameActive => isGameActive;
@@ -72,8 +82,8 @@ public class SessionManager : MonoBehaviour
     private void InitializeSpawners()
     {
         // 의존성 주입
-        playerSpawner.Setup(damagePopupManager, killLogManager, scoreBlockSpawner);
-        enemySpawner.Setup(damagePopupManager, killLogManager, scoreBlockSpawner);
+        playerSpawner.Setup(damagePopupManager, killLogManager, scoreBlockSpawner, entityBasicData);
+        enemySpawner.Setup(damagePopupManager, killLogManager, scoreBlockSpawner, entityBasicData);
 
         // 플레이어 스포너 의존성 주입
         playerSpawner.SetupPlayer(uiController, virtualCamera, skillIconManager, GetPlayerName());

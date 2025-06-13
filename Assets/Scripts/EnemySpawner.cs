@@ -27,9 +27,10 @@ public class EnemySpawner : EntitySpawner
         }
     }
 
-    public override void Setup(DamagePopupManager damagePopupManager, KillLogManager killLogManager, ScoreBlockSpawner scoreBlockSpawner)
+    public override void Setup(DamagePopupManager damagePopupManager, KillLogManager killLogManager, ScoreBlockSpawner scoreBlockSpawner,
+        EntityBasicData basicData)
     {
-        base.Setup(damagePopupManager, killLogManager, scoreBlockSpawner);
+        base.Setup(damagePopupManager, killLogManager, scoreBlockSpawner, basicData);
 
         if (enemyPrefabs != null && enemyPrefabs.Length > 0)
         {
@@ -54,8 +55,9 @@ public class EnemySpawner : EntitySpawner
 
         Vector3 spawnPoint = GetRandomSpawnPoint();
         clone.transform.position = spawnPoint;
-        clone.Setup(new EntityInfo(name, "Test_Image"), new EntityData(1, 100, 10, 1),
-                   memoryPool, damagePopupManager, killLogManager, scoreBlockSpawner);
+        clone.Setup(new EntityInfo(name, "Test_Image"),
+                    new EntityData(entityBasicData.level, entityBasicData.hp, entityBasicData.damage, entityBasicData.defense),
+                    memoryPool, damagePopupManager, killLogManager, scoreBlockSpawner);
 
         clone.AddScore(12345 + Random.Range(0, 23456));
         //FSM 기본 상태 지정

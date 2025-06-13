@@ -42,8 +42,9 @@ public class PlayerSpawner : EntitySpawner
         Vector3 spawnPoint = GetRandomSpawnPoint();
 
         Player clone = Instantiate(playerPrefab, spawnPoint, Quaternion.identity);
-        clone.Setup(new EntityInfo(playerName, "Test_Image"), new EntityData(1, 100, 10, 1),
-                   damagePopupManager, killLogManager, scoreBlockSpawner);
+        clone.Setup(new EntityInfo(playerName, "Test_Image"),
+                    new EntityData(entityBasicData.level, entityBasicData.hp, entityBasicData.damage, entityBasicData.defense),
+                    damagePopupManager, killLogManager, scoreBlockSpawner);
 
         // 스킨 적용
         ApplyRandomSkin(clone);

@@ -25,12 +25,16 @@ public abstract class EntitySpawner : MonoBehaviour
     private float xSize = 20 * 5;
     private float ySize = 20 * 5;
 
-    public virtual void Setup(DamagePopupManager damagePopupManager, KillLogManager killLogManager, ScoreBlockSpawner scoreBlockSpawner)
+    protected EntityBasicData entityBasicData;
+
+    public virtual void Setup(DamagePopupManager damagePopupManager, KillLogManager killLogManager, ScoreBlockSpawner scoreBlockSpawner,
+        EntityBasicData basicData)
     {
         this.damagePopupManager = damagePopupManager;
         this.killLogManager = killLogManager;
         this.scoreBlockSpawner = scoreBlockSpawner;
         isInitialized = true;
+        entityBasicData = basicData;
     }
 
     protected virtual void ValidateSetup()
