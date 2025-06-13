@@ -111,7 +111,7 @@ public static class RankingManager
                 SELECT EntityID, EntityName, EntityType, CurrentScore, CurrentLevel
                 FROM SessionRanking
                 WHERE IsActive = TRUE
-                ORDER BY CurrentScore DESC, LastUpdated ASC
+                ORDER BY CurrentScore DESC, LastUpdated
                 LIMIT @limit
             ";
 
@@ -445,6 +445,31 @@ public static class RankingManager
     }
 
     /// <summary>
+    /// 플레이어의 모든 플레이타임 반환
+    /// </summary>
+    public static int GetPlayerTotalPlayTime()
+    {
+        try
+        {
+            string query = @"
+                SELECT 
+                    SUM(p.TotalPlayTime)
+                FROM Players p
+                WHERE p.HighestScore > 0
+            ";
+
+            var result = DatabaseManager.ExecuteScalar(query);
+            return result != null ? (int)(long)result : 0;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"플레이어의 모든 플레이타임 조회 오류: {ex.Message}");
+        }
+
+        return -1;
+    }
+
+    /// <summary>
     /// 특정 점수의 순위 계산 (모든 엔티티 포함)
     /// </summary>
     public static int GetRankByScore(int score)
@@ -559,9 +584,63 @@ public static class RankingManager
     }
 
     /// <summary>
-    /// 세션 랭킹 정리 (비활성 엔티티 제거)
+    /// 최초 게임 생성일 조회 (전체 시스템)
     /// </summary>
-    public static int CleanupInactiveRankings(int daysOld = 7)
+    public static DateTime? GetCreatedAt()
+    {
+        try
+        {
+            string query = @"
+                SELECT MIN(StartedAt) as FirstGame
+                FROM GameSessions
+            ";
+
+            var result = DatabaseManager.ExecuteScalar(query);
+
+            if (result != null && result != DBNull.Value)
+            {
+                return DatabaseManager.ConvertUtcToLocal(DateTime.Parse(result.ToString(), null, System.Globalization.DateTimeStyles.AssumeUniversal));
+            }
+
+            return null;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"최초 생성일 조회 오류: {ex.Message}");
+            return null;
+        }
+    }
+    /// <summary>
+    /// 마지막 플레이 기록 조회 (전체 시스템)
+    /// </summary>
+    public static DateTime? GetLastPlayedAt()
+    {
+        try
+        {
+            string query = @"
+                SELECT MAX(EndedAt) as LastPlay
+                FROM GameSessions
+            ";
+
+            var result = DatabaseManager.ExecuteScalar(query);
+
+            if (result != null && result != DBNull.Value)
+            {
+                return DatabaseManager.ConvertUtcToLocal(DateTime.Parse(result.ToString(), null, System.Globalization.DateTimeStyles.AssumeUniversal));
+            }
+
+            return null;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"마지막 플레이 기록 조회 오류: {ex.Message}");
+            return null;
+        }
+    }
+        /// <summary>
+        /// 세션 랭킹 정리 (비활성 엔티티 제거)
+        /// </summary>
+        public static int CleanupInactiveRankings(int daysOld = 7)
     {
         try
         {
