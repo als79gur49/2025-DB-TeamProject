@@ -1,5 +1,6 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Events;
 
 public class EnemySpawner : EntitySpawner
@@ -52,9 +53,13 @@ public class EnemySpawner : EntitySpawner
         Enemy clone = memoryPool.ActivatePoolItem();
         // Enemy MemoryPool이기에, GetInstanceID() 같은 값 나옴. 
         string name = $"Enemy_{clone.GetInstanceID()}_{Random.Range(0, 100)}";
-
+        
+        // 위치 변경하려면 NavMesh 일시중지
+        clone.GetComponent<NavMeshAgent>().isStopped = true;
         Vector3 spawnPoint = GetRandomSpawnPoint();
         clone.transform.position = spawnPoint;
+        clone.GetComponent<NavMeshAgent>().isStopped = false;
+
         clone.Setup(new EntityInfo(name, "Test_Image"),
                     new EntityData(entityBasicData.level, entityBasicData.hp, entityBasicData.damage, entityBasicData.defense),
                     memoryPool, damagePopupManager, killLogManager, scoreBlockSpawner);

@@ -8891,7 +8891,7 @@ MonoBehaviour:
   enemySpawner: {fileID: 2039136162}
   entityBasicData:
     level: 1
-    hp: 1000
+    hp: 150
     damage: 10
     defense: 1
 --- !u!4 &1477959739
