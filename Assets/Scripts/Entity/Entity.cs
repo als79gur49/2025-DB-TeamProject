@@ -76,7 +76,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
         Setup();
 
         GetComponent<BoxCollider>().enabled = true;
-
+        
         onDeath.AddListener(DeathLog); // lastDamagedInfo, KillLogManager 
         onDeath.AddListener(GiveScoreToLastAttacker); // lastDamagedInfo, data
         onDeath.AddListener(SpawnLevelupBlocks); // 죽으면 경험치블럭들 생성
@@ -117,14 +117,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     }
 
 
-    protected virtual void Start()
-    {
-        // AI 엔티티인 경우 DB에 자동 등록
-        if (this is not Player)
-        {
-            EntityGameManager.AddAIEntity(GetInstanceID(), info.EntityName);
-        }
-    }
+    
 
     // IAttack
     public void Attack()
@@ -168,6 +161,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
             return;
         }
 
+        Debug.Log($"{GetInstanceID()} 킬로그 출력");
         KillLog log = new KillLog(info.EntityName, lastDamagedInfo.Value, lastDamagedInfo.Key.Info.EntityName);
         killLogManager.AddLog(log);
     }

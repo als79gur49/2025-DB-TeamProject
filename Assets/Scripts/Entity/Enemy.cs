@@ -14,6 +14,8 @@ public class Enemy : Entity
     private MemoryPool<Enemy> memoryPool;
     public MemoryPool<Enemy> MemoryPool => memoryPool;
 
+    private bool isInit = false;
+
     public void Setup(
         EntityInfo info,
         EntityData data,
@@ -40,6 +42,17 @@ public class Enemy : Entity
         input.SetEntity(this);
         input.SetAnimation(animation);
 
+
+
+        if (!isInit)
+        {
+            isInit = true;
+        }
+            Debug.Log($"||{GetInstanceID()}|| 스폰");
+            EntityGameManager.AddAIEntity(GetInstanceID(), Info.EntityName);
+
+
+
         onDeath.AddListener(StartDespawnTimer); // n초 후 memoryPool로 반환
     }
 
@@ -61,11 +74,18 @@ public class Enemy : Entity
     private IEnumerator ReturnToPoolAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
+
+        onDeath.RemoveAllListeners();
         // 메모리 풀로 반환
         memoryPool.DeactivatePoolItem(this);
+        EntityGameManager.OnEntityDeath(GetInstanceID(), Info.EntityName);
     }
 
     protected override void levelup()
+    {
+    }
+
+    private void OnDisable()
     {
     }
 }
