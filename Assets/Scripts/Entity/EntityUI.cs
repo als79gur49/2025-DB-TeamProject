@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -27,5 +28,16 @@ public class EntityUI : MonoBehaviour
         }
 
         hpSlider.value = current / max;
+    }
+    private void Update()
+    {
+        if (Camera.main != null)
+        {
+            Vector3 camPos = Camera.main.transform.position;
+
+            Vector3 t = new Vector3(hpSlider.gameObject.transform.position.x,
+                camPos.y, camPos.z);
+            hpSlider.gameObject.transform.LookAt(t);
+        }
     }
 }

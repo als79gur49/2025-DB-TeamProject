@@ -1,32 +1,29 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
-using System.Buffers;
-using DG.Tweening.Core.Easing;
-using UnityEngine.AI;
-
-
 
 public class ScoreBlock : MonoBehaviour
 {
     private int score = 10;
 
-    //private float upHeight = 2.3f;
-    //private float upDuration = 0.5f;
-
     private Transform targetTransform;
-
-    // ���� 1ȸ�� �۵� �÷���
-    private bool flag = true;
-    //private float absorbedTime = 1f;
 
     private MemoryPool<ScoreBlock> memoryPool;
 
-    // �⺻ �����Ǵ� ��ü ����� ����
     private ScoreBlockSpawner spawner;
     private bool canRespawn;
     private Vector3 originPosition;
+
+    // 흡수 애니메이션 설정들
+    private float pullBackDistance = 0.5f; // 반대 방향으로 당겨지는 거리
+    private float pullBackDuration = 0.5f; // 뒤로 당겨지는 시간
+    private float absorbDuration = 0.4f; // 플레이어에게 흡수되는 시간
+    private float rotationSpeed = 720f; // 회전 속도
+
+    private bool isAbsorbing = false;
+
+    private float fullDuration => pullBackDuration + absorbDuration;
+    [SerializeField]
+    private GameObject childMesh; // 실제 작아질 오브젝트
 
     public void Setup(int score, Color c, float size,
         MemoryPool<ScoreBlock> memoryPool,
@@ -35,18 +32,21 @@ public class ScoreBlock : MonoBehaviour
     {
         this.score = score;
 
-        flag = true;
+        isAbsorbing = false;
 
-        // �޽� �ν��Ͻ�ȭ ���Ѽ� ����
-        MeshRenderer renderer = GetComponent<MeshRenderer>();
+        // 색 변경
+        MeshRenderer renderer = childMesh.GetComponent<MeshRenderer>();
         MaterialPropertyBlock block = new MaterialPropertyBlock();
 
         renderer.GetPropertyBlock(block);
         block.SetColor("_BaseColor", c); 
         renderer.SetPropertyBlock(block);
 
-        transform.localScale = Vector3.one * size;
-
+        if(childMesh != null)
+        {
+            childMesh.transform.localScale = Vector3.one * size;
+        }
+        
         this.memoryPool = memoryPool;
         
         this.canRespawn = canRespawn;
@@ -56,6 +56,7 @@ public class ScoreBlock : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        // 플레이어만 
         if (other.gameObject.TryGetComponent<Player>(out Player player))
         {
             AbsorbScoreObject(other.gameObject, player);
@@ -76,6 +77,7 @@ public class ScoreBlock : MonoBehaviour
 
         Vector3 startPos = transform.position;
         Vector3 endPos = startPos + new Vector3(xOffset, 0f, zOffset);
+        // 각 Offset에 곱해진 값 바꾸면, 포물선의 각도 변경
         Vector3 midPos = startPos + new Vector3(xOffset * 0.3f, upHeight, zOffset * 0.3f);
 
         Vector3[] path = new Vector3[] { startPos, midPos, endPos };
@@ -125,72 +127,68 @@ public class ScoreBlock : MonoBehaviour
 
     public void YoYoMoving()
     {
-        Tween yoyoTween = transform.DOMoveY(0.5f, 1f).SetRelative(true).SetEase(Ease.InOutQuad).SetLoops(-1, LoopType.Yoyo);
+        Tween yoyoTween = transform.DOMoveY(0.5f, 1f)
+            .SetRelative(true)
+            .SetEase(Ease.InOutQuad)
+            .SetLoops(-1, LoopType.Yoyo)
+            .SetLink(gameObject);
         yoyoTween.Goto(Random.Range(0, 1f), true);
     }
 
-    // 접촉되어 흡수될 때
-    public void AbsorbScoreObject(GameObject target, Player player)
+    public void AbsorbScoreObject(GameObject target, Entity entity)
     {
-        if (flag == true)
+        if (isAbsorbing)
         {
-            float t = 1f;
-
-            Sequence rotateSeq = DOTween.Sequence();
-            rotateSeq.Append(transform.DORotate(new Vector3(0, 1000, 0), t, RotateMode.FastBeyond360)) //제자리 회전
-                .Join(transform.DOMove(target.transform.position, t).SetEase(Ease.InOutBack)) // 타겟 방향으로 이동
-                .Join(transform.DOScale(0, t).SetEase(Ease.InElastic)) // 스케일 조정
-                .AppendCallback(() => AddScoreTo(player));
-
-            flag = false;
+            return;
         }
+
+        isAbsorbing = true;
+
+        Vector3 startPos = transform.position;
+
+        // 목표 반대 방향으로 일정 거리 계산
+        Vector3 directionToPlayer = (target.transform.position - transform.position).normalized;
+        Vector3 pullBackPos = startPos - directionToPlayer * pullBackDistance;
+
+        Sequence absorbSequence = DOTween.Sequence();
+
+        // 반대 방향으로 당기기
+        absorbSequence.Append(transform.DOMove(pullBackPos, pullBackDuration)
+            .SetEase(Ease.OutQuad));
+        // 회전 트윈
+        absorbSequence.Join(childMesh.transform.DORotate(new Vector3(0, rotationSpeed, 0), fullDuration, RotateMode.FastBeyond360));
+        // 스케일 
+        absorbSequence.Join(childMesh.transform.DOScale(0, fullDuration)
+            .SetEase(Ease.InElastic));
+
+        // 실시간 목표 방향으로 다가가기
+        float t = 0f;
+        //                                시작값, 진행 중인 값 ,목표값, 걸리는 시간
+        absorbSequence.Insert(pullBackDuration,DOTween.To(() => t, x => t = x, 1, absorbDuration)
+            .SetEase(Ease.InQuad)
+            .OnUpdate(() =>
+            {
+                if (target != null)
+                {
+                    // 실시간으로 플레이어 위치 추적
+                    float progress = t;
+                    transform.position = Vector3.Lerp(pullBackPos, target.transform.position, progress);
+                }
+            }))
+            .OnComplete(() => {
+                AddScoreTo(entity);
+                });
     }
 
-    private void AddScoreTo(Player player)
+    private void AddScoreTo(Entity entity)
     {
-        player.AddScore(score);
+        if(entity == null)
+        {
+            return;
+        }
+
+        entity.AddScore(score);
         Destroy(gameObject);
         //EntityGameManager.OnPlayerScoreAdd(score);
     }
 }
-
-/*
- if (flag == true)
-        {
-            float t = 1f;
-            GameObject tmpT = target;
-            targetTransform = target.transform;
-
-            Sequence rotateSeq = DOTween.Sequence();
-
-            Tween rotateTween = transform.DORotate(new Vector3(0, 1000, 0), t, RotateMode.FastBeyond360);
-            Tweener moveTweener = transform.DOMove(targetTransform.position, t)
-                .SetEase(Ease.InOutBack);
-            Tween scaleTween = transform.DOScale(0, t).SetEase(Ease.InElastic);
-
-            // ������ ������Ʈ �������� Ÿ�� ��ġ ����
-            DOTween.To(() => 0f, x => {
-                // �� �����Ӹ��� Ÿ���� ���� ��ġ�� ��ǥ�� ������Ʈ
-                if (targetTransform != null && moveTweener != null)
-                {
-                    moveTweener.ChangeEndValue(targetTransform.position, true);
-                }
-            }, 1f, t);
-
-            rotateSeq.Append(rotateTween) // ���ڸ� ȸ��
-                .Join(moveTweener) // Ÿ�� �������� �̵�
-                .Join(scaleTween) // ������ ����
-                .OnUpdate(() => {
-                    // �� �����Ӹ��� ���� Ÿ�� ��ġ�� �̵�
-                    if (tmpT != null)
-                    {
-                        Debug.Log("upd");
-                        targetTransform = tmpT.transform;
-                        moveTweener.ChangeEndValue(targetTransform.position, false);
-                    }
-                })
-                .AppendCallback(() => AddScoreTo(entity)); // ������ ������ ���� �߰�
-
-            flag = false;
-        }
- */

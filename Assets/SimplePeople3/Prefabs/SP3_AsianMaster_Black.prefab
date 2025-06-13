@@ -1862,7 +1862,6 @@ MonoBehaviour:
   levelupPrefab: {fileID: 1624714524768532, guid: c9eb15264aa6c4348b00d5b9b3daab2a,
     type: 3}
   skinnedMeshRenderer: {fileID: 13734226}
-  material: {fileID: 0}
 --- !u!114 &9017735697518951089
 MonoBehaviour:
   m_ObjectHideFlags: 0
