@@ -17,6 +17,13 @@ public abstract class EntitySpawner : MonoBehaviour
     protected Material[] material;
 
     protected bool isInitialized = false;
+    [Header("랜덤 위치 스폰")]
+    [SerializeField]
+    protected bool useRandomSpawnPoint = false;
+    private Vector3 standardPosition = new Vector3(-40, 0.5f, -40);
+
+    private float xSize = 20 * 5;
+    private float ySize = 20 * 5;
 
     public virtual void Setup(DamagePopupManager damagePopupManager, KillLogManager killLogManager, ScoreBlockSpawner scoreBlockSpawner)
     {
@@ -41,5 +48,30 @@ public abstract class EntitySpawner : MonoBehaviour
             entity.SetSkin(skinnedMesh[Random.Range(0, skinnedMesh.Length)],
                           material[Random.Range(0, material.Length)]);
         }
+    }
+
+    protected Vector3 GetRandomSpawnPoint()
+    {   
+        if(! useRandomSpawnPoint)
+        {
+            return Vector3.zero;
+        }
+
+        int maxNum = 10;
+        for(int i = 0; i < maxNum; ++i)
+        {
+            Vector3 spawnPoint = standardPosition +
+                                 Vector3.right * Random.Range(0, xSize) +
+                                 Vector3.forward * Random.Range(0, ySize);
+
+            if (Physics.CheckBox(standardPosition, new Vector3(0.5f, 0.3f, 0.5f), Quaternion.identity))
+            {
+                continue;
+            }
+
+            return standardPosition;
+        }
+
+        return Vector3.zero;
     }
 }

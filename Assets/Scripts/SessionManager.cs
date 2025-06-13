@@ -88,11 +88,14 @@ public class SessionManager : MonoBehaviour
 
     private string GetPlayerName()
     {
-        // 타이틀씬에서 입력된 이름
-        string name = PlayerDataManager.Instance?.PlayerName;
         if (string.IsNullOrEmpty(name))
         {
-            name = "Test_Player_" + Random.Range(0, 10000);
+            // 타이틀씬에서 입력된 이름
+            string name = PlayerDataManager.Instance?.PlayerName;
+            if (string.IsNullOrEmpty(name))
+            {
+                name = $"Test_Player_{Random.Range(0, 1000)}";
+            }
         }
         return name;
     }

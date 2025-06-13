@@ -52,6 +52,8 @@ public class EnemySpawner : EntitySpawner
         // Enemy MemoryPool이기에, GetInstanceID() 같은 값 나옴. 
         string name = $"Enemy_{clone.GetInstanceID()}_{Random.Range(0, 100)}";
 
+        Vector3 spawnPoint = GetRandomSpawnPoint();
+        clone.transform.position = spawnPoint;
         clone.Setup(new EntityInfo(name, "Test_Image"), new EntityData(1, 100, 10, 1),
                    memoryPool, damagePopupManager, killLogManager, scoreBlockSpawner);
 

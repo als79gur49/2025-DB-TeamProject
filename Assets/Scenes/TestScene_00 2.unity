@@ -10762,6 +10762,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 07ef886f44c0a0b47b9e44a59b47b5c6, type: 2}
   - {fileID: 2100000, guid: d5f231380c68a994e819077c1ea4e154, type: 2}
   - {fileID: 2100000, guid: 23cd651be4adf8241bfcbae23439d4ae, type: 2}
+  useRandomSpawnPoint: 1
   playerPrefab: {fileID: -5987256920896985292, guid: eb61ee9a4308e0546a7dfdb0e2d700c9,
     type: 3}
   onPlayerSpawned:
@@ -13008,6 +13009,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 07ef886f44c0a0b47b9e44a59b47b5c6, type: 2}
   - {fileID: 2100000, guid: d5f231380c68a994e819077c1ea4e154, type: 2}
   - {fileID: 2100000, guid: 23cd651be4adf8241bfcbae23439d4ae, type: 2}
+  useRandomSpawnPoint: 1
   enemyPrefabs:
   - {fileID: 6036340914966094974, guid: 68dd9aad3dedc114ab3dd2d4777bf242, type: 3}
   onEnemySpawned:

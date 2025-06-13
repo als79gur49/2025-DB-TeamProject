@@ -39,7 +39,9 @@ public class PlayerSpawner : EntitySpawner
             return currentPlayer;
         }
 
-        Player clone = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
+        Vector3 spawnPoint = GetRandomSpawnPoint();
+
+        Player clone = Instantiate(playerPrefab, spawnPoint, Quaternion.identity);
         clone.Setup(new EntityInfo(playerName, "Test_Image"), new EntityData(1, 100, 10, 1),
                    damagePopupManager, killLogManager, scoreBlockSpawner);
 
