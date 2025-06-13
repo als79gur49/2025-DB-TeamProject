@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 /// <summary>
 /// 실시간 + 전체 랭킹 관리 (각 엔티티 개별 점수 지원)
@@ -332,7 +333,7 @@ public static class RankingManager
 
         return rankings;
     }
-
+    
     /// <summary>
     /// 플레이어만의 최고 기록 랭킹 조회
     /// </summary>
@@ -443,19 +444,20 @@ public static class RankingManager
 
         return null;
     }
-
     /// <summary>
     /// 플레이어의 모든 플레이타임 반환
     /// </summary>
     public static int GetPlayerTotalPlayTime()
     {
+        var rankings = new List<RankingData>();
+
         try
         {
             string query = @"
                 SELECT 
-                    SUM(p.TotalPlayTime)
-                FROM Players p
-                WHERE p.HighestScore > 0
+                    SUM(atr.PlayTimeSeconds)
+                FROM AllTimeRanking atr
+                WHERE atr.EntityType = 'Player'
             ";
 
             var result = DatabaseManager.ExecuteScalar(query);
@@ -468,6 +470,31 @@ public static class RankingManager
 
         return -1;
     }
+
+    /// <summary>
+    /// 플레이어의 모든 플레이타임 반환
+    /// </summary>
+  //  public static int GetPlayerTotalPlayTime()
+  //  {
+  //      try
+  //      {
+  //          string query = @"
+  //              SELECT 
+  //                  SUM(p.TotalPlayTime)
+  //              FROM Players p
+  //              WHERE p.HighestScore > 0
+  //          ";
+  //
+  //          var result = DatabaseManager.ExecuteScalar(query);
+  //          return result != null ? (int)(long)result : 0;
+  //      }
+  //      catch (Exception ex)
+  //      {
+  //          Debug.LogError($"플레이어의 모든 플레이타임 조회 오류: {ex.Message}");
+  //      }
+  //
+  //      return -1;
+  //  }
 
     /// <summary>
     /// 특정 점수의 순위 계산 (모든 엔티티 포함)
