@@ -34,6 +34,7 @@ public class SessionManager : MonoBehaviour
     public GameSessionModel CurrentSession => currentSession;
     public bool IsGameActive => isGameActive;
 
+    private string playerName;
     private void Awake()
     {
         ValidateComponents(); // 핵심 매니저 할당되었는지 검증
@@ -88,16 +89,16 @@ public class SessionManager : MonoBehaviour
 
     private string GetPlayerName()
     {
-        if (string.IsNullOrEmpty(name))
+        if (string.IsNullOrEmpty(playerName))
         {
             // 타이틀씬에서 입력된 이름
-            string name = PlayerDataManager.Instance?.PlayerName;
-            if (string.IsNullOrEmpty(name))
+            playerName = PlayerDataManager.Instance?.PlayerName;
+            if (string.IsNullOrEmpty(playerName))
             {
-                name = $"Test_Player_{Random.Range(0, 1000)}";
+                playerName = $"Test_Player_{Random.Range(0, 1000)}";
             }
         }
-        return name;
+        return playerName;
     }
 
     public void StartGame()

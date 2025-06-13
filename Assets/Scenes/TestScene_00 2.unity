@@ -3250,11 +3250,11 @@ MonoBehaviour:
   scoreBlockPrefab: {fileID: 2753357758409471887, guid: a3a1437b35f76284fa627c9689fcfdc5,
     type: 3}
   bigBlockColor: {r: 1, g: 0.08701119, b: 0, a: 1}
-  bigBlockScore: 2000
+  bigBlockScore: 200
   mediumBlockColor: {r: 0.9056604, g: 0.557835, b: 0.20932718, a: 1}
-  mediumBlockScore: 1000
+  mediumBlockScore: 100
   smallBlockColor: {r: 0.6273585, g: 0.6273585, b: 1, a: 1}
-  smallBlockScore: 500
+  smallBlockScore: 50
 --- !u!4 &622744850
 Transform:
   m_ObjectHideFlags: 0

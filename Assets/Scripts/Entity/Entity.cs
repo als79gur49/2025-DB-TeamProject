@@ -171,7 +171,8 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     {
         if(lastDamagedInfo.Key != null)
         {
-            lastDamagedInfo.Key.AddScore(100);
+            // 킬 점수, 레벨 업 필요 점수 등 SessionManager 등에 넘기고, 가져오는 방식으로 바꾸기
+            lastDamagedInfo.Key.AddScore(400);
 
             // DB에 점수 추가
             //EntityGameManager.OnEntityScoreAddbyName(lastDamagedInfo.Key.info.EntityName, 100);
