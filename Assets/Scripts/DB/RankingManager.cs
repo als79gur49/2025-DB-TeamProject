@@ -122,49 +122,6 @@ public static class RankingManager
                 while (reader.Read())
                 {
                     string entityType = reader["EntityType"].ToString();
-                    
-                    rankings.Add(new RankingData
-                    {
-                        EntityID = (int)(long)reader["EntityID"],
-                        EntityName = reader["EntityName"].ToString(),
-                        EntityType = entityType,
-                        Score = (int)(long)reader["CurrentScore"],
-                        Level = (int)(long)reader["CurrentLevel"],
-                        Rank = rank++
-                    });
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Debug.LogError($"실시간 랭킹 조회 오류: {ex.Message}");
-        }
-
-        return rankings;
-    }
-    /// <summary>
-    /// 현재 진행중인 플레이어 실시간 랭킹 조회 (모든 활성 세션 통합)
-    /// </summary>
-    public static List<RankingData> GetPlayerLiveRanking(string playerName, int limit = 10)
-    {
-        var rankings = new List<RankingData>();
-
-        try
-        {
-            string query = @"
-                SELECT EntityID, EntityName, EntityType, CurrentScore, CurrentLevel
-                FROM SessionRanking
-                WHERE IsActive = TRUE AND EntityName = @playerName
-                ORDER BY CurrentScore DESC, LastUpdated ASC
-                LIMIT @limit
-            ";
-
-            using (var reader = DatabaseManager.ExecuteReader(query, ("@playerName", playerName),("@limit", limit)))
-            {
-                int rank = 1;
-                while (reader.Read())
-                {
-                    string entityType = reader["EntityType"].ToString();
 
                     rankings.Add(new RankingData
                     {
@@ -181,52 +138,6 @@ public static class RankingManager
         catch (Exception ex)
         {
             Debug.LogError($"실시간 랭킹 조회 오류: {ex.Message}");
-        }
-
-        return rankings;
-    }
-
-    /// <summary>
-    /// 특정 세션의 실시간 랭킹 조회
-    /// </summary>
-    public static List<RankingData> GetSessionLiveRanking(int sessionId, int limit = 10)
-    {
-        var rankings = new List<RankingData>();
-
-        try
-        {
-            string query = @"
-                SELECT EntityID, EntityName, EntityType, CurrentScore, CurrentLevel
-                FROM SessionRanking
-                WHERE SessionID = @sessionId AND IsActive = TRUE
-                ORDER BY CurrentScore DESC, LastUpdated ASC
-                LIMIT @limit
-            ";
-
-            using (var reader = DatabaseManager.ExecuteReader(query, 
-                ("@sessionId", sessionId), 
-                ("@limit", limit)))
-            {
-                int rank = 1;
-                while (reader.Read())
-                {
-                    string entityType = reader["EntityType"].ToString();
-                    
-                    rankings.Add(new RankingData
-                    {
-                        EntityID = (int)(long)reader["EntityID"],
-                        EntityName = reader["EntityName"].ToString(),
-                        EntityType = entityType,
-                        Score = (int)(long)reader["CurrentScore"],
-                        Level = (int)(long)reader["CurrentLevel"],
-                        Rank = rank++
-                    });
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Debug.LogError($"세션 실시간 랭킹 조회 오류: {ex.Message}");
         }
 
         return rankings;
@@ -357,7 +268,7 @@ public static class RankingManager
                 while (reader.Read())
                 {
                     string entityType = reader["EntityType"].ToString();
-                    
+
                     rankings.Add(new RankingData
                     {
                         EntityID = (int)(long)reader["EntityID"],
@@ -380,7 +291,7 @@ public static class RankingManager
 
         return rankings;
     }
-    
+
     /// <summary>
     /// 플레이어만의 최고 기록 랭킹 조회
     /// </summary>
@@ -438,59 +349,7 @@ public static class RankingManager
         return rankings;
     }
 
-    /// <summary>
-    /// 특정 엔티티의 최고 기록 조회
-    /// </summary>
-    public static RankingData GetEntityBestRecord(int entityId)
-    {
-        try
-        {
-            string query = @"
-                SELECT 
-                    se.EntityID,
-                    e.EntityName,
-                    e.EntityType,
-                    MAX(se.Score) as BestScore,
-                    se.Level,
-                    se.EnemiesKilled,
-                    gs.PlayTimeSeconds,
-                    gs.StartedAt,
-                    gs.EndedAt
-                FROM SessionEntities se
-                JOIN Entities e ON se.EntityID = e.EntityID
-                JOIN GameSessions gs ON se.SessionID = gs.SessionID
-                WHERE se.EntityID = @entityId AND gs.IsCompleted = TRUE
-                GROUP BY se.EntityID
-                ORDER BY BestScore DESC
-            ";
 
-            using (var reader = DatabaseManager.ExecuteReader(query, ("@entityId", entityId)))
-            {
-                if (reader.Read())
-                {
-                    string entityType = reader["EntityType"].ToString();
-                    
-                    return new RankingData
-                    {
-                        EntityID = (int)(long)reader["EntityID"],
-                        EntityName = reader["EntityName"].ToString(),
-                        EntityType = entityType,
-                        Score = (int)(long)reader["BestScore"],
-                        Level = (int)(long)reader["Level"],
-                        PlayTime = reader["PlayTimeSeconds"] != DBNull.Value ? (int)(long)reader["PlayTimeSeconds"] : 0,
-                        StartedAt = DatabaseManager.ConvertUtcToLocal(DateTime.Parse(reader["StartedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeUniversal)),
-                        EndedAt = DatabaseManager.ConvertUtcToLocal(DateTime.Parse(reader["EndedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeUniversal))
-                    };
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Debug.LogError($"엔티티 최고 기록 조회 오류: {ex.Message}");
-        }
-
-        return null;
-    }
     /// <summary>
     /// 플레이어의 모든 플레이타임 반환
     /// </summary>
@@ -519,31 +378,6 @@ public static class RankingManager
     }
 
     /// <summary>
-    /// 플레이어의 모든 플레이타임 반환
-    /// </summary>
-  //  public static int GetPlayerTotalPlayTime()
-  //  {
-  //      try
-  //      {
-  //          string query = @"
-  //              SELECT 
-  //                  SUM(p.TotalPlayTime)
-  //              FROM Players p
-  //              WHERE p.HighestScore > 0
-  //          ";
-  //
-  //          var result = DatabaseManager.ExecuteScalar(query);
-  //          return result != null ? (int)(long)result : 0;
-  //      }
-  //      catch (Exception ex)
-  //      {
-  //          Debug.LogError($"플레이어의 모든 플레이타임 조회 오류: {ex.Message}");
-  //      }
-  //
-  //      return -1;
-  //  }
-
-    /// <summary>
     /// 특정 점수의 순위 계산 (모든 엔티티 포함)
     /// </summary>
     public static int GetRankByScore(int score)
@@ -565,55 +399,6 @@ public static class RankingManager
         {
             Debug.LogError($"점수별 순위 조회 오류: {ex.Message}");
             return -1;
-        }
-    }
-
-    /// <summary>
-    /// 엔티티 타입별 통계 조회
-    /// </summary>
-    public static EntityTypeStats GetEntityTypeStats()
-    {
-        try
-        {
-            var stats = new EntityTypeStats();
-
-            // 활성 엔티티 수 조회
-            string activeQuery = @"
-                SELECT 
-                    EntityType,
-                    COUNT(*) as Count
-                FROM SessionRanking 
-                WHERE IsActive = TRUE 
-                GROUP BY EntityType
-            ";
-
-            using (var reader = DatabaseManager.ExecuteReader(activeQuery))
-            {
-                while (reader.Read())
-                {
-                    string entityType = reader["EntityType"].ToString();
-                    int count = (int)(long)reader["Count"];
-
-                    if (entityType == "Player")
-                        stats.ActivePlayers = count;
-                    else if (entityType == "AI")
-                        stats.ActiveAIs = count;
-                }
-            }
-
-            // 전체 통계
-            stats.TotalEntities = stats.ActivePlayers + stats.ActiveAIs;
-
-            // 완료된 게임 수
-            var totalGames = DatabaseManager.ExecuteScalar("SELECT COUNT(*) FROM GameSessions WHERE IsCompleted = TRUE");
-            stats.TotalCompletedGames = totalGames != null ? (int)(long)totalGames : 0;
-
-            return stats;
-        }
-        catch (Exception ex)
-        {
-            Debug.LogError($"엔티티 타입별 통계 조회 오류: {ex.Message}");
-            return new EntityTypeStats();
         }
     }
 
@@ -710,94 +495,5 @@ public static class RankingManager
             Debug.LogError($"마지막 플레이 기록 조회 오류: {ex.Message}");
             return null;
         }
-    }
-        /// <summary>
-        /// 세션 랭킹 정리 (비활성 엔티티 제거)
-        /// </summary>
-        public static int CleanupInactiveRankings(int daysOld = 7)
-    {
-        try
-        {
-            string query = @"
-                DELETE FROM SessionRanking 
-                WHERE IsActive = FALSE 
-                AND datetime(LastUpdated) < datetime('now', '-' || @daysOld || ' days')
-            ";
-
-            int rowsAffected = DatabaseManager.ExecuteNonQuery(query, ("@daysOld", daysOld));
-
-            if (rowsAffected > 0)
-            {
-                Debug.Log($"오래된 랭킹 데이터 {rowsAffected}개를 정리했습니다.");
-            }
-
-            return rowsAffected;
-        }
-        catch (Exception ex)
-        {
-            Debug.LogError($"랭킹 정리 오류: {ex.Message}");
-            return 0;
-        }
-    }
-
-    /// <summary>
-    /// 특정 세션의 모든 랭킹 데이터 제거
-    /// </summary>
-    public static bool ClearSessionRanking(int sessionId)
-    {
-        try
-        {
-            string query = "DELETE FROM SessionRanking WHERE SessionID = @sessionId";
-
-            int rowsAffected = DatabaseManager.ExecuteNonQuery(query, ("@sessionId", sessionId));
-
-            return rowsAffected > 0;
-        }
-        catch (Exception ex)
-        {
-            Debug.LogError($"세션 랭킹 정리 오류: {ex.Message}");
-            return false;
-        }
-    }
-    public static bool ClearAllSessionRanking()
-    {
-        try
-        {
-            string query = "DELETE FROM SessionRanking";
-
-            int rowsAffected = DatabaseManager.ExecuteNonQuery(query);
-
-            return rowsAffected > 0;
-        }
-        catch (Exception ex)
-        {
-            Debug.LogError($"세션 랭킹 정리 오류: {ex.Message}");
-            return false;
-        }
-    }
-}
-
-/// <summary>
-/// 엔티티 타입별 통계 정보
-/// </summary>
-[System.Serializable]
-public class EntityTypeStats
-{
-    public int ActivePlayers;
-    public int ActiveAIs;
-    public int TotalEntities;
-    public int TotalCompletedGames;
-
-    public EntityTypeStats()
-    {
-        ActivePlayers = 0;
-        ActiveAIs = 0;
-        TotalEntities = 0;
-        TotalCompletedGames = 0;
-    }
-
-    public string GetSummary()
-    {
-        return $"활성 엔티티: {TotalEntities}개 (플레이어 {ActivePlayers}명, AI {ActiveAIs}개), 완료된 게임: {TotalCompletedGames}개";
     }
 }

@@ -89,53 +89,6 @@ public static class SessionEntityRepository
         }
     }
 
-
-    /// <summary>
-    /// 세션과 엔티티 Name로 세션 엔티티 조회
-    /// </summary>
-    public static SessionEntityModel GetSessionEntity(int sessionId, string entityName)
-    {
-        try
-        {
-            string query = @"
-                SELECT SessionEntityID, SessionID, EntityID, EntityName, EntityType,
-                       Score, Level, EnemiesKilled, IsAlive, FinalRank, JoinedAt, DiedAt
-                FROM SessionEntities
-                WHERE SessionID = @sessionId AND EntityName = @entityName
-            ";
-
-            using (var reader = DatabaseManager.ExecuteReader(query,
-                ("@sessionId", sessionId),
-                ("@entityName", entityName)))
-            {
-                if (reader.Read())
-                {
-                    return new SessionEntityModel
-                    {
-                        SessionEntityID = (int)(long)reader["SessionEntityID"],
-                        SessionID = (int)(long)reader["SessionID"],
-                        EntityID = (int)(long)reader["EntityID"],
-                        EntityName = reader["EntityName"].ToString(),
-                        EntityType = reader["EntityType"].ToString(),
-                        Score = (int)(long)reader["Score"],
-                        Level = (int)(long)reader["Level"],
-                        EnemiesKilled = (int)(long)reader["EnemiesKilled"],
-                        IsAlive = (bool)reader["IsAlive"],
-                        FinalRank = reader["FinalRank"] == DBNull.Value ? null : (int)(long)reader["FinalRank"],
-                        JoinedAt = DatabaseManager.ConvertUtcToLocal(DateTime.Parse(reader["JoinedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeUniversal)),
-                        DiedAt = reader["DiedAt"] == DBNull.Value ? null : DatabaseManager.ConvertUtcToLocal(DateTime.Parse(reader["DiedAt"].ToString(), null, System.Globalization.DateTimeStyles.AssumeUniversal))
-                    };
-                }
-            }
-
-            return null;
-        }
-        catch (Exception ex)
-        {
-            Debug.LogError($"세션 엔티티 조회 오류: {ex.Message}");
-            return null;
-        }
-    }
     /// <summary>
     /// 세션과 엔티티 ID로 세션 엔티티 조회
     /// </summary>
@@ -361,46 +314,4 @@ public static class SessionEntityRepository
         return entities;
     }
 
-    /// <summary>
-    /// 세션의 살아있는 엔티티 수 조회
-    /// </summary>
-    public static int GetAliveEntityCount(int sessionId)
-    {
-        try
-        {
-            string query = @"
-                SELECT COUNT(*) FROM SessionEntities
-                WHERE SessionID = @sessionId AND IsAlive = TRUE
-            ";
-
-            var result = DatabaseManager.ExecuteScalar(query, ("@sessionId", sessionId));
-
-            return result != null ? (int)(long)result : 0;
-        }
-        catch (Exception ex)
-        {
-            Debug.LogError($"살아있는 엔티티 수 조회 오류: {ex.Message}");
-            return 0;
-        }
-    }
-
-    /// <summary>
-    /// 세션 엔티티 삭제
-    /// </summary>
-    public static bool DeleteSessionEntity(int sessionEntityId)
-    {
-        try
-        {
-            string query = "DELETE FROM SessionEntities WHERE SessionEntityID = @sessionEntityId";
-
-            int rowsAffected = DatabaseManager.ExecuteNonQuery(query, ("@sessionEntityId", sessionEntityId));
-
-            return rowsAffected > 0;
-        }
-        catch (Exception ex)
-        {
-            Debug.LogError($"세션 엔티티 삭제 오류: {ex.Message}");
-            return false;
-        }
-    }
 }

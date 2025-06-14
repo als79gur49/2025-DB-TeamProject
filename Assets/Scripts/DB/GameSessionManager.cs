@@ -135,8 +135,7 @@ public static class GameSessionManager
         try
         {
             // 세션 엔티티 점수 추가
-            bool entityUpdated = SessionEntityRepository.UpdateEntityScore(currentSessionId, entityId, newScore, newLevel);
-                //SessionEntityRepository.AddEntityScore(currentSessionId, entityId, newScore, newLevel);
+            bool entityUpdated = SessionEntityRepository.AddEntityScore(currentSessionId, entityId, newScore, newLevel);
 
             // 실시간 랭킹 업데이트
             bool rankingUpdated = RankingManager.UpdateLiveRanking(currentSessionId, entityId, newScore, newLevel > 0 ? newLevel : -1);
@@ -151,7 +150,7 @@ public static class GameSessionManager
     }
 
     /// <summary>
-    /// 엔티티 점수 업데이트 (Player + AI 모두 지원)
+    /// 엔티티 점수 업데이트
     /// </summary>
     public static bool UpdateEntityScore(int entityId, int newScore, int newLevel = -1)
     {
@@ -244,20 +243,6 @@ public static class GameSessionManager
     }
 
     /// <summary>
-    /// 플레이어가 엔티티를 처치했을 때
-    /// </summary>
-    public static bool OnPlayerKilledEntity(string killedEntityName, int scoreGain = 100)
-    {
-        if (currentPlayerEntityId == -1)
-        {
-            Debug.LogWarning("활성 플레이어 엔티티가 없습니다.");
-            return false;
-        }
-
-        return OnEntityKilled(currentPlayerEntityId, killedEntityName, scoreGain);
-    }
-
-    /// <summary>
     /// 엔티티 사망 처리 (세션 종료 없이 사망만 처리)
     /// </summary>
     public static bool OnEntityDeath(int entityId)
@@ -270,17 +255,13 @@ public static class GameSessionManager
 
         try
         {
-            // 현재 살아있는 엔티티 수 확인하여 순위 계산
-            int aliveCount = SessionEntityRepository.GetAliveEntityCount(currentSessionId);
-            int finalRank = aliveCount; // 현재 살아있는 수가 사망한 엔티티의 순위
-
             // 엔티티 사망 처리
-            bool entityUpdated = SessionEntityRepository.SetEntityDead(currentSessionId, entityId, finalRank);
+            bool entityUpdated = SessionEntityRepository.SetEntityDead(currentSessionId, entityId, 0);
 
             // 실시간 랭킹에서 제거
             bool rankingUpdated = RankingManager.RemoveFromLiveRanking(currentSessionId, entityId);
 
-            Debug.Log($"<color=red>엔티티 사망 처리 완료 (Entity ID: {entityId}, 최종 순위: {finalRank})</color>");
+            Debug.Log($"<color=red>엔티티 사망 처리 완료 (Entity ID: {entityId})</color>");
 
             return entityUpdated && rankingUpdated;
         }

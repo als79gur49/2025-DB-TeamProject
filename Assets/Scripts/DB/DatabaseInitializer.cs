@@ -354,11 +354,11 @@ public class DatabaseInitializer : MonoBehaviour
                 EntityGameManager.ForceEndGame();
             }
 
-            //// DB 연결 종료
-            //DatabaseManager.Close();
+            // DB 연결 종료
+            DatabaseManager.Close();
 
-            //if (enableDebugLogs)
-            //    Debug.Log("데이터베이스 연결이 안전하게 종료되었습니다.");
+            if (enableDebugLogs)
+                Debug.Log("데이터베이스 연결이 안전하게 종료되었습니다.");
         }
     }
 
