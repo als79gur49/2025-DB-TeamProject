@@ -118,7 +118,7 @@ public class SessionManager : MonoBehaviour
             Debug.LogWarning("이미 게임이 진행 중입니다.");
             return;
         }
-        RankingManager.ClearAllSessionRanking();
+        
         string playerName = GetPlayerName();
         currentSession = EntityGameManager.StartNewGame(playerName);
 
@@ -145,7 +145,7 @@ public class SessionManager : MonoBehaviour
         }
 
         isGameActive = false;
-        GameSessionManager.OnPlayerDeath();
+        EntityGameManager.OnPlayerDeath();
 
         Debug.Log("게임 종료");
     }
