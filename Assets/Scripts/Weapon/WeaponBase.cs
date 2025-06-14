@@ -25,6 +25,10 @@ public abstract class WeaponBase : MonoBehaviour, ILevelup
             Projectile clone = Instantiate(projectile.Key, firePoint.position, firePoint.rotation);
 
             float levelupAmount = Mathf.Log(data.level + 1); // log2 =1,
+            //if(owner is Player p)
+            //{ //테스트 영상용 플레이어 임시 강화
+            //    levelupAmount *= 5;
+            //}
             clone.Setup(owner.gameObject, 
                 Mathf.Round(data.damageMultiplier * levelupAmount), 
                 data.speedMultiplier * levelupAmount, 

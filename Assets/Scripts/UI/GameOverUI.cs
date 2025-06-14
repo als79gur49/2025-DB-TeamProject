@@ -57,7 +57,7 @@ public class GameOverUI : MonoBehaviour
         //List<RankingData> list = RankingManager.GetLiveRanking(showInfoNum);
         
         //List<RankingData> list = RankingManager.GetSessionEndRanking(sessionId, showInfoNum);
-        List<RankingData> list = RankingManager.GetSessionEndRanking(sessionId, GameSessionManager.GetSession(sessionId2).TotalEntities);
+        List<RankingData> list = RankingManager.GetSessionEndRanking(sessionId, showInfoNum);
 
         foreach (RankingData rankingData in list)
         {
@@ -65,12 +65,6 @@ public class GameOverUI : MonoBehaviour
             clone.transform.SetParent(ListParent, false);
 
             clone.Setup(rankingData.Rank, rankingData.EntityName, rankingData.Score);
-
-            // 위치 변경, 따로 플레이어 랭킹만 찾을려고 여러 DB에서 가져와서 사용해봤지만, 랭킹이 제대로 표시X
-            if(rankingData.IsPlayer)
-            {
-                player.Setup(rankingData.Rank, rankingData.EntityName, rankingData.Score);
-            }
         }
 
     }
@@ -78,27 +72,18 @@ public class GameOverUI : MonoBehaviour
     // 플레이어 랭킹
     private void ShowPlayerInfo()
     {
-        return;
-
-     //   // 가장 최근 플레이어 정보 조회
-     //   PlayerModel playerData = PlayerRepository.GetPlayerByName(playerName);
-     //
-     //   // 가장 최근 세션과 가장 최근 플레이어ID로 해당 세션에서의 엔티티 정보 조회
-     //   //var sessionEntity = SessionEntityRepository.GetSessionEntity(sessionId, playerData.PlayerID);
-     //   var sessionEntity = SessionEntityRepository.GetSessionEntity(sessionId, playerData.PlayerName);
-     //   if(sessionEntity != null)
-     //   {
-     //       player.Setup(sessionEntity.FinalRank ?? -1, sessionEntity.EntityName, sessionEntity.Score);
-     //   }
-
-        List<RankingData> list = RankingManager.GetSessionEndRanking(sessionId, showInfoNum);
-        foreach(RankingData rankingData in list)
+        List<RankingData> list = RankingManager.GetSessionEndRanking(sessionId, GameSessionManager.GetSession(sessionId2).TotalEntities);
+        foreach (RankingData rankingData in list)
         {
-            if(rankingData.EntityID == playerId2)
+            // 위치 변경, 따로 플레이어 랭킹만 찾을려고 여러 DB에서 가져와서 사용해봤지만, 랭킹이 제대로 표시X
+            if (rankingData.IsPlayer)
             {
                 player.Setup(rankingData.Rank, rankingData.EntityName, rankingData.Score);
+
+                break;
             }
-            break;
         }
+
+        return;
     }
 }

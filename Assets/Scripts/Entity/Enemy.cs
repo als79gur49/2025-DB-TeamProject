@@ -48,7 +48,6 @@ public class Enemy : Entity
         {
             isInit = true;
         }
-            Debug.Log($"||{GetInstanceID()}|| ½ºÆù");
             EntityGameManager.AddAIEntity(GetInstanceID(), Info.EntityName);
 
 

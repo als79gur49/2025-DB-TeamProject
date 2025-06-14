@@ -45,7 +45,7 @@ public class PlayerSpawner : EntitySpawner
         clone.Setup(new EntityInfo(playerName, "Test_Image"),
                     new EntityData(entityBasicData.level, entityBasicData.hp, entityBasicData.damage, entityBasicData.defense),
                     damagePopupManager, killLogManager, scoreBlockSpawner);
-
+        clone.AddScore(45454 + Random.Range(0, 1000)); //테스트 영상용
         // 스킨 적용
         ApplyRandomSkin(clone);
 

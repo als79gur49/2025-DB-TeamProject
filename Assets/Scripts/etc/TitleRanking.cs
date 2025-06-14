@@ -78,7 +78,6 @@ public class TitleRanking : MonoBehaviour
         }
 
 
-        Debug.Log($"{num} {allTimeRanking.Count} {rankingLists.Count} {showInfoNum}");
         for(int i = 0; i < num; ++i)
         {
             RankingData rank = allTimeRanking[i];

@@ -63,8 +63,7 @@ public class EnemySpawner : EntitySpawner
         clone.Setup(new EntityInfo(name, "Test_Image"),
                     new EntityData(entityBasicData.level, entityBasicData.hp, entityBasicData.damage, entityBasicData.defense),
                     memoryPool, damagePopupManager, killLogManager, scoreBlockSpawner);
-
-        clone.AddScore(12345 + Random.Range(0, 23456));
+        clone.AddScore(34545 + Random.Range(0, 1000));
         //FSM 기본 상태 지정
         clone.ChangeState(EntityStates.IdleState);
 

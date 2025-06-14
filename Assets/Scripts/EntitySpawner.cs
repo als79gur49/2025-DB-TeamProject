@@ -1,4 +1,5 @@
-    using UnityEngine;
+using Unity.VisualScripting.Antlr3.Runtime.Tree;
+using UnityEngine;
 
     public abstract class EntitySpawner : MonoBehaviour
     {
@@ -64,12 +65,13 @@
             int maxNum = 10;
             for(int i = 0; i < maxNum; ++i)
             {
-                Vector3 spawnPoint = standardPosition +
-                                     Vector3.right * Random.Range(0, (int)xSize) +
-                                     Vector3.forward * Random.Range(0, (int)ySize);
+            Vector3 spawnPoint = standardPosition +
+            new Vector3(Mathf.Clamp(Random.Range(0, (int)xSize) + i * 10,0,xSize), 0, 0) +
+            new Vector3(0, 0, Mathf.Clamp(Random.Range(0, (int)ySize),0,ySize));
 
                 Debug.DrawLine(spawnPoint, spawnPoint + Vector3.up * 10, Color.red, 5f);
-                if (Physics.CheckBox(spawnPoint, new Vector3(0.5f, 0.3f, 0.5f), Quaternion.identity))
+            int targetLayer = int.MaxValue ^ 1 ^ 512;
+                if (Physics.CheckBox(spawnPoint, new Vector3(4f, 0.1f, 4f), Quaternion.identity, targetLayer))
                 {
                     continue;
                 }

@@ -30,7 +30,7 @@ public static class RankingManager
 
             if (rowsAffected > 0)
             {
-                Debug.Log($"실시간 랭킹에 추가: ID({entityId}) {entityName} ({entityType})");
+                Debug.Log($"<color=black>실시간 랭킹에 추가: ID({entityId}) {entityName} ({entityType})</color>");
             }
 
             return rowsAffected > 0;

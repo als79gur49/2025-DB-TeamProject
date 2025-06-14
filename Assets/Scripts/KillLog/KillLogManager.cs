@@ -191,7 +191,6 @@ public class KillLogManager : MonoBehaviour
                              }
 
                              onComplete?.Invoke();
-                             Debug.Log("킬 로그 제거 완료");
                          });
         }
         else

@@ -111,7 +111,7 @@ public static class GameSessionManager
             // 3. 실시간 랭킹에 추가
             RankingManager.AddToLiveRanking(currentSessionId, aiEntity.EntityID, aiEntity.EntityName, aiEntity.EntityType);
 
-            Debug.Log($"AI 엔티티 추가: {aiName} (ID={aiEntity.EntityID})");
+            Debug.Log($"<color=green>AI 엔티티 추가: {aiName} (ID={aiEntity.EntityID})</color>");
             return true;
         }
         catch (Exception ex)
@@ -280,7 +280,7 @@ public static class GameSessionManager
             // 실시간 랭킹에서 제거
             bool rankingUpdated = RankingManager.RemoveFromLiveRanking(currentSessionId, entityId);
 
-            Debug.Log($"엔티티 사망 처리 완료 (Entity ID: {entityId}, 최종 순위: {finalRank})");
+            Debug.Log($"<color=red>엔티티 사망 처리 완료 (Entity ID: {entityId}, 최종 순위: {finalRank})</color>");
 
             return entityUpdated && rankingUpdated;
         }

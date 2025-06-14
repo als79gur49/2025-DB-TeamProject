@@ -71,7 +71,7 @@ public static class EntityGameManager
                     gameObjectToEntityMap[gameObjectInstanceId] = aiEntity.EntityID;
                     entityToGameObjectMap[aiEntity.EntityID] = gameObjectInstanceId;
 
-                    Debug.Log($"AI 엔티티 추가: {aiName} (GameObject ID: {gameObjectInstanceId}, Entity ID: {aiEntity.EntityID})");
+                    Debug.Log($"<color=green>AI 엔티티 추가: {aiName} (GameObject ID: {gameObjectInstanceId}, Entity ID: {aiEntity.EntityID})</color>");
                     return true;
                 }
             }
@@ -333,7 +333,7 @@ public static class EntityGameManager
 
                 if (updated)
                 {
-                    Debug.Log($"{entityName} 사망 처리 완료 (Entity ID: {entityId})");
+                    Debug.Log($"<color=red>{entityName} 사망 처리 완료 (Entity ID: {entityId})</color>");
                 }
                 else
                 {
