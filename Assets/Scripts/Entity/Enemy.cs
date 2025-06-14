@@ -72,12 +72,12 @@ public class Enemy : Entity
 
     private IEnumerator ReturnToPoolAfterDelay(float delay)
     {
+        EntityGameManager.OnEntityDeath(GetInstanceID(), Info.EntityName);
         yield return new WaitForSeconds(delay);
 
         onDeath.RemoveAllListeners();
         // 메모리 풀로 반환
         memoryPool.DeactivatePoolItem(this);
-        EntityGameManager.OnEntityDeath(GetInstanceID(), Info.EntityName);
     }
 
     protected override void levelup()
