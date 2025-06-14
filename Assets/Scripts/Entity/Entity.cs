@@ -35,7 +35,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     [SerializeField]
     private List<Projectile> storages; // 해당 내용은 임시로 투사체 넣어둔 곳 실제로는 외부에서 레벨 업 등을 통해서 projectileStorage에 넣어주기
 
-    public WeaponBase Weapon=>weapon;
+    public WeaponBase Weapon => weapon;
 
     // 이름, 공격력, 스코어 등
     public EntityData Data => data;
@@ -65,7 +65,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     public void Setup(EntityInfo info, EntityData data,
         DamagePopupManager damagePopupManager,
         KillLogManager killLogManager, ScoreBlockSpawner scoreBlockSpawner)
-    {  
+    {
         this.damagePopupManager = damagePopupManager;
         this.killLogManager = killLogManager;
         this.scoreBlockSpawner = scoreBlockSpawner;
@@ -76,7 +76,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
         Setup();
 
         GetComponent<BoxCollider>().enabled = true;
-        
+
         onDeath.AddListener(DeathLog); // lastDamagedInfo, KillLogManager 
         onDeath.AddListener(GiveScoreToLastAttacker); // lastDamagedInfo, data
         onDeath.AddListener(SpawnLevelupBlocks); // 죽으면 경험치블럭들 생성
@@ -117,7 +117,7 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     }
 
 
-    
+
 
     // IAttack
     public void Attack()
@@ -168,16 +168,16 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
     // 처치한 적에게 점수 부여
     private void GiveScoreToLastAttacker()
     {
-        if(lastDamagedInfo.Key != null)
+        if (lastDamagedInfo.Key != null)
         {
             // 킬 점수, 레벨 업 필요 점수 등 SessionManager 등에 넘기고, 가져오는 방식으로 바꾸기
-            lastDamagedInfo.Key.AddScore(400);
+            lastDamagedInfo.Key.AddScore(400, lastDamagedInfo.Key.info.EntityName);
 
             // DB에 점수 추가
             //EntityGameManager.OnEntityScoreAddbyName(lastDamagedInfo.Key.info.EntityName, 100);
         }
     }
-    public void AddScore(int amount)
+    public void AddScore(int amount, string entityName)
     {
         int remainExp = data.Score % levelupAmount;
         int levelupNum = (remainExp + amount) / levelupAmount;
@@ -185,13 +185,13 @@ public abstract class Entity : MonoBehaviour, IAttack, IDamageable
 
         remainExp = (remainExp + amount) % levelupAmount;
         onAddExperience?.Invoke(remainExp, levelupAmount);
-        //RankingManager.UpdateLiveRanking
-        EntityGameManager.OnEntityScoreAddbyName(info.EntityName, data.Score);
+
+        EntityGameManager.OnEntityScoreAddbyName(entityName, amount);
 
         for (int i = 0; i < levelupNum; ++i)
         {
             //Do Levelup
-            if(levelupPrefab != null)
+            if (levelupPrefab != null)
             {
                 GameObject clone = Instantiate(levelupPrefab, transform.position, Quaternion.identity);
                 clone.transform.localScale *= 1.5f;

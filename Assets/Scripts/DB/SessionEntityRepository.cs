@@ -253,7 +253,7 @@ public static class SessionEntityRepository
             var sessionEntity = GetSessionEntity(sessionId, entityId);
             if (sessionEntity == null) return false;
 
-            sessionEntity.Score = newScore;
+            sessionEntity.Score += newScore;
             if (newLevel > 0) sessionEntity.Level = newLevel;
 
             return UpdateSessionEntity(sessionEntity);

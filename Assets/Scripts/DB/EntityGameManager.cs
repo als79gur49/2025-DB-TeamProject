@@ -166,6 +166,41 @@ public static class EntityGameManager
         }
     }
 
+    public static void OnEntityKilledByName(string killerName, int scoreGain = 100)
+    {
+        try
+        {
+            if (!GameSessionManager.HasActiveSession())
+            {
+                Debug.LogWarning("Entity가 처치되었지만 활성 세션이 없습니다.");
+                return;
+            }
+
+            var killerEntity = EntityRepository.GetEntityByName(killerName);
+
+
+            bool updated = GameSessionManager.OnEntityKilled(killerEntity.EntityID, killerEntity.EntityName, scoreGain);
+
+            if (updated)
+            {
+                var sessionEntity = SessionEntityRepository.GetSessionEntity(GameSessionManager.GetCurrentSessionId(), killerEntity.EntityName);
+                if (sessionEntity != null)
+                {
+                    Debug.Log($"{killerName}이 적을 처치! +{scoreGain}점 (총 점수: {sessionEntity.Score}, 처치 수: {sessionEntity.EnemiesKilled})");
+                }
+            }
+            else
+            {
+                Debug.LogError("Entity 처치 처리 중 오류가 발생했습니다.");
+            }
+
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"Entity 처치 처리 오류: {ex.Message}");
+        }
+    }
+
     /// <summary>
     /// 엔티티 점수 추가 (Entity.cs의 AddScore에서 호출)
     /// </summary>
@@ -375,11 +410,11 @@ public static class EntityGameManager
             if (result)
             {
                 Debug.Log("플레이어 사망 및 게임 세션 종료가 완료되었습니다.");
-                
+
                 // 매핑 테이블 초기화
                 gameObjectToEntityMap.Clear();
                 entityToGameObjectMap.Clear();
-                
+
                 Debug.Log("게임 오브젝트 매핑이 초기화되었습니다.");
             }
             else
@@ -390,7 +425,7 @@ public static class EntityGameManager
         catch (System.Exception ex)
         {
             Debug.LogError($"플레이어 사망 처리 오류: {ex.Message}");
-            
+
             // 오류 발생 시에도 매핑 테이블 정리
             try
             {
@@ -451,7 +486,7 @@ public static class EntityGameManager
 
             var playerEntityId = GameSessionManager.GetCurrentPlayerEntityId();
             var sessionEntity = SessionEntityRepository.GetSessionEntity(GameSessionManager.GetCurrentSessionId(), playerEntityId);
-            
+
             if (sessionEntity != null)
             {
                 bool updated = GameSessionManager.UpdatePlayerScore(sessionEntity.Score, newLevel);
@@ -478,7 +513,7 @@ public static class EntityGameManager
             if (GameSessionManager.HasActiveSession())
             {
                 GameSessionManager.ForceEndSession();
-                
+
                 // 매핑 테이블 초기화
                 gameObjectToEntityMap.Clear();
                 entityToGameObjectMap.Clear();
@@ -506,7 +541,7 @@ public static class EntityGameManager
 
             var session = GameSessionManager.GetCurrentSession();
             var sessionEntities = GameSessionManager.GetCurrentSessionEntities(true); // 살아있는 엔티티만
-            var liveRanking = RankingManager.GetSessionLiveRanking(GameSessionManager.GetCurrentSessionId(), 5);
+            var liveRanking = RankingManager.GetActiveSessionLiveRanking(5);
 
             // 플레이어 엔티티 정보 찾기
             var playerEntity = sessionEntities.Find(e => e.EntityType == "Player");

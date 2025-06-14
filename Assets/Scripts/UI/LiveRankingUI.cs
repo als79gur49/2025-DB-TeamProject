@@ -75,8 +75,8 @@ public class LiveRankingUI : MonoBehaviour
     }
     private void Update()
     {
-        UpdateEntitiesRanking(RankingManager.GetLiveRanking(10));
-        UpdatePlayerRankingTMP(RankingManager.GetLiveRanking(RankingManager.GetActiveEntityCount()));
+        UpdateEntitiesRanking(RankingManager.GetActiveSessionLiveRanking(10));
+        UpdatePlayerRankingTMP(RankingManager.GetActiveSessionLiveRanking(RankingManager.GetActiveEntityCount()));
         //UpdatePlayerRanking(RankingManager.GetPlayerLiveRanking(playerName, 1));
     }
 }

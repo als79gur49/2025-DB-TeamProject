@@ -39,19 +39,19 @@ public class ScoreBlock : MonoBehaviour
         MaterialPropertyBlock block = new MaterialPropertyBlock();
 
         renderer.GetPropertyBlock(block);
-        block.SetColor("_BaseColor", c); 
+        block.SetColor("_BaseColor", c);
         renderer.SetPropertyBlock(block);
 
-        if(childMesh != null)
+        if (childMesh != null)
         {
             childMesh.transform.localScale = Vector3.one * size;
         }
-        
+
         this.memoryPool = memoryPool;
-        
+
         this.canRespawn = canRespawn;
-            this.spawner = spawner;
-            this.originPosition = transform.position;
+        this.spawner = spawner;
+        this.originPosition = transform.position;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -135,7 +135,7 @@ public class ScoreBlock : MonoBehaviour
         yoyoTween.Goto(Random.Range(0, 1f), true);
     }
 
-    public void AbsorbScoreObject(GameObject target, Entity entity)
+    public void AbsorbScoreObject(GameObject target, Player player)
     {
         if (isAbsorbing)
         {
@@ -164,7 +164,7 @@ public class ScoreBlock : MonoBehaviour
         // 실시간 목표 방향으로 다가가기
         float t = 0f;
         //                                시작값, 진행 중인 값 ,목표값, 걸리는 시간
-        absorbSequence.Insert(pullBackDuration,DOTween.To(() => t, x => t = x, 1, absorbDuration)
+        absorbSequence.Insert(pullBackDuration, DOTween.To(() => t, x => t = x, 1, absorbDuration)
             .SetEase(Ease.InQuad)
             .OnUpdate(() =>
             {
@@ -175,20 +175,20 @@ public class ScoreBlock : MonoBehaviour
                     transform.position = Vector3.Lerp(pullBackPos, target.transform.position, progress);
                 }
             }))
-            .OnComplete(() => {
-                AddScoreTo(entity);
-                });
+            .OnComplete(() =>
+            {
+                AddScoreTo(player);
+            });
     }
 
-    private void AddScoreTo(Entity entity)
+    private void AddScoreTo(Player player)
     {
-        if(entity == null)
+        if (player == null)
         {
             return;
         }
 
-        entity.AddScore(score);
+        player.AddScore(score, player.Info.EntityName);
         Destroy(gameObject);
-        //EntityGameManager.OnPlayerScoreAdd(score);
     }
 }

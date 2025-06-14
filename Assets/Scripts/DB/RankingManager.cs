@@ -51,7 +51,7 @@ public static class RankingManager
         {
             string query = @"
                 UPDATE SessionRanking SET
-                    CurrentScore = @currentScore,
+                    CurrentScore = CurrentScore + @currentScore,
                     CurrentLevel = CASE WHEN @currentLevel > 0 THEN @currentLevel ELSE CurrentLevel END,
                     LastUpdated = datetime('now')
                 WHERE SessionID = @sessionId AND EntityID = @entityId AND IsActive = TRUE
@@ -231,6 +231,53 @@ public static class RankingManager
 
         return rankings;
     }
+
+    /// <summary>
+    /// 특정 세션의 실시간 랭킹 조회
+    /// </summary>
+    public static List<RankingData> GetActiveSessionLiveRanking(int limit = 10)
+    {
+        var rankings = new List<RankingData>();
+
+        try
+        {
+            string query = @"
+                SELECT EntityID, EntityName, EntityType, CurrentScore, CurrentLevel
+                FROM SessionRanking
+                WHERE SessionID = @sessionId AND IsActive = TRUE
+                ORDER BY CurrentScore DESC, LastUpdated ASC
+                LIMIT @limit
+            ";
+
+            using (var reader = DatabaseManager.ExecuteReader(query,
+                ("@sessionId", GameSessionManager.GetCurrentSessionId()),
+                ("@limit", limit)))
+            {
+                int rank = 1;
+                while (reader.Read())
+                {
+                    string entityType = reader["EntityType"].ToString();
+
+                    rankings.Add(new RankingData
+                    {
+                        EntityID = (int)(long)reader["EntityID"],
+                        EntityName = reader["EntityName"].ToString(),
+                        EntityType = entityType,
+                        Score = (int)(long)reader["CurrentScore"],
+                        Level = (int)(long)reader["CurrentLevel"],
+                        Rank = rank++
+                    });
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"세션 실시간 랭킹 조회 오류: {ex.Message}");
+        }
+
+        return rankings;
+    }
+
 
     /// <summary>
     /// 특정 세션의 종료된 랭킹 조회
