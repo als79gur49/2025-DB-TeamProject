@@ -8039,6 +8039,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6270746322890833862, guid: f2a280f1e519bb44a9ccdd535cba126e,
         type: 3}
+      propertyPath: m_text
+      value: player
+      objectReference: {fileID: 0}
+    - target: {fileID: 6270746322890833862, guid: f2a280f1e519bb44a9ccdd535cba126e,
+        type: 3}
       propertyPath: m_fontSize
       value: 38
       objectReference: {fileID: 0}
@@ -9230,6 +9235,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6270746322890833862, guid: f2a280f1e519bb44a9ccdd535cba126e,
         type: 3}
+      propertyPath: m_text
+      value: Test_Entity_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 6270746322890833862, guid: f2a280f1e519bb44a9ccdd535cba126e,
+        type: 3}
       propertyPath: m_fontSize
       value: 38
       objectReference: {fileID: 0}
@@ -9491,6 +9501,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6270746322890833862, guid: f2a280f1e519bb44a9ccdd535cba126e,
+        type: 3}
+      propertyPath: m_text
+      value: Test_Entity_02
       objectReference: {fileID: 0}
     - target: {fileID: 6270746322890833862, guid: f2a280f1e519bb44a9ccdd535cba126e,
         type: 3}
@@ -10348,6 +10363,13 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6270746322890833862, guid: f2a280f1e519bb44a9ccdd535cba126e,
+        type: 3}
+      propertyPath: m_text
+      value: 'Test_Entity
+
+'
       objectReference: {fileID: 0}
     - target: {fileID: 6270746322890833862, guid: f2a280f1e519bb44a9ccdd535cba126e,
         type: 3}
@@ -12979,7 +13001,7 @@ MonoBehaviour:
   onEnemyDeath:
     m_PersistentCalls:
       m_Calls: []
-  spawnMultiplier: 0.1
+  spawnMultiplier: 3
 --- !u!4 &2039136163
 Transform:
   m_ObjectHideFlags: 0
