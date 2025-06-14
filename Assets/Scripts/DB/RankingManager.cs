@@ -496,4 +496,24 @@ public static class RankingManager
             return null;
         }
     }
+
+    /// <summary>
+    /// 모든 랭킹 데이터 제거
+    /// </summary>
+    public static bool ClearAllSessionRanking()
+    {
+        try
+        {
+            string query = "DELETE FROM SessionRanking";
+
+            int rowsAffected = DatabaseManager.ExecuteNonQuery(query);
+
+            return rowsAffected > 0;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"세션 랭킹 정리 오류: {ex.Message}");
+            return false;
+        }
+    }
 }

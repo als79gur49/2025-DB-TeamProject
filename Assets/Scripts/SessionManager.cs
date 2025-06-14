@@ -12,21 +12,21 @@ public class EntityBasicData
 }
 public class SessionManager : MonoBehaviour
 {
-    // Spawner¿Í UnityEvent·Î ¿¬°á
+    // Spawnerì™€ UnityEventë¡œ ì—°ê²°
 
-    [Header("ÇÙ½É ¸Å´ÏÀúµé")]
+    [Header("í•µì‹¬ ë§¤ë‹ˆì €ë“¤")]
     [SerializeField]
-    private DamagePopupManager damagePopupManager; // °ø°İ¹ŞÀ» °æ¿ì µ¥¹ÌÁö Ãâ·Â
+    private DamagePopupManager damagePopupManager; // ê³µê²©ë°›ì„ ê²½ìš° ë°ë¯¸ì§€ ì¶œë ¥
     [SerializeField]
-    private KillLogManager killLogManager; // Á×À» °æ¿ì Å³·Î±× Ãâ·Â
+    private KillLogManager killLogManager; // ì£½ì„ ê²½ìš° í‚¬ë¡œê·¸ ì¶œë ¥
     [SerializeField]
-    private ScoreBlockSpawner scoreBlockSpawner; // Á×À» °æ¿ì Á¡¼öºí·° ½ºÆù
+    private ScoreBlockSpawner scoreBlockSpawner; // ì£½ì„ ê²½ìš° ì ìˆ˜ë¸”ëŸ­ ìŠ¤í°
     [SerializeField]
-    private UIController uiController; // ÇÃ·¹ÀÌ¾î UI, ·©Å·°ü·Ã UI
+    private UIController uiController; // í”Œë ˆì´ì–´ UI, ë­í‚¹ê´€ë ¨ UI
     [SerializeField]
-    private CinemachineVirtualCamera virtualCamera; // ÇÃ·¹ÀÌ¾î¿¡ ¿¬°áµÉ Ä«¸Ş¶ó
+    private CinemachineVirtualCamera virtualCamera; // í”Œë ˆì´ì–´ì— ì—°ê²°ë  ì¹´ë©”ë¼
     [SerializeField]
-    private SkillIconManager skillIconManager; // ½ºÅ³ ÀúÀå¼Ò // ÀÛµ¿X
+    private SkillIconManager skillIconManager; // ìŠ¤í‚¬ ì €ì¥ì†Œ // ì‘ë™X
 
     [Header("Spawners")]
     [SerializeField]
@@ -38,7 +38,7 @@ public class SessionManager : MonoBehaviour
     private GameSessionModel currentSession;
     private bool isGameActive = false;
 
-    [Header("Entity ±âº» ¼öÄ¡")]
+    [Header("Entity ê¸°ë³¸ ìˆ˜ì¹˜")]
     public EntityBasicData entityBasicData;
 
     public GameSessionModel CurrentSession => currentSession;
@@ -47,13 +47,13 @@ public class SessionManager : MonoBehaviour
     private string playerName;
     private void Awake()
     {
-        ValidateComponents(); // ÇÙ½É ¸Å´ÏÀú ÇÒ´çµÇ¾ú´ÂÁö °ËÁõ
+        ValidateComponents(); // í•µì‹¬ ë§¤ë‹ˆì € í• ë‹¹ë˜ì—ˆëŠ”ì§€ ê²€ì¦
         InitializeSpawners();
     }
 
     private void Start()
     {
-        // °ÔÀÓ ½ÃÀÛ
+        // ê²Œì„ ì‹œì‘
         StartGame();
     }
 
@@ -62,33 +62,33 @@ public class SessionManager : MonoBehaviour
     {
         if (damagePopupManager == null || killLogManager == null || scoreBlockSpawner == null)
         {
-            Debug.LogError("Core Manager ÂüÁ¶°¡ ¾ø½À´Ï´Ù.");
+            Debug.LogError("Core Manager ì°¸ì¡°ê°€ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
         if (playerSpawner == null || enemySpawner == null)
         {
-            Debug.LogError("Player, EnemySpawner ÂüÁ¶°¡ ¾ø½À´Ï´Ù.");
+            Debug.LogError("Player, EnemySpawner ì°¸ì¡°ê°€ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
         if (uiController == null || virtualCamera == null)
         {
-            Debug.LogError("UI ¶Ç´Â Camera ÂüÁ¶°¡ ¾ø½À´Ï´Ù.");
+            Debug.LogError("UI ë˜ëŠ” Camera ì°¸ì¡°ê°€ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
     }
 
     private void InitializeSpawners()
     {
-        // ÀÇÁ¸¼º ÁÖÀÔ
+        // ì˜ì¡´ì„± ì£¼ì…
         playerSpawner.Setup(damagePopupManager, killLogManager, scoreBlockSpawner, entityBasicData);
         enemySpawner.Setup(damagePopupManager, killLogManager, scoreBlockSpawner, entityBasicData);
 
-        // ÇÃ·¹ÀÌ¾î ½ºÆ÷³Ê ÀÇÁ¸¼º ÁÖÀÔ
+        // í”Œë ˆì´ì–´ ìŠ¤í¬ë„ˆ ì˜ì¡´ì„± ì£¼ì…
         playerSpawner.SetupPlayer(uiController, virtualCamera, skillIconManager, GetPlayerName());
 
-        // ÀÌº¥Æ® ±¸µ¶
+        // ì´ë²¤íŠ¸ êµ¬ë…
         playerSpawner.onPlayerSpawned.AddListener(OnPlayerSpawned);
         playerSpawner.onPlayerDeath.AddListener(OnPlayerDeath);
 
@@ -101,7 +101,7 @@ public class SessionManager : MonoBehaviour
     {
         if (string.IsNullOrEmpty(playerName))
         {
-            // Å¸ÀÌÆ²¾À¿¡¼­ ÀÔ·ÂµÈ ÀÌ¸§
+            // íƒ€ì´í‹€ì”¬ì—ì„œ ì…ë ¥ëœ ì´ë¦„
             playerName = PlayerDataManager.Instance?.PlayerName;
             if (string.IsNullOrEmpty(playerName))
             {
@@ -115,24 +115,27 @@ public class SessionManager : MonoBehaviour
     {
         if (isGameActive)
         {
-            Debug.LogWarning("ÀÌ¹Ì °ÔÀÓÀÌ ÁøÇà ÁßÀÔ´Ï´Ù.");
+            Debug.LogWarning("ì´ë¯¸ ê²Œì„ì´ ì§„í–‰ ì¤‘ì…ë‹ˆë‹¤.");
             return;
         }
-        
+
+        // ì „ ê²Œì„ ë­í‚¹ì„ í™•ì¸í•˜ê¸° ìœ„í•´ ìƒˆë¡œìš´ ê²Œì„ ì‹œì‘ ì‹œ ë­í‚¹ ë³´ë“œ ì‚­ì œ
+        RankingManager.ClearAllSessionRanking();
+
         string playerName = GetPlayerName();
         currentSession = EntityGameManager.StartNewGame(playerName);
 
         if (currentSession != null)
         {
             isGameActive = true;
-            Debug.Log($"°ÔÀÓ ½ÃÀÛ. °ÔÀÓ¼¼¼Ç ID: {currentSession.SessionID}");
+            Debug.Log($"ê²Œì„ ì‹œì‘. ê²Œì„ì„¸ì…˜ ID: {currentSession.SessionID}");
 
-            // ÇÃ·¹ÀÌ¾î ½ºÆù
+            // í”Œë ˆì´ì–´ ìŠ¤í°
             playerSpawner.SpawnPlayer();
         }
         else
         {
-            Debug.LogError("°ÔÀÓ ¼¼¼Ç »ı¼º¿¡ ½ÇÆĞÇß½À´Ï´Ù.");
+            Debug.LogError("ê²Œì„ ì„¸ì…˜ ìƒì„±ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.");
         }
     }
 
@@ -140,30 +143,30 @@ public class SessionManager : MonoBehaviour
     {
         if (!isGameActive)
         {
-            Debug.LogWarning("Á¾·áÇÒ °ÔÀÓÀÌ ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("ì¢…ë£Œí•  ê²Œì„ì´ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
         isGameActive = false;
         EntityGameManager.OnPlayerDeath();
 
-        Debug.Log("°ÔÀÓ Á¾·á");
+        Debug.Log("ê²Œì„ ì¢…ë£Œ");
     }
 
     private void OnPlayerSpawned(Player player)
     {
         if (currentSession != null)
         {
-            // UI ¼³Á¤
+            // UI ì„¤ì •
             uiController.Setup(player, player.Info.EntityName, currentSession.SessionID);
 
-            // Ä«¸Ş¶ó ¼³Á¤
+            // ì¹´ë©”ë¼ ì„¤ì •
             if (virtualCamera != null)
             {
                 virtualCamera.Follow = player.transform;
             }
 
-            // ÇÃ·¹ÀÌ¾î ¿£Æ¼Æ¼ µî·Ï
+            // í”Œë ˆì´ì–´ ì—”í‹°í‹° ë“±ë¡
             int playerInstanceId = player.GetInstanceID();
             EntityGameManager.RegisterPlayerEntity(playerInstanceId);
         }
@@ -177,17 +180,17 @@ public class SessionManager : MonoBehaviour
 
     private void OnEnemySpawned(Enemy enemy)
     {
-        // Àû ½ºÆù ½Ã ÇÊ¿äÇÑ ·ÎÁ÷
+        // ì  ìŠ¤í° ì‹œ í•„ìš”í•œ ë¡œì§
     }
 
     private void OnEnemyDeath(Enemy enemy)
     {
-        // Àû »ç¸Á ½Ã ÇÊ¿äÇÑ ·ÎÁ÷
+        // ì  ì‚¬ë§ ì‹œ í•„ìš”í•œ ë¡œì§
     }
 
     private void OnDestroy()
     {
-        // ÀÌº¥Æ® ±¸µ¶ ÇØÁ¦
+        // ì´ë²¤íŠ¸ êµ¬ë… í•´ì œ
         if (playerSpawner != null)
         {
             playerSpawner.onPlayerSpawned.RemoveAllListeners();
