@@ -3,13 +3,13 @@ using UnityEngine;
 using DG.Tweening;
 using System.Data.Common;
 
-public abstract class Projectile : MonoBehaviour
+public abstract class Projectile : MonoBehaviour, ILevelup
 {
-    // 원본 SO
+    // origin SO
     [SerializeField]
     private SOProjectile origin_data;
     
-    // 사본 SO, 사본 데이터 이용
+    // copied SO
     private SOProjectile data;
     public SOProjectile Data => data;
 
@@ -22,18 +22,19 @@ public abstract class Projectile : MonoBehaviour
     public GameObject Owner => owner;
 
     private List<ProjectileEffect> effects;
-
+    private ProjectileEffect pEffect;
     // VFX
     public GameObject muzzlePrefab;
     public GameObject hitPrefab;
 
     private void Awake()
     {
-        // 독립 데이터 생성
+        // 
         Initialize();
+        
     }
 
-    // Awake에서만 실행할 경우, 종종 안 되는 경우가 있어, ProjectileStorage에서 수동으로 한 번더 Init실행
+    // Double check
     public void Initialize()
     {
         data = Instantiate(origin_data);
@@ -69,10 +70,14 @@ public abstract class Projectile : MonoBehaviour
         }
 
         effects = new List<ProjectileEffect>();
+        pEffect = new PoisonEffect(owner.GetComponent<Entity>(), 10, 0.3f);
+        effects.Add(pEffect);
+        Debug.Log($"{effects.Count}, {pEffect}");
+
 
         entity = owner.GetComponent<Entity>();
 
-        // 부모 오브젝트와 충돌 비활성화
+        // parent collision disable
         Collider projectileCollider = GetComponent<Collider>();
         Collider[] ownerColliders = owner.GetComponentsInChildren<Collider>();
         foreach (Collider collider in ownerColliders)
@@ -153,13 +158,22 @@ public abstract class Projectile : MonoBehaviour
 
         if (c.gameObject.TryGetComponent<IDamageable>(out IDamageable target))
         {
+            // Prev Attack
             foreach (var effect in effects)
             {
                 effect.ApplyEffect(target);
             }
 
+            // Main Attack
+            Debug.Log($"Main Attack Frame:{Time.frameCount}");
             target.TakeDamage(data.damage, owner.GetComponent<Entity>(), data.name);
+            // After Attack
         }
         Destroy(gameObject);
+    }
+
+    public void LevelUp()
+    {
+        throw new System.NotImplementedException();
     }
 }

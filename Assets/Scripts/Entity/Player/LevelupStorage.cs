@@ -49,7 +49,6 @@ public class LevelupStorage : MonoBehaviour
         }
         else if(obj is  WeaponBase weapon)
         {
-            // 현재는 이전 무기의 값 유지
             owner.ChangeWeapon(weapon);
         }
     }
@@ -58,12 +57,11 @@ public class LevelupStorage : MonoBehaviour
     {
         if(levelupable == null || levelupable.Count == 0)
         {
-            Debug.Log("레벨 업 가능한 스킬 없음");
             return;
         }
 
         List<ILevelup> randomSkills = new List<ILevelup>(levelupable);
-        // 랜덤하게 섞기
+        // Random
         int count = Mathf.Min(maxSelectedIcons, randomSkills.Count);
         List<ILevelup> selected = randomSkills.GetRange(0, count);
 
@@ -74,9 +72,7 @@ public class LevelupStorage : MonoBehaviour
 
     public void AddLevelupable(ILevelup item)
     {
-        // levelupable.Any(x => x.GetType() == item.GetType())
-
-        // 참조 비교가 아닌 클래스 타입으로 비교
+        
         if (levelupable == null || levelupable.Count <= 0)
         {
             return;

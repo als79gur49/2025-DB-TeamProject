@@ -26,7 +26,7 @@ public class AttackState : IState
             Attack(input);
         }
         
-        Debug.Log("Attack Execute");
+        //Debug.Log("Attack Execute");
     }
 
     public void Exit(AIInput input)

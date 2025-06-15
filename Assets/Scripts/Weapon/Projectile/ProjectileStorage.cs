@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class ProjectileStorage : MonoBehaviour
 {
-    // 투사체 저장 및 발사한 마지막 시간 저장. (현재 - 마지막) > cooldown
+    // projectile, lastAttackTime(Time.time), (current - lastAttackTime) > cooldown
     private Dictionary<Projectile, float> projectiles;
     public Dictionary<Projectile, float> Projectiles => projectiles;
 
