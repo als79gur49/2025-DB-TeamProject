@@ -25,7 +25,7 @@ public class FSM : MonoBehaviour
     [SerializeField]
     private int attackRange = 7;
     [SerializeField]
-    private int chaseRange = 30;
+    private int chaseRange = 23;
     [SerializeField]
     private float chaseSpeed = 3.5f;
     [SerializeField]

@@ -248,7 +248,6 @@ MonoBehaviour:
   levelupPrefab: {fileID: 1624714524768532, guid: c9eb15264aa6c4348b00d5b9b3daab2a,
     type: 3}
   skinnedMeshRenderer: {fileID: 13724346}
-  material: {fileID: 0}
   levelupStorage: {fileID: 3376394969416401188}
 --- !u!114 &6557342948470428465
 MonoBehaviour:
@@ -262,8 +261,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff6cd3b316cd2ff4dad8dccb635875fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRange: 7
-  chaseRange: 30
+  attackRange: 1
+  chaseRange: 1
   chaseSpeed: 3.5
   patrolSpeed: 2.5
 --- !u!195 &1003481600684351216
